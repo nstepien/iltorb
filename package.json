@@ -1,0 +1,45 @@
+{
+  "name": "iltorb",
+  "version": "1.0.0",
+  "description": "Brotli compression/decompression with native bindings",
+  "homepage": "https://github.com/MayhemYDG/iltorb",
+  "bugs": "https://github.com/MayhemYDG/iltorb/issues",
+  "repository": "MayhemYDG/iltorb",
+  "main": "index.js",
+  "keywords": [
+    "brotli",
+    "compression",
+    "decompression"
+  ],
+  "contributors": [
+    {
+      "name": "Nicolas Stepien",
+      "email": "stepien.nicolas@gmail.com"
+    },
+    {
+      "name": "Hung Tran",
+      "email": "oohnoitz@gmail.com"
+    }
+  ],
+  "files": [
+    "brotli/dec",
+    "brotli/enc",
+    "src",
+    "binding.gyp",
+    "index.js"
+  ],
+  "dependencies": {
+    "nan": "^2.1.0"
+  },
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^2.3.3"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "license": "MIT"
+}

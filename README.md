@@ -1,5 +1,7 @@
 # iltorb
 
+[![NPM Version][npm-badge]][npm-url] [![Build Status][travis-badge]][travis-url]
+
 [iltorb](https://www.npmjs.com/package/iltorb) is a [Node.js](https://nodejs.org) package offering native bindings for the [brotli](https://github.com/google/brotli) compression library.
 
 ## Usage
@@ -94,3 +96,8 @@ const brotliParams = {
   lgblock: 0
 };
 ```
+
+[npm-badge]: https://img.shields.io/npm/v/iltorb.svg
+[npm-url]: https://www.npmjs.com/package/iltorb
+[travis-badge]: https://img.shields.io/travis/MayhemYDG/iltorb.svg
+[travis-url]: https://travis-ci.org/MayhemYDG/iltorb

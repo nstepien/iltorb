@@ -29,15 +29,23 @@ describe('Brotli Buffer Sync', function() {
     it('should compress text data with quality=9', function() {
       testBufferSync(brotli.compressSync, 'data.txt', 'data.txt.compressed.09', { quality: 9 });
     });
+
+    it('should compress an empty buffer', function() {
+      testBufferSync(brotli.compressSync, 'empty', 'empty.compressed');
+    });
   });
 
   describe('decompress', function() {
-    it('should compress binary data', function() {
+    it('should decompress binary data', function() {
       testBufferSync(brotli.decompressSync, 'data10k.bin.compressed', 'data10k.bin');
     });
 
-    it('should compress text data', function() {
+    it('should decompress text data', function() {
       testBufferSync(brotli.decompressSync, 'data.txt.compressed', 'data.txt');
+    });
+
+    it('should decompress to an empty buffer', function() {
+      testBufferSync(brotli.decompressSync, 'empty.compressed', 'empty');
     });
   });
 });

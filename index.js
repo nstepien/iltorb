@@ -55,14 +55,10 @@ function decompressSync(input) {
 }
 
 function handleStream(handler, params) {
-  let buffer;
+  let buffer = new Buffer(0);
   return new Transform({
     transform: function(chunk, encoding, next) {
-      if (buffer) {
-        buffer = Buffer.concat([buffer, chunk], buffer.length + chunk.length);
-      } else {
-        buffer = chunk;
-      }
+      buffer = Buffer.concat([buffer, chunk], buffer.length + chunk.length);
       next();
     },
     flush: function(done) {

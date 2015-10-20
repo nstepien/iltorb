@@ -41,15 +41,23 @@ describe('Brotli Buffer Async', function() {
     it('should compress text data with quality=9', function(done) {
       testBufferAsync(brotli.compress, 'data.txt', 'data.txt.compressed.09', done, { quality: 9 });
     });
+
+    it('should compress an empty buffer', function(done) {
+      testBufferAsync(brotli.compress, 'empty', 'empty.compressed', done);
+    });
   });
 
   describe('decompress', function() {
-    it('should compress binary data', function(done) {
+    it('should decompress binary data', function(done) {
       testBufferAsync(brotli.decompress, 'data10k.bin.compressed', 'data10k.bin', done);
     });
 
-    it('should compress text data', function(done) {
+    it('should decompress text data', function(done) {
       testBufferAsync(brotli.decompress, 'data.txt.compressed', 'data.txt', done);
+    });
+
+    it('should decompress to an empty buffer', function(done) {
+      testBufferAsync(brotli.decompress, 'empty.compressed', 'empty', done);
     });
   });
 });

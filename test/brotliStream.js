@@ -38,6 +38,10 @@ describe('Brotli Stream', function() {
     it('should compress an empty buffer', function(done) {
       testStream(brotli.compressStream, 'empty', 'empty.compressed', done);
     });
+
+    it('should compress a large buffer', function(done) {
+      testStream(brotli.compressStream, 'large.txt', 'large.txt.compressed', done);
+    });
   });
 
   describe('decompress', function() {
@@ -51,6 +55,10 @@ describe('Brotli Stream', function() {
 
     it('should decompress to an empty buffer', function(done) {
       testStream(brotli.decompressStream, 'empty.compressed', 'empty', done);
+    });
+
+    it('should decompress to a large buffer', function(done) {
+      testStream(brotli.decompressStream, 'large.txt.compressed', 'large.txt', done);
     });
   });
 });

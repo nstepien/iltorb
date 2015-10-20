@@ -33,6 +33,10 @@ describe('Brotli Buffer Sync', function() {
     it('should compress an empty buffer', function() {
       testBufferSync(brotli.compressSync, 'empty', 'empty.compressed');
     });
+
+    it('should compress a large buffer', function() {
+      testBufferSync(brotli.compressSync, 'large.txt', 'large.txt.compressed');
+    });
   });
 
   describe('decompress', function() {
@@ -46,6 +50,10 @@ describe('Brotli Buffer Sync', function() {
 
     it('should decompress to an empty buffer', function() {
       testBufferSync(brotli.decompressSync, 'empty.compressed', 'empty');
+    });
+
+    it('should decompress to a large buffer', function() {
+      testBufferSync(brotli.decompressSync, 'large.txt.compressed', 'large.txt');
     });
   });
 });

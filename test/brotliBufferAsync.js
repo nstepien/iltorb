@@ -45,6 +45,10 @@ describe('Brotli Buffer Async', function() {
     it('should compress an empty buffer', function(done) {
       testBufferAsync(brotli.compress, 'empty', 'empty.compressed', done);
     });
+
+    it('should compress a large buffer', function(done) {
+      testBufferAsync(brotli.compress, 'large.txt', 'large.txt.compressed', done);
+    });
   });
 
   describe('decompress', function() {
@@ -58,6 +62,10 @@ describe('Brotli Buffer Async', function() {
 
     it('should decompress to an empty buffer', function(done) {
       testBufferAsync(brotli.decompress, 'empty.compressed', 'empty', done);
+    });
+
+    it('should decompress to a large buffer', function(done) {
+      testBufferAsync(brotli.decompress, 'large.txt.compressed', 'large.txt', done);
     });
   });
 });

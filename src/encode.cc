@@ -4,36 +4,30 @@
 using namespace v8;
 using namespace brotli;
 
+class BufferOut : public BrotliOut {
+  public:
+    bool Write(const void* buf, size_t n) {
+      buffer.append((char*) buf, n);
+      return true;
+    }
+
+    std::string buffer;
+};
+
 class EncodeWorker : public Nan::AsyncWorker {
  public:
-  EncodeWorker(Nan::Callback *callback, BrotliParams params, Local<Object> buffer)
-    : Nan::AsyncWorker(callback), params(params) {
-      input_size = node::Buffer::Length(buffer);
-      input_buffer = node::Buffer::Data(buffer);
-    }
+  EncodeWorker(Nan::Callback *callback, BrotliParams params, BrotliMemIn input)
+    : Nan::AsyncWorker(callback), params(params), input(input) {}
 
   void Execute() {
-    uint8_t* buffer;
-
-    BrotliCompressor compressor(params);
-    compressor.CopyInputToRingBuffer(input_size, (uint8_t*) input_buffer);
-    res = compressor.WriteBrotliData(true, false, &output_size, &buffer);
-
-    if (res) {
-      output_buffer = (char*) malloc(output_size);
-      if (output_buffer == NULL) {
-        res = false;
-      } else {
-        memcpy(output_buffer, buffer, output_size);
-      }
-    }
+    res = BrotliCompress(params, &input, &output);
   }
 
   void HandleOKCallback() {
     if (res) {
       Local<Value> argv[] = {
         Nan::Null(),
-        Nan::NewBuffer(output_buffer, output_size).ToLocalChecked()
+        Nan::CopyBuffer(&output.buffer[0], output.buffer.length()).ToLocalChecked()
       };
       callback->Call(2, argv);
     } else {
@@ -47,10 +41,8 @@ class EncodeWorker : public Nan::AsyncWorker {
   private:
     bool res;
     BrotliParams params;
-    size_t input_size;
-    char* input_buffer;
-    size_t output_size = 0;
-    char* output_buffer;
+    BrotliMemIn input;
+    BufferOut output;
 };
 
 BrotliParams getParams(Local<Object> userParams) {
@@ -83,19 +75,18 @@ BrotliParams getParams(Local<Object> userParams) {
 NAN_METHOD(CompressAsync) {
   Local<Object> buffer = info[0]->ToObject();
   Nan::Callback *callback = new Nan::Callback(info[2].As<Function>());
-  Nan::AsyncQueueWorker(new EncodeWorker(callback, getParams(info[1]->ToObject()), buffer));
+  BrotliMemIn input(node::Buffer::Data(buffer), node::Buffer::Length(buffer));
+
+  Nan::AsyncQueueWorker(new EncodeWorker(callback, getParams(info[1]->ToObject()), input));
 }
 
 NAN_METHOD(CompressSync) {
-  size_t output_size = 0;
-  uint8_t* output_buffer;
   Local<Object> buffer = info[0]->ToObject();
+  BrotliMemIn input(node::Buffer::Data(buffer), node::Buffer::Length(buffer));
+  BufferOut output;
 
-  BrotliCompressor compressor(getParams(info[1]->ToObject()));
-  compressor.CopyInputToRingBuffer(node::Buffer::Length(buffer), (uint8_t*) node::Buffer::Data(buffer));
-
-  if (compressor.WriteBrotliData(true, false, &output_size, &output_buffer)) {
-    info.GetReturnValue().Set(Nan::CopyBuffer((char*) output_buffer, output_size).ToLocalChecked());
+  if (BrotliCompress(getParams(info[1]->ToObject()), &input, &output)) {
+    info.GetReturnValue().Set(Nan::CopyBuffer(&output.buffer[0], output.buffer.length()).ToLocalChecked());
   } else {
     Nan::ThrowError("Brotli failed to compress.");
   }

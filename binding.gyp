@@ -16,6 +16,9 @@
         "brotli/enc/static_dict.cc",
         "brotli/enc/streams.cc",
         "brotli/enc/utf8_util.cc",
+        "src/stream_encode.cc",
+        "src/stream_encode_worker.cc",
+        "src/get_params.cc",
         "src/encode.cc"
       ],
       "include_dirs": [

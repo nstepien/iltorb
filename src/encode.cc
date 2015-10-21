@@ -1,4 +1,6 @@
 #include <nan.h>
+#include "stream_encode.h"
+#include "get_params.h"
 #include "../brotli/enc/encode.h"
 
 using namespace v8;
@@ -45,33 +47,6 @@ class EncodeWorker : public Nan::AsyncWorker {
     BufferOut output;
 };
 
-BrotliParams getParams(Local<Object> userParams) {
-  BrotliParams params;
-  Local<String> key;
-
-  key = Nan::New<String>("mode").ToLocalChecked();
-  if (Nan::Has(userParams, key).FromJust()) {
-    params.mode = (BrotliParams::Mode) Nan::Get(userParams, key).ToLocalChecked()->Int32Value();
-  }
-
-  key = Nan::New<String>("quality").ToLocalChecked();
-  if (Nan::Has(userParams, key).FromJust()) {
-    params.quality = Nan::Get(userParams, key).ToLocalChecked()->Int32Value();
-  }
-
-  key = Nan::New<String>("lgwin").ToLocalChecked();
-  if (Nan::Has(userParams, key).FromJust()) {
-    params.lgwin = Nan::Get(userParams, key).ToLocalChecked()->Int32Value();
-  }
-
-  key = Nan::New<String>("lgblock").ToLocalChecked();
-  if (Nan::Has(userParams, key).FromJust()) {
-    params.lgblock = Nan::Get(userParams, key).ToLocalChecked()->Int32Value();
-  }
-
-  return params;
-}
-
 NAN_METHOD(CompressAsync) {
   Local<Object> buffer = info[0]->ToObject();
   Nan::Callback *callback = new Nan::Callback(info[2].As<Function>());
@@ -93,6 +68,7 @@ NAN_METHOD(CompressSync) {
 }
 
 NAN_MODULE_INIT(Init) {
+  StreamEncode::Init(target);
   Nan::SetMethod(target, "compressAsync", CompressAsync);
   Nan::SetMethod(target, "compressSync", CompressSync);
 }

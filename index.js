@@ -54,7 +54,71 @@ function decompressSync(input) {
   return decode.decompressSync(input);
 }
 
-function handleStream(handler, params) {
+// We need to fill the blockSize for better compression results
+function compressStreamChunk(stream, chunk, encoder, status, done) {
+  const length = chunk.length;
+
+  if (length > status.remaining) {
+    const slicedChunk = chunk.slice(0, status.remaining);
+    chunk = chunk.slice(status.remaining);
+    status.remaining = status.blockSize;
+
+    encoder.copy(slicedChunk);
+    encoder.encode(false, function(err, output) {
+      if (err) {
+        return done(err);
+      }
+      if (output) {
+        stream.push(output);
+      }
+      compressStreamChunk(stream, chunk, encoder, status, done);
+    });
+  } else if (length < status.remaining) {
+    status.remaining -= length;
+    encoder.copy(chunk);
+    done();
+  } else { // length === status.remaining
+    status.remaining = status.blockSize;
+    encoder.copy(chunk);
+    encoder.encode(false, function(err, output) {
+      if (err) {
+        return done(err);
+      }
+      if (output) {
+        stream.push(output);
+      }
+      done();
+    });
+  }
+}
+
+function compressStream(params) {
+  const encoder = new encode.StreamEncode(params || {});
+  const blockSize = encoder.getBlockSize();
+  const status = {
+    blockSize,
+    remaining: blockSize
+  };
+
+  return new Transform({
+    transform: function(chunk, encoding, next) {
+      compressStreamChunk(this, chunk, encoder, status, next);
+    },
+    flush: function(done) {
+      encoder.encode(true, (err, output) => {
+        if (err) {
+          return done(err);
+        }
+        if (output) {
+          this.push(output);
+        }
+        done();
+      });
+    }
+  });
+}
+
+function decompressStream() {
   let buffer = new Buffer(0);
   return new Transform({
     transform: function(chunk, encoding, next) {
@@ -62,26 +126,13 @@ function handleStream(handler, params) {
       next();
     },
     flush: function(done) {
-      let args = [buffer, (err, output) => {
+      decode.decompressAsync(buffer, (err, output) => {
         if (err) {
           return done(err);
         }
         this.push(output);
         done();
-      }];
-      if (params) {
-        args.splice(1, 0, params);
-      }
-      handler.apply(null, args);
+      });
     }
   });
-}
-
-function compressStream(params) {
-  params = params || {};
-  return handleStream(encode.compressAsync, params);
-}
-
-function decompressStream() {
-  return handleStream(decode.decompressAsync);
 }

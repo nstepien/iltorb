@@ -2,7 +2,7 @@
 #define STREAM_ENCODE_WORKER_H
 
 #include <nan.h>
-#include "../brotli/enc/encode.h"
+#include "../../brotli/enc/encode.h"
 
 class StreamEncodeWorker : public Nan::AsyncWorker {
  public:

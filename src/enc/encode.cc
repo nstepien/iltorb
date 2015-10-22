@@ -1,51 +1,12 @@
 #include <nan.h>
-#include "stream_encode.h"
+#include "buffer_out.h"
+#include "encode_worker.h"
 #include "get_params.h"
-#include "../brotli/enc/encode.h"
+#include "stream_encode.h"
+#include "../../brotli/enc/encode.h"
 
 using namespace v8;
 using namespace brotli;
-
-class BufferOut : public BrotliOut {
-  public:
-    bool Write(const void* buf, size_t n) {
-      buffer.append((char*) buf, n);
-      return true;
-    }
-
-    std::string buffer;
-};
-
-class EncodeWorker : public Nan::AsyncWorker {
- public:
-  EncodeWorker(Nan::Callback *callback, BrotliParams params, BrotliMemIn input)
-    : Nan::AsyncWorker(callback), params(params), input(input) {}
-
-  void Execute() {
-    res = BrotliCompress(params, &input, &output);
-  }
-
-  void HandleOKCallback() {
-    if (res) {
-      Local<Value> argv[] = {
-        Nan::Null(),
-        Nan::CopyBuffer(&output.buffer[0], output.buffer.length()).ToLocalChecked()
-      };
-      callback->Call(2, argv);
-    } else {
-      Local<Value> argv[] = {
-        Nan::Error("Brotli failed to compress.")
-      };
-      callback->Call(1, argv);
-    }
-  }
-
-  private:
-    bool res;
-    BrotliParams params;
-    BrotliMemIn input;
-    BufferOut output;
-};
 
 NAN_METHOD(CompressAsync) {
   Local<Object> buffer = info[0]->ToObject();

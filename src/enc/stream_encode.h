@@ -3,7 +3,7 @@
 
 #include <nan.h>
 #include "get_params.h"
-#include "../brotli/enc/encode.h"
+#include "../../brotli/enc/encode.h"
 
 class StreamEncode : public Nan::ObjectWrap {
   public:

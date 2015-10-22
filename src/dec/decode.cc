@@ -1,5 +1,5 @@
 #include <nan.h>
-#include "../brotli/dec/decode.h"
+#include "../../brotli/dec/decode.h"
 
 using namespace v8;
 

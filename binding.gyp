@@ -16,10 +16,12 @@
         "brotli/enc/static_dict.cc",
         "brotli/enc/streams.cc",
         "brotli/enc/utf8_util.cc",
-        "src/stream_encode.cc",
-        "src/stream_encode_worker.cc",
-        "src/get_params.cc",
-        "src/encode.cc"
+        "src/enc/buffer_out.cc",
+        "src/enc/encode.cc",
+        "src/enc/encode_worker.cc",
+        "src/enc/get_params.cc",
+        "src/enc/stream_encode.cc",
+        "src/enc/stream_encode_worker.cc"
       ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")"
@@ -38,7 +40,7 @@
         "brotli/dec/huffman.c",
         "brotli/dec/state.c",
         "brotli/dec/streams.c",
-        "src/decode.cc"
+        "src/dec/decode.cc"
       ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")"

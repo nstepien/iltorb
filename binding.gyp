@@ -40,7 +40,9 @@
         "brotli/dec/huffman.c",
         "brotli/dec/state.c",
         "brotli/dec/streams.c",
-        "src/dec/decode.cc"
+        "src/dec/buffer_output.cc",
+        "src/dec/decode.cc",
+        "src/dec/decode_worker.cc"
       ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")"

@@ -1,6 +1,7 @@
 #include <nan.h>
 #include "buffer_output.h"
 #include "decode_worker.h"
+#include "stream_decode.h"
 #include "../../brotli/dec/decode.h"
 
 using namespace v8;
@@ -29,6 +30,7 @@ NAN_METHOD(DecompressSync) {
 }
 
 NAN_MODULE_INIT(Init) {
+  StreamDecode::Init(target);
   Nan::SetMethod(target, "decompressAsync", DecompressAsync);
   Nan::SetMethod(target, "decompressSync", DecompressSync);
 }

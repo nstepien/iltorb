@@ -42,7 +42,9 @@
         "brotli/dec/streams.c",
         "src/dec/buffer_output.cc",
         "src/dec/decode.cc",
-        "src/dec/decode_worker.cc"
+        "src/dec/decode_worker.cc",
+        "src/dec/stream_decode.cc",
+        "src/dec/stream_decode_worker.cc"
       ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")"

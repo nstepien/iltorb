@@ -65,6 +65,10 @@ describe('Brotli Buffer Async', function() {
     });
 
     it('should decompress to a large buffer', function(done) {
+      testBufferAsync(brotli.decompress, 'large.compressed', 'large', done);
+    });
+
+    it('should decompress to another large buffer', function(done) {
       testBufferAsync(brotli.decompress, 'large.txt.compressed', 'large.txt', done);
     });
   });

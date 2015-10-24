@@ -58,6 +58,10 @@ describe('Brotli Stream', function() {
     });
 
     it('should decompress to a large buffer', function(done) {
+      testStream(brotli.decompressStream, 'large.compressed', 'large', done);
+    });
+
+    it('should decompress to another large buffer', function(done) {
       testStream(brotli.decompressStream, 'large.txt.compressed', 'large.txt', done);
     });
   });

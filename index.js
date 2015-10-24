@@ -119,18 +119,28 @@ function compressStream(params) {
 }
 
 function decompressStream() {
-  let buffer = new Buffer(0);
+  const decoder = new decode.StreamDecode();
+
   return new Transform({
     transform: function(chunk, encoding, next) {
-      buffer = Buffer.concat([buffer, chunk], buffer.length + chunk.length);
-      next();
+      decoder.transform(chunk, (err, output) => {
+        if (err) {
+          return next(err);
+        }
+        if (output) {
+          this.push(output);
+        }
+        next();
+      });
     },
     flush: function(done) {
-      decode.decompressAsync(buffer, (err, output) => {
+      decoder.flush((err, output) => {
         if (err) {
           return done(err);
         }
-        this.push(output);
+        if (output) {
+          this.push(output);
+        }
         done();
       });
     }

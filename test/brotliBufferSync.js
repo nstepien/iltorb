@@ -53,6 +53,10 @@ describe('Brotli Buffer Sync', function() {
     });
 
     it('should decompress to a large buffer', function() {
+      testBufferSync(brotli.decompressSync, 'large.compressed', 'large');
+    });
+
+    it('should decompress to another large buffer', function() {
       testBufferSync(brotli.decompressSync, 'large.txt.compressed', 'large.txt');
     });
   });

@@ -5,7 +5,7 @@ const expect = require('expect.js');
 const Writable = require('stream').Writable;
 const fs = require('fs');
 
-function testStream(method, bufferFile, resultFile, done) {
+function testStream(method, bufferFile, resultFile, done, params) {
   let data = new Buffer(0);
   const writeStream = new Writable({
     write: function(chunk, encoding, next) {
@@ -15,7 +15,7 @@ function testStream(method, bufferFile, resultFile, done) {
   });
 
   fs.createReadStream(`${__dirname}/fixtures/${bufferFile}`)
-    .pipe(method())
+    .pipe(method(params))
     .pipe(writeStream);
 
   writeStream.on('finish', function() {
@@ -33,6 +33,14 @@ describe('Brotli Stream', function() {
 
     it('should compress text data', function(done) {
       testStream(brotli.compressStream, 'data.txt', 'data.txt.compressed', done);
+    });
+
+    it('should compress text data with quality=3', function(done) {
+      testStream(brotli.compressStream, 'data.txt', 'data.txt.compressed.03', done, { quality: 3 });
+    });
+
+    it('should compress text data with quality=9', function(done) {
+      testStream(brotli.compressStream, 'data.txt', 'data.txt.compressed.09', done, { quality: 9 });
     });
 
     it('should compress an empty buffer', function(done) {

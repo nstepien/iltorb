@@ -7,9 +7,9 @@ exports.decompressSync = decompressSync;
 exports.compressStream = compressStream;
 exports.decompressStream = decompressStream;
 
-const encode = require('./build/Release/encode.node');
-const decode = require('./build/Release/decode.node');
-const Transform = require('stream').Transform;
+var encode = require('./build/Release/encode.node');
+var decode = require('./build/Release/decode.node');
+var Transform = require('stream').Transform;
 
 function compress(input, params, cb) {
   if (arguments.length === 2) {
@@ -56,10 +56,10 @@ function decompressSync(input) {
 
 // We need to fill the blockSize for better compression results
 function compressStreamChunk(stream, chunk, encoder, status, done) {
-  const length = chunk.length;
+  var length = chunk.length;
 
   if (length > status.remaining) {
-    const slicedChunk = chunk.slice(0, status.remaining);
+    var slicedChunk = chunk.slice(0, status.remaining);
     chunk = chunk.slice(status.remaining);
     status.remaining = status.blockSize;
 
@@ -93,10 +93,10 @@ function compressStreamChunk(stream, chunk, encoder, status, done) {
 }
 
 function compressStream(params) {
-  const encoder = new encode.StreamEncode(params || {});
-  const blockSize = encoder.getBlockSize();
-  const status = {
-    blockSize,
+  var encoder = new encode.StreamEncode(params || {});
+  var blockSize = encoder.getBlockSize();
+  var status = {
+    blockSize: blockSize,
     remaining: blockSize
   };
 
@@ -105,12 +105,13 @@ function compressStream(params) {
       compressStreamChunk(this, chunk, encoder, status, next);
     },
     flush: function(done) {
-      encoder.encode(true, (err, output) => {
+      var that = this;
+      encoder.encode(true, function(err, output) {
         if (err) {
           return done(err);
         }
         if (output) {
-          this.push(output);
+          that.push(output);
         }
         done();
       });
@@ -119,27 +120,29 @@ function compressStream(params) {
 }
 
 function decompressStream() {
-  const decoder = new decode.StreamDecode();
+  var decoder = new decode.StreamDecode();
 
   return new Transform({
     transform: function(chunk, encoding, next) {
-      decoder.transform(chunk, (err, output) => {
+      var that = this;
+      decoder.transform(chunk, function(err, output) {
         if (err) {
           return next(err);
         }
         if (output) {
-          this.push(output);
+          that.push(output);
         }
         next();
       });
     },
     flush: function(done) {
-      decoder.flush((err, output) => {
+      var that = this;
+      decoder.flush(function(err, output) {
         if (err) {
           return done(err);
         }
         if (output) {
-          this.push(output);
+          that.push(output);
         }
         done();
       });

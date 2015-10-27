@@ -1,14 +1,14 @@
 'use strict';
 
-const brotli = require('../');
-const expect = require('expect.js');
-const fs = require('fs');
+var brotli = require('../');
+var expect = require('expect.js');
+var fs = require('fs');
 
 function testBufferSync(method, bufferFile, resultFile, params) {
   params = params || {};
-  const buffer = fs.readFileSync(`${__dirname}/fixtures/${bufferFile}`);
-  const result = fs.readFileSync(`${__dirname}/fixtures/${resultFile}`);
-  const output = method(buffer, params);
+  var buffer = fs.readFileSync(__dirname + '/fixtures/' + bufferFile);
+  var result = fs.readFileSync(__dirname + '/fixtures/' + resultFile);
+  var output = method(buffer, params);
   expect(output).to.eql(result);
 }
 

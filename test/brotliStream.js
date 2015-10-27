@@ -1,25 +1,25 @@
 'use strict';
 
-const brotli = require('../');
-const expect = require('expect.js');
-const Writable = require('stream').Writable;
-const fs = require('fs');
+var brotli = require('../');
+var expect = require('expect.js');
+var Writable = require('stream').Writable;
+var fs = require('fs');
 
 function testStream(method, bufferFile, resultFile, done, params) {
-  let data = new Buffer(0);
-  const writeStream = new Writable({
+  var data = new Buffer(0);
+  var writeStream = new Writable({
     write: function(chunk, encoding, next) {
       data = Buffer.concat([data, chunk], data.length + chunk.length);
       next();
     }
   });
 
-  fs.createReadStream(`${__dirname}/fixtures/${bufferFile}`)
+  fs.createReadStream(__dirname + '/fixtures/' + bufferFile)
     .pipe(method(params))
     .pipe(writeStream);
 
   writeStream.on('finish', function() {
-    const result = fs.readFileSync(`${__dirname}/fixtures/${resultFile}`);
+    var result = fs.readFileSync(__dirname + '/fixtures/' + resultFile);
     expect(data).to.eql(result);
     done();
   });

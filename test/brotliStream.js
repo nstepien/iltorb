@@ -3,16 +3,22 @@
 var brotli = require('../');
 var expect = require('expect.js');
 var Writable = require('stream').Writable;
+var util = require('util');
 var fs = require('fs');
 
+function BufferWriter() {
+  Writable.call(this);
+  this.data = new Buffer(0);
+}
+util.inherits(BufferWriter, Writable);
+
+BufferWriter.prototype._write = function(chunk, encoding, next) {
+  this.data = Buffer.concat([this.data, chunk], this.data.length + chunk.length);
+  next();
+};
+
 function testStream(method, bufferFile, resultFile, done, params) {
-  var data = new Buffer(0);
-  var writeStream = new Writable({
-    write: function(chunk, encoding, next) {
-      data = Buffer.concat([data, chunk], data.length + chunk.length);
-      next();
-    }
-  });
+  var writeStream = new BufferWriter();
 
   fs.createReadStream(__dirname + '/fixtures/' + bufferFile)
     .pipe(method(params))
@@ -20,7 +26,7 @@ function testStream(method, bufferFile, resultFile, done, params) {
 
   writeStream.on('finish', function() {
     var result = fs.readFileSync(__dirname + '/fixtures/' + resultFile);
-    expect(data).to.eql(result);
+    expect(writeStream.data).to.eql(result);
     done();
   });
 }

@@ -10,6 +10,7 @@ exports.decompressStream = decompressStream;
 var encode = require('./build/Release/encode.node');
 var decode = require('./build/Release/decode.node');
 var Transform = require('stream').Transform;
+var util = require('util');
 
 function compress(input, params, cb) {
   if (arguments.length === 2) {
@@ -54,6 +55,35 @@ function decompressSync(input) {
   return decode.decompressSync(input);
 }
 
+function TransformStreamEncode(params) {
+  Transform.call(this);
+
+  this.encoder = new encode.StreamEncode(params || {});
+  var blockSize = this.encoder.getBlockSize();
+  this.status = {
+    blockSize: blockSize,
+    remaining: blockSize
+  };
+}
+util.inherits(TransformStreamEncode, Transform);
+
+TransformStreamEncode.prototype._transform = function(chunk, encoding, next) {
+  compressStreamChunk(this, chunk, this.encoder, this.status, next);
+};
+
+TransformStreamEncode.prototype._flush = function(done) {
+  var that = this;
+  this.encoder.encode(true, function(err, output) {
+    if (err) {
+      return done(err);
+    }
+    if (output) {
+      that.push(output);
+    }
+    done();
+  });
+};
+
 // We need to fill the blockSize for better compression results
 function compressStreamChunk(stream, chunk, encoder, status, done) {
   var length = chunk.length;
@@ -93,59 +123,42 @@ function compressStreamChunk(stream, chunk, encoder, status, done) {
 }
 
 function compressStream(params) {
-  var encoder = new encode.StreamEncode(params || {});
-  var blockSize = encoder.getBlockSize();
-  var status = {
-    blockSize: blockSize,
-    remaining: blockSize
-  };
-
-  return new Transform({
-    transform: function(chunk, encoding, next) {
-      compressStreamChunk(this, chunk, encoder, status, next);
-    },
-    flush: function(done) {
-      var that = this;
-      encoder.encode(true, function(err, output) {
-        if (err) {
-          return done(err);
-        }
-        if (output) {
-          that.push(output);
-        }
-        done();
-      });
-    }
-  });
+  return new TransformStreamEncode(params);
 }
 
-function decompressStream() {
-  var decoder = new decode.StreamDecode();
+function TransformStreamDecode() {
+  Transform.call(this);
 
-  return new Transform({
-    transform: function(chunk, encoding, next) {
-      var that = this;
-      decoder.transform(chunk, function(err, output) {
-        if (err) {
-          return next(err);
-        }
-        if (output) {
-          that.push(output);
-        }
-        next();
-      });
-    },
-    flush: function(done) {
-      var that = this;
-      decoder.flush(function(err, output) {
-        if (err) {
-          return done(err);
-        }
-        if (output) {
-          that.push(output);
-        }
-        done();
-      });
+  this.decoder = new decode.StreamDecode();
+}
+util.inherits(TransformStreamDecode, Transform);
+
+TransformStreamDecode.prototype._transform = function(chunk, encoding, next) {
+  var that = this;
+  this.decoder.transform(chunk, function(err, output) {
+    if (err) {
+      return next(err);
     }
+    if (output) {
+      that.push(output);
+    }
+    next();
   });
+};
+
+TransformStreamDecode.prototype._flush = function(done) {
+  var that = this;
+  this.decoder.flush(function(err, output) {
+    if (err) {
+      return done(err);
+    }
+    if (output) {
+      that.push(output);
+    }
+    done();
+  });
+};
+
+function decompressStream() {
+  return new TransformStreamDecode();
 }

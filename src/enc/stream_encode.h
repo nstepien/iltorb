@@ -11,6 +11,7 @@ class StreamEncode : public Nan::ObjectWrap {
 
   private:
     explicit StreamEncode(brotli::BrotliParams params);
+    ~StreamEncode();
 
     static NAN_METHOD(New);
     static NAN_METHOD(GetBlockSize);

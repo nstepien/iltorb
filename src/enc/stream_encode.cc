@@ -10,6 +10,10 @@ StreamEncode::StreamEncode(BrotliParams params) {
   compressor = new BrotliCompressor(params);
 }
 
+StreamEncode::~StreamEncode() {
+  delete compressor;
+}
+
 void StreamEncode::Init(Local<Object> target) {
   Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
   tpl->SetClassName(Nan::New<String>("StreamEncode").ToLocalChecked());

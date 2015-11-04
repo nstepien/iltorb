@@ -9,7 +9,6 @@ StreamDecode::StreamDecode() {
 }
 
 StreamDecode::~StreamDecode() {
-  constructor.Reset();
 }
 
 void StreamDecode::Init(Local<Object> target) {

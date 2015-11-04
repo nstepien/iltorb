@@ -9,7 +9,6 @@ StreamEncode::StreamEncode(BrotliParams params) {
 }
 
 StreamEncode::~StreamEncode() {
-  constructor.Reset();
   delete compressor;
 }
 

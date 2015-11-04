@@ -4,8 +4,6 @@
 using namespace v8;
 using namespace brotli;
 
-Nan::Persistent<Function> StreamEncode::constructor;
-
 StreamEncode::StreamEncode(BrotliParams params) {
   compressor = new BrotliCompressor(params);
 }
@@ -16,15 +14,16 @@ StreamEncode::~StreamEncode() {
 
 void StreamEncode::Init(Local<Object> target) {
   Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
-  tpl->SetClassName(Nan::New<String>("StreamEncode").ToLocalChecked());
+  tpl->SetClassName(Nan::New("StreamEncode").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   Nan::SetPrototypeMethod(tpl, "getBlockSize", GetBlockSize);
   Nan::SetPrototypeMethod(tpl, "copy", Copy);
   Nan::SetPrototypeMethod(tpl, "encode", Encode);
 
-  constructor.Reset(tpl->GetFunction());
-  Nan::Set(target, Nan::New<String>("StreamEncode").ToLocalChecked(), tpl->GetFunction());
+  constructor().Reset(Nan::GetFunction(tpl).ToLocalChecked());
+  Nan::Set(target, Nan::New("StreamEncode").ToLocalChecked(),
+    Nan::GetFunction(tpl).ToLocalChecked());
 }
 
 NAN_METHOD(StreamEncode::New) {
@@ -54,4 +53,9 @@ NAN_METHOD(StreamEncode::Encode) {
   bool is_last = info[0]->BooleanValue();
   Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
   Nan::AsyncQueueWorker(new StreamEncodeWorker(callback, obj->compressor, is_last));
+}
+
+Nan::Persistent<Function> & StreamEncode::constructor() {
+  static Nan::Persistent<Function> my_constructor;
+  return my_constructor;
 }

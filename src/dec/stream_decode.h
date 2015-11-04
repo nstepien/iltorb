@@ -22,7 +22,7 @@ class StreamDecode : public Nan::ObjectWrap {
     static NAN_METHOD(New);
     static NAN_METHOD(Transform);
     static NAN_METHOD(Flush);
-    static Nan::Persistent<v8::Function> constructor;
+    static inline Nan::Persistent<v8::Function> & constructor();
     BrotliMemInput mem_input;
 };
 

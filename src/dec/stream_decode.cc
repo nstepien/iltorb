@@ -3,8 +3,6 @@
 
 using namespace v8;
 
-Nan::Persistent<Function> StreamDecode::constructor;
-
 StreamDecode::StreamDecode() {
   BrotliStateInit(&state);
   output = BrotliInitBufferOutput(&mem_output);
@@ -15,14 +13,15 @@ StreamDecode::~StreamDecode() {
 
 void StreamDecode::Init(Local<Object> target) {
   Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
-  tpl->SetClassName(Nan::New<String>("StreamDecode").ToLocalChecked());
+  tpl->SetClassName(Nan::New("StreamDecode").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   Nan::SetPrototypeMethod(tpl, "transform", Transform);
   Nan::SetPrototypeMethod(tpl, "flush", Flush);
 
-  constructor.Reset(tpl->GetFunction());
-  Nan::Set(target, Nan::New<String>("StreamDecode").ToLocalChecked(), tpl->GetFunction());
+  constructor().Reset(Nan::GetFunction(tpl).ToLocalChecked());
+  Nan::Set(target, Nan::New("StreamDecode").ToLocalChecked(),
+    Nan::GetFunction(tpl).ToLocalChecked());
 }
 
 NAN_METHOD(StreamDecode::New) {
@@ -49,4 +48,9 @@ NAN_METHOD(StreamDecode::Flush) {
 
   Nan::Callback *callback = new Nan::Callback(info[0].As<Function>());
   Nan::AsyncQueueWorker(new StreamDecodeWorker(callback, obj, true));
+}
+
+Nan::Persistent<Function> & StreamDecode::constructor() {
+  static Nan::Persistent<Function> my_constructor;
+  return my_constructor;
 }

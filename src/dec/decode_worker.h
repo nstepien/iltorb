@@ -12,6 +12,7 @@ class DecodeWorker : public Nan::AsyncWorker {
     void HandleOKCallback();
 
   private:
+    ~DecodeWorker();
     BrotliResult res;
     BrotliMemInput mem_input;
     BrotliInput input;

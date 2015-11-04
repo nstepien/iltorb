@@ -6,6 +6,9 @@ using namespace brotli;
 StreamEncodeWorker::StreamEncodeWorker(Nan::Callback *callback, BrotliCompressor *compressor, bool is_last)
   : Nan::AsyncWorker(callback), compressor(compressor), is_last(is_last) {}
 
+StreamEncodeWorker::~StreamEncodeWorker() {
+}
+
 void StreamEncodeWorker::Execute() {
   uint8_t* buffer;
   res = compressor->WriteBrotliData(is_last, false, &output_size, &buffer);

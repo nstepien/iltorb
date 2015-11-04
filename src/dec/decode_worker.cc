@@ -10,6 +10,9 @@ DecodeWorker::DecodeWorker(Nan::Callback *callback, Local<Object> buffer)
       &mem_input);
 }
 
+DecodeWorker::~DecodeWorker() {
+}
+
 void DecodeWorker::Execute() {
   BrotliOutput output = BrotliInitBufferOutput(&mem_output);
   res = BrotliDecompress(input, output);

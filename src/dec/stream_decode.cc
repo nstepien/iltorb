@@ -10,6 +10,9 @@ StreamDecode::StreamDecode() {
   output = BrotliInitBufferOutput(&mem_output);
 }
 
+StreamDecode::~StreamDecode() {
+}
+
 void StreamDecode::Init(Local<Object> target) {
   Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
   tpl->SetClassName(Nan::New<String>("StreamDecode").ToLocalChecked());

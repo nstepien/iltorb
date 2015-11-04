@@ -6,6 +6,9 @@ using namespace brotli;
 EncodeWorker::EncodeWorker(Nan::Callback *callback, BrotliParams params, BrotliMemIn input)
   : Nan::AsyncWorker(callback), params(params), input(input) {}
 
+EncodeWorker::~EncodeWorker() {
+}
+
 void EncodeWorker::Execute() {
   res = BrotliCompress(params, &input, &output);
 }

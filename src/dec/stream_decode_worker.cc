@@ -5,6 +5,9 @@ using namespace v8;
 StreamDecodeWorker::StreamDecodeWorker(Nan::Callback *callback, StreamDecode* obj, bool finish)
   : Nan::AsyncWorker(callback), obj(obj), finish(finish) {}
 
+StreamDecodeWorker::~StreamDecodeWorker() {
+}
+
 void StreamDecodeWorker::Execute() {
   res = BrotliDecompressStreaming(obj->input, obj->output, finish, &obj->state);
 }

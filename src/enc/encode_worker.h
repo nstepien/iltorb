@@ -12,6 +12,7 @@ class EncodeWorker : public Nan::AsyncWorker {
   void HandleOKCallback();
 
   private:
+    ~EncodeWorker();
     bool res;
     brotli::BrotliParams params;
     brotli::BrotliMemIn input;

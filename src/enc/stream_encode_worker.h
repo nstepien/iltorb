@@ -5,13 +5,14 @@
 #include "../../brotli/enc/encode.h"
 
 class StreamEncodeWorker : public Nan::AsyncWorker {
- public:
-  StreamEncodeWorker(Nan::Callback *callback, brotli::BrotliCompressor *compressor, bool is_last);
+  public:
+    StreamEncodeWorker(Nan::Callback *callback, brotli::BrotliCompressor *compressor, bool is_last);
 
-  void Execute();
-  void HandleOKCallback();
+    void Execute();
+    void HandleOKCallback();
 
   private:
+    ~StreamEncodeWorker();
     brotli::BrotliCompressor *compressor;
     bool is_last;
     bool res;

@@ -13,6 +13,7 @@ class StreamDecodeWorker : public Nan::AsyncWorker {
   void HandleOKCallback();
 
   private:
+    ~StreamDecodeWorker();
     StreamDecode* obj;
     BrotliResult res;
     bool finish;

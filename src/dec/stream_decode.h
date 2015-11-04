@@ -17,6 +17,7 @@ class StreamDecode : public Nan::ObjectWrap {
 
   private:
     explicit StreamDecode();
+    ~StreamDecode();
 
     static NAN_METHOD(New);
     static NAN_METHOD(Transform);

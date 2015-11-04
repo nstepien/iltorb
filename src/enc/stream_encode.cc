@@ -9,6 +9,7 @@ StreamEncode::StreamEncode(BrotliParams params) {
 }
 
 StreamEncode::~StreamEncode() {
+  constructor.Reset();
   delete compressor;
 }
 
@@ -21,7 +22,7 @@ void StreamEncode::Init(Local<Object> target) {
   Nan::SetPrototypeMethod(tpl, "copy", Copy);
   Nan::SetPrototypeMethod(tpl, "encode", Encode);
 
-  constructor().Reset(Nan::GetFunction(tpl).ToLocalChecked());
+  constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("StreamEncode").ToLocalChecked(),
     Nan::GetFunction(tpl).ToLocalChecked());
 }
@@ -55,7 +56,4 @@ NAN_METHOD(StreamEncode::Encode) {
   Nan::AsyncQueueWorker(new StreamEncodeWorker(callback, obj->compressor, is_last));
 }
 
-Nan::Persistent<Function> & StreamEncode::constructor() {
-  static Nan::Persistent<Function> my_constructor;
-  return my_constructor;
-}
+Nan::Persistent<Function> StreamEncode::constructor;

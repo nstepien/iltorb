@@ -17,7 +17,7 @@ class StreamEncode : public Nan::ObjectWrap {
     static NAN_METHOD(GetBlockSize);
     static NAN_METHOD(Copy);
     static NAN_METHOD(Encode);
-    static inline Nan::Persistent<v8::Function> & constructor();
+    static Nan::Persistent<v8::Function> constructor;
     brotli::BrotliCompressor *compressor;
 };
 

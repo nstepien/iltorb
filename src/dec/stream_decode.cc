@@ -9,6 +9,7 @@ StreamDecode::StreamDecode() {
 }
 
 StreamDecode::~StreamDecode() {
+  constructor.Reset();
 }
 
 void StreamDecode::Init(Local<Object> target) {
@@ -19,7 +20,7 @@ void StreamDecode::Init(Local<Object> target) {
   Nan::SetPrototypeMethod(tpl, "transform", Transform);
   Nan::SetPrototypeMethod(tpl, "flush", Flush);
 
-  constructor().Reset(Nan::GetFunction(tpl).ToLocalChecked());
+  constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("StreamDecode").ToLocalChecked(),
     Nan::GetFunction(tpl).ToLocalChecked());
 }
@@ -50,7 +51,4 @@ NAN_METHOD(StreamDecode::Flush) {
   Nan::AsyncQueueWorker(new StreamDecodeWorker(callback, obj, true));
 }
 
-Nan::Persistent<Function> & StreamDecode::constructor() {
-  static Nan::Persistent<Function> my_constructor;
-  return my_constructor;
-}
+Nan::Persistent<Function> StreamDecode::constructor;

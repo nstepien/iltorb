@@ -34,4 +34,4 @@ NAN_MODULE_INIT(Init) {
   Nan::SetMethod(target, "compressSync", CompressSync);
 }
 
-NODE_MODULE(brotli, Init)
+NODE_MODULE(encode, Init)

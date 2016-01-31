@@ -7,7 +7,7 @@
 
 class StreamDecode : public Nan::ObjectWrap {
   public:
-    static void Init(v8::Local<v8::Object> target);
+    static void Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target);
 
     BrotliInput input;
     BrotliOutput output;

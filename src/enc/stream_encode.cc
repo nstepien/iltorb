@@ -12,7 +12,7 @@ StreamEncode::~StreamEncode() {
   delete compressor;
 }
 
-void StreamEncode::Init(Local<Object> target) {
+void StreamEncode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
   Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
   tpl->SetClassName(Nan::New("StreamEncode").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);

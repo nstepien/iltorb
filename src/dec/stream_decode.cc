@@ -11,7 +11,7 @@ StreamDecode::StreamDecode() {
 StreamDecode::~StreamDecode() {
 }
 
-void StreamDecode::Init(Local<Object> target) {
+void StreamDecode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
   Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
   tpl->SetClassName(Nan::New("StreamDecode").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);

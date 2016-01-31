@@ -35,4 +35,4 @@ NAN_MODULE_INIT(Init) {
   Nan::SetMethod(target, "decompressSync", DecompressSync);
 }
 
-NODE_MODULE(brotli, Init)
+NODE_MODULE(decode, Init)

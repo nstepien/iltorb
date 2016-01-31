@@ -1,6 +1,6 @@
 {
   "name": "iltorb",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Brotli compression/decompression with native bindings",
   "homepage": "https://github.com/MayhemYDG/iltorb",
   "bugs": "https://github.com/MayhemYDG/iltorb/issues",

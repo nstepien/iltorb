@@ -26,9 +26,9 @@
       "include_dirs": [
         "<!(node -e \"require('nan')\")"
       ],
-      "cflags" : ["-Wno-sign-compare", "-O2"],
+      "cflags" : ["-O2"],
       "xcode_settings": {
-        "OTHER_CFLAGS" : ["-Wno-sign-compare", "-O2"]
+        "OTHER_CFLAGS" : ["-O2"]
       }
     },
     {

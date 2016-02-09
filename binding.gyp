@@ -17,7 +17,7 @@
         "brotli/enc/streams.cc",
         "brotli/enc/utf8_util.cc",
         "src/enc/buffer_out.cc",
-        "src/enc/encode.cc",
+        "src/enc/encode_index.cc",
         "src/enc/encode_worker.cc",
         "src/enc/get_params.cc",
         "src/enc/stream_encode.cc",
@@ -26,6 +26,7 @@
       "include_dirs": [
         "<!(node -e \"require('nan')\")"
       ],
+      "defines": ["NOMINMAX"],
       "cflags" : ["-O2"],
       "xcode_settings": {
         "OTHER_CFLAGS" : ["-O2"]
@@ -41,7 +42,7 @@
         "brotli/dec/state.c",
         "brotli/dec/streams.c",
         "src/dec/buffer_output.cc",
-        "src/dec/decode.cc",
+        "src/dec/decode_index.cc",
         "src/dec/decode_worker.cc",
         "src/dec/stream_decode.cc",
         "src/dec/stream_decode_worker.cc"

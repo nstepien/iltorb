@@ -5,6 +5,7 @@ var expect = require('expect.js');
 var Writable = require('stream').Writable;
 var util = require('util');
 var fs = require('fs');
+var path = require('path');
 
 function BufferWriter() {
   Writable.call(this);
@@ -20,12 +21,12 @@ BufferWriter.prototype._write = function(chunk, encoding, next) {
 function testStream(method, bufferFile, resultFile, done, params) {
   var writeStream = new BufferWriter();
 
-  fs.createReadStream(__dirname + '/fixtures/' + bufferFile)
+  fs.createReadStream(path.join(__dirname, '/fixtures/', bufferFile))
     .pipe(method(params))
     .pipe(writeStream);
 
   writeStream.on('finish', function() {
-    var result = fs.readFileSync(__dirname + '/fixtures/' + resultFile);
+    var result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
     expect(writeStream.data).to.eql(result);
     done();
   });
@@ -54,6 +55,7 @@ describe('Brotli Stream', function() {
     });
 
     it('should compress a large buffer', function(done) {
+      this.timeout(30000);
       testStream(brotli.compressStream, 'large.txt', 'large.txt.compressed', done);
     });
   });
@@ -72,6 +74,7 @@ describe('Brotli Stream', function() {
     });
 
     it('should decompress to a large buffer', function(done) {
+      this.timeout(30000);
       testStream(brotli.decompressStream, 'large.compressed', 'large', done);
     });
 

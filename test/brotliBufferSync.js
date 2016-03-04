@@ -3,11 +3,12 @@
 var brotli = require('../');
 var expect = require('expect.js');
 var fs = require('fs');
+var path = require('path');
 
 function testBufferSync(method, bufferFile, resultFile, params) {
   params = params || {};
-  var buffer = fs.readFileSync(__dirname + '/fixtures/' + bufferFile);
-  var result = fs.readFileSync(__dirname + '/fixtures/' + resultFile);
+  var buffer = fs.readFileSync(path.join(__dirname, '/fixtures/', bufferFile));
+  var result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
   var output = method(buffer, params);
   expect(output).to.eql(result);
 }
@@ -35,6 +36,7 @@ describe('Brotli Buffer Sync', function() {
     });
 
     it('should compress a large buffer', function() {
+      this.timeout(30000);
       testBufferSync(brotli.compressSync, 'large.txt', 'large.txt.compressed');
     });
   });

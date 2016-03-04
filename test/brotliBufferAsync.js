@@ -47,6 +47,7 @@ describe('Brotli Buffer Async', function() {
     });
 
     it('should compress a large buffer', function(done) {
+      this.timeout(30000);
       testBufferAsync(brotli.compress, 'large.txt', 'large.txt.compressed', done);
     });
   });

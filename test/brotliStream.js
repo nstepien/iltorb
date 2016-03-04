@@ -54,6 +54,7 @@ describe('Brotli Stream', function() {
     });
 
     it('should compress a large buffer', function(done) {
+      this.timeout(30000);
       testStream(brotli.compressStream, 'large.txt', 'large.txt.compressed', done);
     });
   });
@@ -72,6 +73,7 @@ describe('Brotli Stream', function() {
     });
 
     it('should decompress to a large buffer', function(done) {
+      this.timeout(30000);
       testStream(brotli.decompressStream, 'large.compressed', 'large', done);
     });
 

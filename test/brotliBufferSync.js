@@ -35,6 +35,7 @@ describe('Brotli Buffer Sync', function() {
     });
 
     it('should compress a large buffer', function() {
+      this.timeout(30000);
       testBufferSync(brotli.compressSync, 'large.txt', 'large.txt.compressed');
     });
   });

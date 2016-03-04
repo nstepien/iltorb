@@ -3,11 +3,12 @@
 var brotli = require('../');
 var expect = require('expect.js');
 var fs = require('fs');
+var path = require('path');
 
 function testBufferAsync(method, bufferFile, resultFile, done, params) {
   params = params || {};
-  var buffer = fs.readFileSync(__dirname + '/fixtures/' + bufferFile);
-  var result = fs.readFileSync(__dirname + '/fixtures/' + resultFile);
+  var buffer = fs.readFileSync(path.join(__dirname, '/fixtures/', bufferFile));
+  var result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
 
   if (method.name === 'compress') {
     method(buffer, params, function(err, output) {

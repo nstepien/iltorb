@@ -17,6 +17,8 @@ environment:
       platform: x86
     - nodejs_version: "5"
       platform: x86
+    - nodejs_version: "6"
+      platform: x86
 
 install:
   - git submodule update --init --recursive

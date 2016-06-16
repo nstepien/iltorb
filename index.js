@@ -56,7 +56,7 @@ function decompressSync(input) {
 }
 
 function TransformStreamEncode(params, sync) {
-  Transform.call(this);
+  Transform.call(this, params);
 
   this.encoder = new encode.StreamEncode(params || {});
   this.sync = sync || false;
@@ -127,8 +127,8 @@ function compressStream(params) {
   return new TransformStreamEncode(params);
 }
 
-function TransformStreamDecode(sync) {
-  Transform.call(this);
+function TransformStreamDecode(params, sync) {
+  Transform.call(this, params);
 
   this.sync = sync || false;
   this.decoder = new decode.StreamDecode();
@@ -161,6 +161,6 @@ TransformStreamDecode.prototype._flush = function(done) {
   }, !this.sync);
 };
 
-function decompressStream() {
-  return new TransformStreamDecode();
+function decompressStream(params) {
+  return new TransformStreamDecode(params);
 }

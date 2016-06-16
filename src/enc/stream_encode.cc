@@ -52,7 +52,14 @@ NAN_METHOD(StreamEncode::Encode) {
 
   bool is_last = info[0]->BooleanValue();
   Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
-  Nan::AsyncQueueWorker(new StreamEncodeWorker(callback, obj->compressor, is_last));
+  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj->compressor, is_last);
+  if (info[2]->BooleanValue()) {
+    Nan::AsyncQueueWorker(worker);
+  } else {
+    worker->Execute();
+    worker->WorkComplete();
+    worker->Destroy();
+  }
 }
 
 Nan::Persistent<Function> StreamEncode::constructor;

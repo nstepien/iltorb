@@ -81,7 +81,7 @@ TransformStreamEncode.prototype._flush = function(done) {
       that.push(output);
     }
     done();
-  });
+  }, true);
 };
 
 // We need to fill the blockSize for better compression results
@@ -102,7 +102,7 @@ function compressStreamChunk(stream, chunk, encoder, status, done) {
         stream.push(output);
       }
       compressStreamChunk(stream, chunk, encoder, status, done);
-    });
+    }, true);
   } else if (length < status.remaining) {
     status.remaining -= length;
     encoder.copy(chunk);
@@ -118,7 +118,7 @@ function compressStreamChunk(stream, chunk, encoder, status, done) {
         stream.push(output);
       }
       done();
-    });
+    }, true);
   }
 }
 

@@ -55,10 +55,11 @@ function decompressSync(input) {
   return decode.decompressSync(input);
 }
 
-function TransformStreamEncode(params) {
+function TransformStreamEncode(params, sync) {
   Transform.call(this);
 
   this.encoder = new encode.StreamEncode(params || {});
+  this.sync = sync || false;
   var blockSize = this.encoder.getBlockSize();
   this.status = {
     blockSize: blockSize,
@@ -68,7 +69,7 @@ function TransformStreamEncode(params) {
 util.inherits(TransformStreamEncode, Transform);
 
 TransformStreamEncode.prototype._transform = function(chunk, encoding, next) {
-  compressStreamChunk(this, chunk, this.encoder, this.status, next);
+  compressStreamChunk(this, chunk, this.encoder, this.status, this.sync, next);
 };
 
 TransformStreamEncode.prototype._flush = function(done) {
@@ -81,11 +82,11 @@ TransformStreamEncode.prototype._flush = function(done) {
       that.push(output);
     }
     done();
-  }, true);
+  }, !this.sync);
 };
 
 // We need to fill the blockSize for better compression results
-function compressStreamChunk(stream, chunk, encoder, status, done) {
+function compressStreamChunk(stream, chunk, encoder, status, sync, done) {
   var length = chunk.length;
 
   if (length > status.remaining) {
@@ -101,8 +102,8 @@ function compressStreamChunk(stream, chunk, encoder, status, done) {
       if (output) {
         stream.push(output);
       }
-      compressStreamChunk(stream, chunk, encoder, status, done);
-    }, true);
+      compressStreamChunk(stream, chunk, encoder, status, sync, done);
+    }, !sync);
   } else if (length < status.remaining) {
     status.remaining -= length;
     encoder.copy(chunk);
@@ -118,7 +119,7 @@ function compressStreamChunk(stream, chunk, encoder, status, done) {
         stream.push(output);
       }
       done();
-    }, true);
+    }, !sync);
   }
 }
 
@@ -126,9 +127,10 @@ function compressStream(params) {
   return new TransformStreamEncode(params);
 }
 
-function TransformStreamDecode() {
+function TransformStreamDecode(sync) {
   Transform.call(this);
 
+  this.sync = sync || false;
   this.decoder = new decode.StreamDecode();
 }
 util.inherits(TransformStreamDecode, Transform);
@@ -143,7 +145,7 @@ TransformStreamDecode.prototype._transform = function(chunk, encoding, next) {
       that.push(output);
     }
     next();
-  }, true);
+  }, !this.sync);
 };
 
 TransformStreamDecode.prototype._flush = function(done) {
@@ -156,7 +158,7 @@ TransformStreamDecode.prototype._flush = function(done) {
       that.push(output);
     }
     done();
-  }, true);
+  }, !this.sync);
 };
 
 function decompressStream() {

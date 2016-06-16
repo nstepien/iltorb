@@ -40,14 +40,28 @@ NAN_METHOD(StreamDecode::Transform) {
     &obj->mem_input);
 
   Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
-  Nan::AsyncQueueWorker(new StreamDecodeWorker(callback, obj, false));
+  StreamDecodeWorker *worker = new StreamDecodeWorker(callback, obj, false);
+  if (info[2]->BooleanValue()) {
+    Nan::AsyncQueueWorker(worker);
+  } else {
+    worker->Execute();
+    worker->WorkComplete();
+    worker->Destroy();
+  }
 }
 
 NAN_METHOD(StreamDecode::Flush) {
   StreamDecode* obj = ObjectWrap::Unwrap<StreamDecode>(info.Holder());
 
   Nan::Callback *callback = new Nan::Callback(info[0].As<Function>());
-  Nan::AsyncQueueWorker(new StreamDecodeWorker(callback, obj, true));
+  StreamDecodeWorker *worker = new StreamDecodeWorker(callback, obj, true);
+  if (info[1]->BooleanValue()) {
+    Nan::AsyncQueueWorker(worker);
+  } else {
+    worker->Execute();
+    worker->WorkComplete();
+    worker->Destroy();
+  }
 }
 
 Nan::Persistent<Function> StreamDecode::constructor;

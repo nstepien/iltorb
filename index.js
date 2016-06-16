@@ -143,7 +143,7 @@ TransformStreamDecode.prototype._transform = function(chunk, encoding, next) {
       that.push(output);
     }
     next();
-  });
+  }, true);
 };
 
 TransformStreamDecode.prototype._flush = function(done) {
@@ -156,7 +156,7 @@ TransformStreamDecode.prototype._flush = function(done) {
       that.push(output);
     }
     done();
-  });
+  }, true);
 };
 
 function decompressStream() {

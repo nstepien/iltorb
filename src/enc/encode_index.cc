@@ -2,7 +2,6 @@
 #include "stream_encode.h"
 
 using namespace v8;
-using namespace brotli;
 
 NAN_MODULE_INIT(Init) {
   StreamEncode::Init(target);

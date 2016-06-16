@@ -2,22 +2,22 @@
 #define STREAM_ENCODE_WORKER_H
 
 #include <nan.h>
+#include "stream_encode.h"
 #include "../../brotli/enc/encode.h"
 
 class StreamEncodeWorker : public Nan::AsyncWorker {
   public:
-    StreamEncodeWorker(Nan::Callback *callback, brotli::BrotliCompressor *compressor, bool is_last);
+    StreamEncodeWorker(Nan::Callback *callback, StreamEncode* obj, bool is_last);
 
     void Execute();
     void HandleOKCallback();
 
   private:
     ~StreamEncodeWorker();
-    brotli::BrotliCompressor *compressor;
+    StreamEncode* obj;
+
     bool is_last;
-    bool res;
-    size_t output_size = 0;
-    char* output_buffer;
+    int res;
 };
 
 #endif

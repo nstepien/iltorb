@@ -1,15 +1,19 @@
+#include "get_params.h"
 #include "stream_encode.h"
 #include "stream_encode_worker.h"
 
 using namespace v8;
-using namespace brotli;
 
-StreamEncode::StreamEncode(BrotliParams params) {
-  compressor = new BrotliCompressor(params);
+StreamEncode::StreamEncode(BrotliEncoderParams params) {
+  state = BrotliEncoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
+  BrotliEncoderSetParameter(state, BROTLI_PARAM_MODE, params.mode);
+  BrotliEncoderSetParameter(state, BROTLI_PARAM_QUALITY, params.quality);
+  BrotliEncoderSetParameter(state, BROTLI_PARAM_LGWIN, params.lgwin);
+  BrotliEncoderSetParameter(state, BROTLI_PARAM_LGBLOCK, params.lgblock);
 }
 
 StreamEncode::~StreamEncode() {
-  delete compressor;
+  BrotliEncoderDestroyInstance(state);
 }
 
 void StreamEncode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
@@ -34,7 +38,7 @@ NAN_METHOD(StreamEncode::New) {
 
 NAN_METHOD(StreamEncode::GetBlockSize) {
   StreamEncode* obj = ObjectWrap::Unwrap<StreamEncode>(info.Holder());
-  info.GetReturnValue().Set(Nan::New<Number>(obj->compressor->input_block_size()));
+  info.GetReturnValue().Set(Nan::New<Number>(BrotliEncoderInputBlockSize(obj->state)));
 }
 
 NAN_METHOD(StreamEncode::Copy) {
@@ -44,7 +48,7 @@ NAN_METHOD(StreamEncode::Copy) {
   const size_t input_size = node::Buffer::Length(buffer);
   const char* input_buffer = node::Buffer::Data(buffer);
 
-  obj->compressor->CopyInputToRingBuffer(input_size, (uint8_t*) input_buffer);
+  BrotliEncoderCopyInputToRingBuffer(obj->state, input_size, (const uint8_t*) input_buffer);
 }
 
 NAN_METHOD(StreamEncode::Encode) {
@@ -52,7 +56,7 @@ NAN_METHOD(StreamEncode::Encode) {
 
   bool is_last = info[0]->BooleanValue();
   Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
-  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj->compressor, is_last);
+  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, is_last);
   if (info[2]->BooleanValue()) {
     Nan::AsyncQueueWorker(worker);
   } else {

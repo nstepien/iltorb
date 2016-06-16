@@ -102,7 +102,9 @@ TransformStreamEncode.prototype._flush = function(done) {
       return done(err);
     }
     if (output) {
-      that.push(output);
+      for (var i = 0; i < output.length; i++) {
+        that.push(output[i]);
+      }
     }
     done();
   }, !this.sync);
@@ -123,7 +125,9 @@ function compressStreamChunk(stream, chunk, encoder, status, sync, done) {
         return done(err);
       }
       if (output) {
-        stream.push(output);
+        for (var i = 0; i < output.length; i++) {
+          stream.push(output[i]);
+        }
       }
       compressStreamChunk(stream, chunk, encoder, status, sync, done);
     }, !sync);
@@ -139,7 +143,9 @@ function compressStreamChunk(stream, chunk, encoder, status, sync, done) {
         return done(err);
       }
       if (output) {
-        stream.push(output);
+        for (var i = 0; i < output.length; i++) {
+          stream.push(output[i]);
+        }
       }
       done();
     }, !sync);
@@ -165,7 +171,9 @@ TransformStreamDecode.prototype._transform = function(chunk, encoding, next) {
       return next(err);
     }
     if (output) {
-      that.push(output);
+      for (var i = 0; i < output.length; i++) {
+        that.push(output[i]);
+      }
     }
     next();
   }, !this.sync);
@@ -178,7 +186,9 @@ TransformStreamDecode.prototype._flush = function(done) {
       return done(err);
     }
     if (output) {
-      that.push(output);
+      for (var i = 0; i < output.length; i++) {
+        that.push(output[i]);
+      }
     }
     done();
   }, !this.sync);

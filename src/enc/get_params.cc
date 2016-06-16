@@ -1,15 +1,19 @@
 #include "get_params.h"
 
 using namespace v8;
-using namespace brotli;
 
-BrotliParams getParams(Local<Object> userParams) {
-  BrotliParams params;
+BrotliEncoderParams getParams(Local<Object> userParams) {
+  BrotliEncoderParams params = {
+    BROTLI_DEFAULT_MODE,
+    BROTLI_DEFAULT_QUALITY,
+    BROTLI_DEFAULT_WINDOW,
+    0
+  };
   Local<String> key;
 
   key = Nan::New<String>("mode").ToLocalChecked();
   if (Nan::Has(userParams, key).FromJust()) {
-    params.mode = (BrotliParams::Mode) Nan::Get(userParams, key).ToLocalChecked()->Int32Value();
+    params.mode = (BrotliEncoderMode) Nan::Get(userParams, key).ToLocalChecked()->Int32Value();
   }
 
   key = Nan::New<String>("quality").ToLocalChecked();

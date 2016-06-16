@@ -34,22 +34,9 @@ void StreamEncodeWorker::HandleOKCallback() {
     };
     callback->Call(1, argv);
   } else {
-    size_t n_chunks = obj->pending_output.size();
-    Local<Array> chunks = Nan::New<Array>(n_chunks);
-
-    for (size_t i = 0; i < n_chunks; i++) {
-      uint8_t* current = obj->pending_output[i];
-      Allocator::AllocatedBuffer* buf_info = Allocator::GetBufferInfo(current);
-      Nan::Set(chunks, i, Nan::NewBuffer(reinterpret_cast<char*>(current),
-                                         buf_info->size - buf_info->available,
-                                         Allocator::NodeFree,
-                                         NULL).ToLocalChecked());
-    }
-    obj->pending_output.clear();
-
     Local<Value> argv[] = {
       Nan::Null(),
-      chunks
+      obj->PendingChunksAsArray()
     };
     callback->Call(2, argv);
   }

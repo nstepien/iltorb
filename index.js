@@ -25,7 +25,13 @@ function compress(input, params, cb) {
     process.nextTick(cb, new Error('Second argument is not a function.'));
     return;
   }
-  encode.compressAsync(input, params, cb);
+  var stream = new TransformStreamEncode(params);
+  var chunks = [];
+  var length = 0;
+  stream.on('error', cb);
+  stream.on('data', function(c) { chunks.push(c); length += c.length; });
+  stream.on('end', function() { cb(null, Buffer.concat(chunks, length)); });
+  stream.end(input);
 }
 
 function decompress(input, cb) {
@@ -37,22 +43,39 @@ function decompress(input, cb) {
     process.nextTick(cb, new Error('Second argument is not a function.'));
     return;
   }
-  decode.decompressAsync(input, cb);
+  var stream = new TransformStreamDecode();
+  var chunks = [];
+  var length = 0;
+  stream.on('error', cb);
+  stream.on('data', function(c) { chunks.push(c); length += c.length; });
+  stream.on('end', function() { cb(null, Buffer.concat(chunks, length)); });
+  stream.end(input);
 }
 
 function compressSync(input, params) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('Brotli input is not a buffer.');
   }
-  params = params || {};
-  return encode.compressSync(input, params);
+  var stream = new TransformStreamEncode(params, true);
+  var chunks = [];
+  var length = 0;
+  stream.on('error', function(e) { throw e; });
+  stream.on('data', function(c) { chunks.push(c); length += c.length; });
+  stream.end(input);
+  return Buffer.concat(chunks, length);
 }
 
 function decompressSync(input) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('Brotli input is not a buffer.');
   }
-  return decode.decompressSync(input);
+  var stream = new TransformStreamDecode({}, true);
+  var chunks = [];
+  var length = 0;
+  stream.on('error', function(e) { throw e; });
+  stream.on('data', function(c) { chunks.push(c); length += c.length; });
+  stream.end(input);
+  return Buffer.concat(chunks, length);
 }
 
 function TransformStreamEncode(params, sync) {

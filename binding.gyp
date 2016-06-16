@@ -18,7 +18,6 @@
         "brotli/enc/utf8_util.cc",
         "src/enc/buffer_out.cc",
         "src/enc/encode_index.cc",
-        "src/enc/encode_worker.cc",
         "src/enc/get_params.cc",
         "src/enc/stream_encode.cc",
         "src/enc/stream_encode_worker.cc"
@@ -43,7 +42,6 @@
         "brotli/dec/streams.c",
         "src/dec/buffer_output.cc",
         "src/dec/decode_index.cc",
-        "src/dec/decode_worker.cc",
         "src/dec/stream_decode.cc",
         "src/dec/stream_decode_worker.cc"
       ],

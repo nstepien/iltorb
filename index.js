@@ -25,7 +25,13 @@ function compress(input, params, cb) {
     process.nextTick(cb, new Error('Second argument is not a function.'));
     return;
   }
-  encode.compressAsync(input, params, cb);
+  var stream = new TransformStreamEncode(params);
+  var chunks = [];
+  var length = 0;
+  stream.on('error', cb);
+  stream.on('data', function(c) { chunks.push(c); length += c.length; });
+  stream.on('end', function() { cb(null, Buffer.concat(chunks, length)); });
+  stream.end(input);
 }
 
 function decompress(input, cb) {
@@ -37,28 +43,46 @@ function decompress(input, cb) {
     process.nextTick(cb, new Error('Second argument is not a function.'));
     return;
   }
-  decode.decompressAsync(input, cb);
+  var stream = new TransformStreamDecode();
+  var chunks = [];
+  var length = 0;
+  stream.on('error', cb);
+  stream.on('data', function(c) { chunks.push(c); length += c.length; });
+  stream.on('end', function() { cb(null, Buffer.concat(chunks, length)); });
+  stream.end(input);
 }
 
 function compressSync(input, params) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('Brotli input is not a buffer.');
   }
-  params = params || {};
-  return encode.compressSync(input, params);
+  var stream = new TransformStreamEncode(params, true);
+  var chunks = [];
+  var length = 0;
+  stream.on('error', function(e) { throw e; });
+  stream.on('data', function(c) { chunks.push(c); length += c.length; });
+  stream.end(input);
+  return Buffer.concat(chunks, length);
 }
 
 function decompressSync(input) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('Brotli input is not a buffer.');
   }
-  return decode.decompressSync(input);
+  var stream = new TransformStreamDecode({}, true);
+  var chunks = [];
+  var length = 0;
+  stream.on('error', function(e) { throw e; });
+  stream.on('data', function(c) { chunks.push(c); length += c.length; });
+  stream.end(input);
+  return Buffer.concat(chunks, length);
 }
 
-function TransformStreamEncode(params) {
-  Transform.call(this);
+function TransformStreamEncode(params, sync) {
+  Transform.call(this, params);
 
   this.encoder = new encode.StreamEncode(params || {});
+  this.sync = sync || false;
   var blockSize = this.encoder.getBlockSize();
   this.status = {
     blockSize: blockSize,
@@ -68,7 +92,7 @@ function TransformStreamEncode(params) {
 util.inherits(TransformStreamEncode, Transform);
 
 TransformStreamEncode.prototype._transform = function(chunk, encoding, next) {
-  compressStreamChunk(this, chunk, this.encoder, this.status, next);
+  compressStreamChunk(this, chunk, this.encoder, this.status, this.sync, next);
 };
 
 TransformStreamEncode.prototype._flush = function(done) {
@@ -78,14 +102,16 @@ TransformStreamEncode.prototype._flush = function(done) {
       return done(err);
     }
     if (output) {
-      that.push(output);
+      for (var i = 0; i < output.length; i++) {
+        that.push(output[i]);
+      }
     }
     done();
-  });
+  }, !this.sync);
 };
 
 // We need to fill the blockSize for better compression results
-function compressStreamChunk(stream, chunk, encoder, status, done) {
+function compressStreamChunk(stream, chunk, encoder, status, sync, done) {
   var length = chunk.length;
 
   if (length > status.remaining) {
@@ -99,10 +125,12 @@ function compressStreamChunk(stream, chunk, encoder, status, done) {
         return done(err);
       }
       if (output) {
-        stream.push(output);
+        for (var i = 0; i < output.length; i++) {
+          stream.push(output[i]);
+        }
       }
-      compressStreamChunk(stream, chunk, encoder, status, done);
-    });
+      compressStreamChunk(stream, chunk, encoder, status, sync, done);
+    }, !sync);
   } else if (length < status.remaining) {
     status.remaining -= length;
     encoder.copy(chunk);
@@ -115,10 +143,12 @@ function compressStreamChunk(stream, chunk, encoder, status, done) {
         return done(err);
       }
       if (output) {
-        stream.push(output);
+        for (var i = 0; i < output.length; i++) {
+          stream.push(output[i]);
+        }
       }
       done();
-    });
+    }, !sync);
   }
 }
 
@@ -126,9 +156,10 @@ function compressStream(params) {
   return new TransformStreamEncode(params);
 }
 
-function TransformStreamDecode() {
-  Transform.call(this);
+function TransformStreamDecode(params, sync) {
+  Transform.call(this, params);
 
+  this.sync = sync || false;
   this.decoder = new decode.StreamDecode();
 }
 util.inherits(TransformStreamDecode, Transform);
@@ -140,10 +171,12 @@ TransformStreamDecode.prototype._transform = function(chunk, encoding, next) {
       return next(err);
     }
     if (output) {
-      that.push(output);
+      for (var i = 0; i < output.length; i++) {
+        that.push(output[i]);
+      }
     }
     next();
-  });
+  }, !this.sync);
 };
 
 TransformStreamDecode.prototype._flush = function(done) {
@@ -153,12 +186,14 @@ TransformStreamDecode.prototype._flush = function(done) {
       return done(err);
     }
     if (output) {
-      that.push(output);
+      for (var i = 0; i < output.length; i++) {
+        that.push(output[i]);
+      }
     }
     done();
-  });
+  }, !this.sync);
 };
 
-function decompressStream() {
-  return new TransformStreamDecode();
+function decompressStream(params) {
+  return new TransformStreamDecode(params);
 }

@@ -3,12 +3,13 @@
 
 using namespace v8;
 
-StreamDecode::StreamDecode() {
-  BrotliStateInit(&state);
-  output = BrotliInitBufferOutput(&mem_output);
+StreamDecode::StreamDecode() : next_in(NULL), available_in(0) {
+  state = BrotliCreateState(Allocator::Alloc, Allocator::Free, &alloc);
+  alloc.ReportMemoryToV8();
 }
 
 StreamDecode::~StreamDecode() {
+  BrotliDestroyState(state);
 }
 
 void StreamDecode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
@@ -34,20 +35,34 @@ NAN_METHOD(StreamDecode::Transform) {
   StreamDecode* obj = ObjectWrap::Unwrap<StreamDecode>(info.Holder());
 
   Local<Object> buffer = info[0]->ToObject();
-  obj->input = BrotliInitMemInput(
-    (const uint8_t*) node::Buffer::Data(buffer),
-    node::Buffer::Length(buffer),
-    &obj->mem_input);
+  obj->next_in = (const uint8_t*) node::Buffer::Data(buffer);
+  obj->available_in = node::Buffer::Length(buffer);
 
   Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
-  Nan::AsyncQueueWorker(new StreamDecodeWorker(callback, obj, false));
+  StreamDecodeWorker *worker = new StreamDecodeWorker(callback, obj);
+  if (info[2]->BooleanValue()) {
+    worker->SaveToPersistent(0U, buffer);
+    worker->SaveToPersistent(1U, obj->handle());
+    Nan::AsyncQueueWorker(worker);
+  } else {
+    worker->Execute();
+    worker->WorkComplete();
+    worker->Destroy();
+  }
 }
 
 NAN_METHOD(StreamDecode::Flush) {
   StreamDecode* obj = ObjectWrap::Unwrap<StreamDecode>(info.Holder());
 
   Nan::Callback *callback = new Nan::Callback(info[0].As<Function>());
-  Nan::AsyncQueueWorker(new StreamDecodeWorker(callback, obj, true));
+  StreamDecodeWorker *worker = new StreamDecodeWorker(callback, obj);
+  if (info[1]->BooleanValue()) {
+    Nan::AsyncQueueWorker(worker);
+  } else {
+    worker->Execute();
+    worker->WorkComplete();
+    worker->Destroy();
+  }
 }
 
 Nan::Persistent<Function> StreamDecode::constructor;

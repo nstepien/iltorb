@@ -1,25 +1,29 @@
 #include "stream_encode_worker.h"
 
 using namespace v8;
-using namespace brotli;
 
-StreamEncodeWorker::StreamEncodeWorker(Nan::Callback *callback, BrotliCompressor *compressor, bool is_last)
-  : Nan::AsyncWorker(callback), compressor(compressor), is_last(is_last) {}
+StreamEncodeWorker::StreamEncodeWorker(Nan::Callback *callback, StreamEncode* obj, bool is_last)
+  : Nan::AsyncWorker(callback), obj(obj), is_last(is_last) {}
 
 StreamEncodeWorker::~StreamEncodeWorker() {
 }
 
 void StreamEncodeWorker::Execute() {
-  uint8_t* buffer;
-  res = compressor->WriteBrotliData(is_last, false, &output_size, &buffer);
+  uint8_t* buffer = NULL;
+  size_t output_size = 0;
+  res = BrotliEncoderWriteData(obj->state, is_last, false, &output_size, &buffer);
 
-  if (res && output_size > 0) {
-    output_buffer = (char*) malloc(output_size);
-    if (output_buffer == NULL) {
-      res = false;
-    } else {
-      memcpy(output_buffer, buffer, output_size);
+  if (output_size > 0) {
+    uint8_t* output = static_cast<uint8_t*>(obj->alloc.Alloc(output_size));
+    if (!output) {
+      res = 0;
+      return;
     }
+
+    memcpy(output, buffer, output_size);
+    Allocator::AllocatedBuffer* buf_info = Allocator::GetBufferInfo(output);
+    buf_info->available = 0;
+    obj->pending_output.push_back(output);
   }
 }
 
@@ -29,16 +33,13 @@ void StreamEncodeWorker::HandleOKCallback() {
       Nan::Error("Brotli failed to compress.")
     };
     callback->Call(1, argv);
-  } else if (output_size > 0) {
-    Local<Value> argv[] = {
-      Nan::Null(),
-      Nan::NewBuffer(output_buffer, output_size).ToLocalChecked()
-    };
-    callback->Call(2, argv);
   } else {
     Local<Value> argv[] = {
-      Nan::Null()
+      Nan::Null(),
+      obj->PendingChunksAsArray()
     };
-    callback->Call(1, argv);
+    callback->Call(2, argv);
   }
+
+  obj->alloc.ReportMemoryToV8();
 }

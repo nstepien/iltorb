@@ -4,6 +4,6 @@
 #include <nan.h>
 #include "../../brotli/enc/encode.h"
 
-brotli::BrotliParams getParams(v8::Local<v8::Object> userParams);
+BrotliEncoderParams getParams(v8::Local<v8::Object> userParams);
 
 #endif

@@ -12,7 +12,7 @@ void StreamDecodeWorker::Execute() {
   Allocator::AllocatedBuffer* buf_info;
 
   do {
-    void* buf = obj->alloc.Alloc(16384);
+    void* buf = obj->alloc.Alloc(131072);
     if (!buf) {
       res = BROTLI_RESULT_ERROR;
       return;

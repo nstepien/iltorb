@@ -23,11 +23,6 @@ environment:
 install:
   - git submodule update --init --recursive
   - ps: Install-Product node $env:nodejs_version $env:platform
-  - ps: >-
-      if ($env:nodejs_version -eq "0.10") {
-        npm install -g npm@3
-        $env:PATH="$env:APPDATA\npm;$env:PATH"
-      }
   - IF "%platform%" == "x64" CALL "%VS140COMNTOOLS%..\..\VC\vcvarsall.bat" amd64
   - IF "%platform%" == "x86" CALL "%VS140COMNTOOLS%..\..\VC\vcvarsall.bat" x86
   - npm install

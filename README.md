@@ -10,6 +10,8 @@
 
 ### Install
 
+On Windows, in order to compile the native bindings, it is recommended to install the [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools) beforehand.
+
 ```
 npm install iltorb
 ```

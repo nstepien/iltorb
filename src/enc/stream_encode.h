@@ -11,7 +11,7 @@ class StreamEncode : public StreamCoder {
 
     BrotliEncoderState* state;
   private:
-    explicit StreamEncode(BrotliEncoderParams params);
+    explicit StreamEncode(Local<Object> params);
     ~StreamEncode();
 
     static NAN_METHOD(New);

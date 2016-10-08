@@ -22,7 +22,6 @@
         "src/common/allocator.cc",
         "src/common/stream_coder.cc",
         "src/enc/encode_index.cc",
-        "src/enc/get_params.cc",
         "src/enc/stream_encode.cc",
         "src/enc/stream_encode_worker.cc"
       ],

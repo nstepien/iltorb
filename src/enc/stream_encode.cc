@@ -1,15 +1,37 @@
-#include "get_params.h"
 #include "stream_encode.h"
 #include "stream_encode_worker.h"
 
 using namespace v8;
 
-StreamEncode::StreamEncode(BrotliEncoderParams params) {
+StreamEncode::StreamEncode(Local<Object> params) {
   state = BrotliEncoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
-  BrotliEncoderSetParameter(state, BROTLI_PARAM_MODE, params.mode);
-  BrotliEncoderSetParameter(state, BROTLI_PARAM_QUALITY, params.quality);
-  BrotliEncoderSetParameter(state, BROTLI_PARAM_LGWIN, params.lgwin);
-  BrotliEncoderSetParameter(state, BROTLI_PARAM_LGBLOCK, params.lgblock);
+
+  Local<String> key;
+  uint32_t val;
+
+  key = Nan::New<String>("mode").ToLocalChecked();
+  if (Nan::Has(params, key).FromJust()) {
+    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    BrotliEncoderSetParameter(state, BROTLI_PARAM_MODE, val);
+  }
+
+  key = Nan::New<String>("quality").ToLocalChecked();
+  if (Nan::Has(params, key).FromJust()) {
+    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    BrotliEncoderSetParameter(state, BROTLI_PARAM_QUALITY, val);
+  }
+
+  key = Nan::New<String>("lgwin").ToLocalChecked();
+  if (Nan::Has(params, key).FromJust()) {
+    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    BrotliEncoderSetParameter(state, BROTLI_PARAM_LGWIN, val);
+  }
+
+  key = Nan::New<String>("lgblock").ToLocalChecked();
+  if (Nan::Has(params, key).FromJust()) {
+    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    BrotliEncoderSetParameter(state, BROTLI_PARAM_LGBLOCK, val);
+  }
 }
 
 StreamEncode::~StreamEncode() {
@@ -31,7 +53,7 @@ void StreamEncode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
 }
 
 NAN_METHOD(StreamEncode::New) {
-  StreamEncode* obj = new StreamEncode(getParams(info[0]->ToObject()));
+  StreamEncode* obj = new StreamEncode(info[0]->ToObject());
   obj->Wrap(info.This());
   info.GetReturnValue().Set(info.This());
 }

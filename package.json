@@ -30,7 +30,7 @@
     "index.js"
   ],
   "dependencies": {
-    "nan": "^2.3.5"
+    "nan": "^2.4.0"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",

@@ -7,8 +7,6 @@ version: "{build}"
 # What combinations to test
 environment:
   matrix:
-    - nodejs_version: "0.12"
-      platform: x86
     - nodejs_version: "4"
       platform: x64
     - nodejs_version: "4"
@@ -21,11 +19,6 @@ environment:
 install:
   - git submodule update --init --recursive
   - ps: Install-Product node $env:nodejs_version $env:platform
-  - ps: >-
-      if ($env:nodejs_version -eq "0.12") {
-        npm install -g npm@3
-        $env:PATH="$env:APPDATA\npm;$env:PATH"
-      }
   - IF "%platform%" == "x64" CALL "%VS140COMNTOOLS%..\..\VC\vcvarsall.bat" amd64
   - IF "%platform%" == "x86" CALL "%VS140COMNTOOLS%..\..\VC\vcvarsall.bat" x86
   - npm install

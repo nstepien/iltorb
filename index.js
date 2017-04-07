@@ -7,8 +7,8 @@ exports.decompressSync = decompressSync;
 exports.compressStream = compressStream;
 exports.decompressStream = decompressStream;
 
-var encode = require('./build/Release/encode.node');
-var decode = require('./build/Release/decode.node');
+var encode = require('./build/bindings/encode.node');
+var decode = require('./build/bindings/decode.node');
 var Transform = require('stream').Transform;
 var util = require('util');
 

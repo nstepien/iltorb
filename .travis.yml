@@ -13,7 +13,34 @@ addons:
       - g++-4.8
 
 env:
+  global:
+    - secure: Ql22+1A3r6/PBB12R0B+j0Vg7V+YaBm3hGe7l5ERxywQR4/HcdWNg/VRcc7YmmuMIli6SltJxjflPozkHuH1UGEyz4yfkRMIeZo2Zf8OIFJOZujvoZeCNlJABXFHaTwHzoXJqMHEUjP69il2PSGt6FLdTWvzGoE5aIOeF1k6JPM71dBtkwH0Op3aBF2ausTzuyxtf+gkbYD+ybrHkioModTK+1jQvTeoYzSOnElEHErb7Jh0AQ9o0UQVKnqWduxRgNzhNjtoIKNB/F2B6Q3bXDFtUF1KbzNxk3zhAPvlEc8DY/km19LcSu+o9GXCrnbbsUqzGMgnA1UdVbQvJI7QM2NFJjAbeXHJV6auUhtr/KWnDQePJv5bqg+AhnWiFtSDKVTW2+zgIgzt7rWm9xEMxLd4Za9BpWroGZ9N3d9ycHviYEbtNdTX5IN0oLcU38UBbHBRGplzVprNhCsyKdqpulN3sPUQoBZTgYdS2LOJnLanbqomqvtkwGa7DLtiVS0SmlsmGQIDM63fr5RKYvFLp8SifcQ1NzWsKocOI7DCxPoLwSrmZCn9bzk2AeeMA6LFCVSR8FWGXcxJSRpQyhoUoFCxvKRVEqx/fsPLpJgng68WITVT/qzoKgyLlN7g8DwmScLfMnLnSiO5RZibd1e9zwIhHL1xEJEAMJS0ApjZpXc=
+    - secure: gCY4DvkwHexxfReo8q4yzPVhxivNOKKkPoVhO+EEptmDb77JRHjSYuNWFDdoVKvyTufJcqOqK6shwiF7iBrsVXPFevCiXiLM5j+B+3f7Of3ytkMkV5uwlv7xGvWlP5GEI0UQtm9B1LOPd63hWxzLcUgtbEYfK1Li+vLPIclx2MKZ7nBRMpQtzENEuw0TyeoQ4xY4tqVs0qgMrHUQkk5LSw3r+wMYD8pgcB4Xa19Ugck69XnYkEwoxy/f0JzMcC6OF8GIZiqKpgDMjK11AJPUKVIDvnBuWoRww04kCmeoUYyk64PrieJaV/mvKxT/NIFqSJx2lDoPdPUIPpTMhtpwkGqBKYjIcOOUAE470rnpOTdfZu9PohvJOGGz5DE9WkIUeYkpbD+5aqIEpnNuRphbnfCftONVhwJhV6E9vyLdDGk1+HRg6ypbE/n4STACk/T0CeuUggHyH4KwpPOFin9IKJLWTcAYqBGcCD1hhj6XzqlARJlFvuExA5L/s0KWqgOYiqo/T7q7dWN3iHbo8De68JoCKimm54Zz6y6i77+GfRisBhX49UTcX4kxQK3K8bfTQd1O//6kYOMWZVixLOcBxCmS4R5pjNejj+UK9ZHv0U8NRzd3p1PBBmYqi4Gb73WxzT0TDWxmO2hYTEbFm/cbGQuoovMCHPryVcmdsestiYY=
   - CXX=g++-4.8
 
 matrix:
   fast_finish: true
+
+before_install:
+  - export PATH=./node_modules/.bin/:$PATH
+  - PUBLISH_BINARY=true
+  - if [[ $TRAVIS_BRANCH == `git describe --tags --always HEAD` ]]; then PUBLISH_BINARY=true; fi;
+  - if test "${COMMIT_MESSAGE#*'[publish binary]'}" != "$COMMIT_MESSAGE"; then PUBLISH_BINARY=true; fi;
+
+install:
+  - npm install --build-from-source
+
+before_script:
+  - echo "Publishing native platform Binary Package? ->" $PUBLISH_BINARY
+  - if [[ $PUBLISH_BINARY == true ]]; then node-pre-gyp package publish || true ; fi;
+  - node-pre-gyp clean
+  - node-gyp clean
+
+script:
+  - INSTALL_RESULT=0
+  - if [[ $PUBLISH_BINARY == true ]]; then INSTALL_RESULT=$(npm install --fallback-to-build=false > /dev/null)$? || true; fi;
+  - if [[ $INSTALL_RESULT != 0 ]]; then echo "returned $INSTALL_RESULT"; node-pre-gyp unpublish; false; fi
+  - node-pre-gyp clean
+
+after_success:
+  - node-pre-gyp info

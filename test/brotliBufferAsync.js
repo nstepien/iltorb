@@ -1,7 +1,8 @@
 'use strict';
 
 var brotli = require('../');
-var expect = require('expect.js');
+var chai = require('chai');
+var expect = chai.expect;
 var fs = require('fs');
 var path = require('path');
 
@@ -12,14 +13,14 @@ function testBufferAsync(method, bufferFile, resultFile, done, params) {
 
   if (method.name === 'compress') {
     method(buffer, params, function(err, output) {
-      expect(output).to.eql(result);
+      expect(output).to.deep.equal(result);
       done();
     });
   }
 
   if (method.name === 'decompress') {
     method(buffer, function(err, output) {
-      expect(output).to.eql(result);
+      expect(output).to.deep.equal(result);
       done();
     });
   }

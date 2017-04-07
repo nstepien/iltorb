@@ -1,7 +1,8 @@
 'use strict';
 
 var brotli = require('../');
-var expect = require('expect.js');
+var chai = require('chai');
+var expect = chai.expect;
 var fs = require('fs');
 var path = require('path');
 
@@ -10,7 +11,7 @@ function testBufferSync(method, bufferFile, resultFile, params) {
   var buffer = fs.readFileSync(path.join(__dirname, '/fixtures/', bufferFile));
   var result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
   var output = method(buffer, params);
-  expect(output).to.eql(result);
+  expect(output).to.deep.equal(result);
 }
 
 describe('Brotli Buffer Sync', function() {

@@ -55,6 +55,23 @@
       "xcode_settings": {
         "OTHER_CFLAGS" : ["-O2"]
       }
+    },
+    {
+      "target_name": "action_after_build",
+      "type": "none",
+      "dependencies": [
+        "encode",
+        "decode"
+      ],
+      "copies": [
+        {
+          "files": [
+            "<(PRODUCT_DIR)/encode.node",
+            "<(PRODUCT_DIR)/decode.node"
+          ],
+          "destination": "<(module_path)"
+        }
+      ]
     }
   ]
 }

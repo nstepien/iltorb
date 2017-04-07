@@ -29,15 +29,29 @@
     "binding.gyp",
     "index.js"
   ],
+  "bundledDependencies": [
+    "node-pre-gyp"
+  ],
   "dependencies": {
-    "nan": "^2.4.0"
+    "nan": "^2.6.1",
+    "node-pre-gyp": "^0.6.34"
   },
   "devDependencies": {
-    "expect.js": "^0.3.1",
-    "mocha": "^2.3.3"
+    "aws-sdk": "^2.39.0",
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
   },
   "scripts": {
+    "prepublish": "npm ls",
+    "install": "node-pre-gyp install --fallback-to-build",
     "test": "mocha"
+  },
+  "binary": {
+    "module_name": "encode",
+    "module_path": "./build/bindings",
+    "remote_path": "./{name}/v{version}/{toolset}/",
+    "package_name": "{node_abi}-{platform}-{arch}.tar.gz",
+    "host": "https://node-iltorb.s3.amazonaws.com"
   },
   "license": "MIT"
 }

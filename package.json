@@ -30,11 +30,11 @@
     "index.js"
   ],
   "dependencies": {
-    "nan": "^2.4.0"
+    "nan": "^2.6.1"
   },
   "devDependencies": {
-    "expect.js": "^0.3.1",
-    "mocha": "^2.3.3"
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
   },
   "scripts": {
     "test": "mocha"

@@ -14,21 +14,23 @@ addons:
 
 env:
   global:
-    - secure: Ql22+1A3r6/PBB12R0B+j0Vg7V+YaBm3hGe7l5ERxywQR4/HcdWNg/VRcc7YmmuMIli6SltJxjflPozkHuH1UGEyz4yfkRMIeZo2Zf8OIFJOZujvoZeCNlJABXFHaTwHzoXJqMHEUjP69il2PSGt6FLdTWvzGoE5aIOeF1k6JPM71dBtkwH0Op3aBF2ausTzuyxtf+gkbYD+ybrHkioModTK+1jQvTeoYzSOnElEHErb7Jh0AQ9o0UQVKnqWduxRgNzhNjtoIKNB/F2B6Q3bXDFtUF1KbzNxk3zhAPvlEc8DY/km19LcSu+o9GXCrnbbsUqzGMgnA1UdVbQvJI7QM2NFJjAbeXHJV6auUhtr/KWnDQePJv5bqg+AhnWiFtSDKVTW2+zgIgzt7rWm9xEMxLd4Za9BpWroGZ9N3d9ycHviYEbtNdTX5IN0oLcU38UBbHBRGplzVprNhCsyKdqpulN3sPUQoBZTgYdS2LOJnLanbqomqvtkwGa7DLtiVS0SmlsmGQIDM63fr5RKYvFLp8SifcQ1NzWsKocOI7DCxPoLwSrmZCn9bzk2AeeMA6LFCVSR8FWGXcxJSRpQyhoUoFCxvKRVEqx/fsPLpJgng68WITVT/qzoKgyLlN7g8DwmScLfMnLnSiO5RZibd1e9zwIhHL1xEJEAMJS0ApjZpXc=
-    - secure: gCY4DvkwHexxfReo8q4yzPVhxivNOKKkPoVhO+EEptmDb77JRHjSYuNWFDdoVKvyTufJcqOqK6shwiF7iBrsVXPFevCiXiLM5j+B+3f7Of3ytkMkV5uwlv7xGvWlP5GEI0UQtm9B1LOPd63hWxzLcUgtbEYfK1Li+vLPIclx2MKZ7nBRMpQtzENEuw0TyeoQ4xY4tqVs0qgMrHUQkk5LSw3r+wMYD8pgcB4Xa19Ugck69XnYkEwoxy/f0JzMcC6OF8GIZiqKpgDMjK11AJPUKVIDvnBuWoRww04kCmeoUYyk64PrieJaV/mvKxT/NIFqSJx2lDoPdPUIPpTMhtpwkGqBKYjIcOOUAE470rnpOTdfZu9PohvJOGGz5DE9WkIUeYkpbD+5aqIEpnNuRphbnfCftONVhwJhV6E9vyLdDGk1+HRg6ypbE/n4STACk/T0CeuUggHyH4KwpPOFin9IKJLWTcAYqBGcCD1hhj6XzqlARJlFvuExA5L/s0KWqgOYiqo/T7q7dWN3iHbo8De68JoCKimm54Zz6y6i77+GfRisBhX49UTcX4kxQK3K8bfTQd1O//6kYOMWZVixLOcBxCmS4R5pjNejj+UK9ZHv0U8NRzd3p1PBBmYqi4Gb73WxzT0TDWxmO2hYTEbFm/cbGQuoovMCHPryVcmdsestiYY=
-  - CXX=g++-4.8
+    - secure: A8ieqjLOvpEBcuDKFwEURNLtY9rUT73THx3ym8hnitPBq6ZPrAZ31QjZ55i8vywek+L8YrjcbR3PBZmyiey33TEfN1Z7a3USYB/j1erhYMTsIX3zmqYazhMbeMNAOrh1T5/ei9tlp1nTtYiXNbVbncPBnGYhkhNKHzPgacAm5n29DkeGk4bg333LUXvrxq0ZMFcGCsx3gdPro83HF/gSxQPLJQubAgOFljbHtwa2pTmQprI9IbdcZbh/mEfc3zwqt9zPYT2Pu/gWqMctVkfSaSIyGNVAsmkIMS6iSovwdjJmXhuFxyfhSqNXKR4x+Ha00ELoTD71Oey8VV+CdcVLoVPLMtkw9qai7nrfknWj4Bw+6zwcIkvCWkQ5YuB6SpJUvjf3ZqANU3VaNEbEdzifolMRGkY0i18ivViWe/q78535JLMXFqLtHWy7AusbvGq86TyG9eeP9mTvtD5XSYWUw64vMyCBFJpMfOf1m7XZYKsQ4K8sXiMW9ZbCKKFr78t6wqchSRH5pVocpuPX3T3Ck/w7CMk89MTZP02GsXMzJ4wEKIcLrrne19Z3iGgTXIxNQJ3E+7M/E0NQrWeXRgN4cznhONhGS7I2E3V2TB4ygTsSYoWpA78WDMcGqakL2QWi1goX5wOrdATOnZMtR1SKHP/nSkpm3Z9jJxjufU8pXsw=
+    - secure: W+BvS3DEpZh6oEQL0r0ZfCQy7VsukyQE+39VuKeqseQA5Fa9f7K0bB9X+iTt2EJGYpZx+QWX1z+mtmw1Mfp1q83w2jtf7n4ysyM4ttAlvR5lLKkgOhYBCYiwAb7WBknMck0ub2Nw6pf4NBlkJGvtcZWRfsefBqOHQh5mRh+gLMouSVj+p6mBPtvKdbH9z16cFm5KPBH32+7VAwRaNKsgY9Go4JG1DT5jt/2Et+rUfyeuK9DdRSnmdzjRvWLwpzHeaWGk2i92K04C+R9Ej7Wrf6QyoHvNN2bdEMLUHIR1iuBQbM1/R16WSOSU3YCYY9gMcQiPj+BFjZs/OuzD63m1yZxmtmlTYJ7CZqGa80wHdUnGkgVlshFpObLgqySRBGhlU+wxiR4oM/N2S1Ek0qxrFBjQLKwkZ6ObqiSU5uObxLiDn00kmiInI+1tRRSsE05FRMj78YPar1pgqODQY1iEfIf5WP97tS7TXzWdAHhNrl/sH+2qvsvzbJZe8qQbH84nZ8qNdl4OD4m4kD2YDmQu7Tpl4eQMyTrd1Ehan8oUxM/FUgCxJ6j2TTfb9v6TYGf5S7PuY/oSwSrgbDWu0U/WfV+s2pQBisuT3Oze52d+vVRe3B/WFT1IwhcrOP0lEL3rfccSjZ5ayd/tPr8yrZCJwB3+8DNg8QBXpN6uRVBbeY4=
+    - CXX=g++-4.8
 
 matrix:
   fast_finish: true
 
 before_install:
   - export PATH=./node_modules/.bin/:$PATH
-  - PUBLISH_BINARY=true
+  - npm install node-gyp -g
+  - PUBLISH_BINARY=false
   - if [[ $TRAVIS_BRANCH == `git describe --tags --always HEAD` ]]; then PUBLISH_BINARY=true; fi;
   - if test "${COMMIT_MESSAGE#*'[publish binary]'}" != "$COMMIT_MESSAGE"; then PUBLISH_BINARY=true; fi;
 
 install:
   - npm install --build-from-source
+  - npm test
 
 before_script:
   - echo "Publishing native platform Binary Package? ->" $PUBLISH_BINARY

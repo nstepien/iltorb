@@ -32,6 +32,15 @@ StreamEncode::StreamEncode(Local<Object> params) {
     val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
     BrotliEncoderSetParameter(state, BROTLI_PARAM_LGBLOCK, val);
   }
+
+  key = Nan::New<String>("dictionary").ToLocalChecked();
+  if (Nan::Has(params, key).FromJust()) {
+    Local<Object> dictionary = Nan::Get(params, key).ToLocalChecked()->ToObject();
+    const size_t dict_size = node::Buffer::Length(dictionary);
+    const char* dict_buffer = node::Buffer::Data(dictionary);
+
+    BrotliEncoderSetCustomDictionary(state, dict_size, (const uint8_t*) dict_buffer);
+  }
 }
 
 StreamEncode::~StreamEncode() {

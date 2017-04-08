@@ -34,7 +34,11 @@ function compress(input, params, cb) {
   stream.end(input);
 }
 
-function decompress(input, cb) {
+function decompress(input, params, cb) {
+  if (arguments.length === 2) {
+    cb = params;
+    params = {};
+  }
   if (!Buffer.isBuffer(input)) {
     process.nextTick(cb, new Error('Brotli input is not a buffer.'));
     return;
@@ -43,7 +47,7 @@ function decompress(input, cb) {
     process.nextTick(cb, new Error('Second argument is not a function.'));
     return;
   }
-  var stream = new TransformStreamDecode();
+  var stream = new TransformStreamDecode(params);
   var chunks = [];
   var length = 0;
   stream.on('error', cb);
@@ -65,11 +69,11 @@ function compressSync(input, params) {
   return Buffer.concat(chunks, length);
 }
 
-function decompressSync(input) {
+function decompressSync(input, params) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('Brotli input is not a buffer.');
   }
-  var stream = new TransformStreamDecode({}, true);
+  var stream = new TransformStreamDecode(params, true);
   var chunks = [];
   var length = 0;
   stream.on('error', function(e) { throw e; });
@@ -160,7 +164,7 @@ function TransformStreamDecode(params, sync) {
   Transform.call(this, params);
 
   this.sync = sync || false;
-  this.decoder = new decode.StreamDecode();
+  this.decoder = new decode.StreamDecode(params || {});
 }
 util.inherits(TransformStreamDecode, Transform);
 

@@ -20,6 +20,10 @@ describe('Brotli Buffer Sync', function() {
       testBufferSync(brotli.compressSync, 'data10k.bin', 'data10k.bin.compressed');
     });
 
+    it('should compress binary data with a custom dictionary', function() {
+      testBufferSync(brotli.compressSync, 'data10k.bin', 'data10k.bin.compressed.dict', { dictionary: Buffer.from('0123456789') });
+    });
+
     it('should compress text data', function() {
       testBufferSync(brotli.compressSync, 'data.txt', 'data.txt.compressed');
     });
@@ -45,6 +49,10 @@ describe('Brotli Buffer Sync', function() {
   describe('decompress', function() {
     it('should decompress binary data', function() {
       testBufferSync(brotli.decompressSync, 'data10k.bin.compressed', 'data10k.bin');
+    });
+
+    it('should decompress binary data with a custom dictionary', function() {
+      testBufferSync(brotli.decompressSync, 'data10k.bin.compressed.dict', 'data10k.bin', { dictionary: Buffer.from('0123456789') });
     });
 
     it('should decompress text data', function() {

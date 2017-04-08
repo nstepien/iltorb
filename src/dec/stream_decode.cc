@@ -3,9 +3,20 @@
 
 using namespace v8;
 
-StreamDecode::StreamDecode() : next_in(NULL), available_in(0) {
+StreamDecode::StreamDecode(Local<Object> params) : next_in(NULL), available_in(0) {
   state = BrotliDecoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
   alloc.ReportMemoryToV8();
+
+  Local<String> key;
+
+  key = Nan::New<String>("dictionary").ToLocalChecked();
+  if (Nan::Has(params, key).FromJust()) {
+    Local<Object> dictionary = Nan::Get(params, key).ToLocalChecked()->ToObject();
+    const size_t dict_size = node::Buffer::Length(dictionary);
+    const char* dict_buffer = node::Buffer::Data(dictionary);
+
+    BrotliDecoderSetCustomDictionary(state, dict_size, (const uint8_t*) dict_buffer);
+  }
 }
 
 StreamDecode::~StreamDecode() {
@@ -26,7 +37,7 @@ void StreamDecode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
 }
 
 NAN_METHOD(StreamDecode::New) {
-  StreamDecode* obj = new StreamDecode();
+  StreamDecode* obj = new StreamDecode(info[0]->ToObject());
   obj->Wrap(info.This());
   info.GetReturnValue().Set(info.This());
 }

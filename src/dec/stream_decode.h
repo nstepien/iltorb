@@ -14,7 +14,7 @@ class StreamDecode : public StreamCoder {
 
     BrotliDecoderState* state;
   private:
-    explicit StreamDecode();
+    explicit StreamDecode(Local<Object> params);
     ~StreamDecode();
 
     static NAN_METHOD(New);

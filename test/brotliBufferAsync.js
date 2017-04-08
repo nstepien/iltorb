@@ -80,6 +80,7 @@ describe('Brotli Buffer Async', function() {
     });
 
     it('should decompress to another large buffer', function(done) {
+      this.timeout(30000);
       testBufferAsync(brotli.decompress, 'large.txt.compressed', 'large.txt', done);
     });
   });

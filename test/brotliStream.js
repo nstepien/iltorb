@@ -88,6 +88,7 @@ describe('Brotli Stream', function() {
     });
 
     it('should decompress to another large buffer', function(done) {
+      this.timeout(30000);
       testStream(brotli.decompressStream, 'large.txt.compressed', 'large.txt', done);
     });
   });

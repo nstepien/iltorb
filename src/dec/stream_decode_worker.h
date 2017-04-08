@@ -15,7 +15,7 @@ class StreamDecodeWorker : public Nan::AsyncWorker {
   private:
     ~StreamDecodeWorker();
     StreamDecode* obj;
-    BrotliResult res;
+    BrotliDecoderResult res;
 };
 
 #endif

@@ -4,12 +4,12 @@
 using namespace v8;
 
 StreamDecode::StreamDecode() : next_in(NULL), available_in(0) {
-  state = BrotliCreateState(Allocator::Alloc, Allocator::Free, &alloc);
+  state = BrotliDecoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
   alloc.ReportMemoryToV8();
 }
 
 StreamDecode::~StreamDecode() {
-  BrotliDestroyState(state);
+  BrotliDecoderDestroyInstance(state);
 }
 
 void StreamDecode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {

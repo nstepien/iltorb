@@ -1,5 +1,9 @@
 language: node_js
 
+os:
+  - linux
+  - osx
+
 node_js:
   - "4"
   - "6"
@@ -16,7 +20,6 @@ env:
   global:
     - secure: A8ieqjLOvpEBcuDKFwEURNLtY9rUT73THx3ym8hnitPBq6ZPrAZ31QjZ55i8vywek+L8YrjcbR3PBZmyiey33TEfN1Z7a3USYB/j1erhYMTsIX3zmqYazhMbeMNAOrh1T5/ei9tlp1nTtYiXNbVbncPBnGYhkhNKHzPgacAm5n29DkeGk4bg333LUXvrxq0ZMFcGCsx3gdPro83HF/gSxQPLJQubAgOFljbHtwa2pTmQprI9IbdcZbh/mEfc3zwqt9zPYT2Pu/gWqMctVkfSaSIyGNVAsmkIMS6iSovwdjJmXhuFxyfhSqNXKR4x+Ha00ELoTD71Oey8VV+CdcVLoVPLMtkw9qai7nrfknWj4Bw+6zwcIkvCWkQ5YuB6SpJUvjf3ZqANU3VaNEbEdzifolMRGkY0i18ivViWe/q78535JLMXFqLtHWy7AusbvGq86TyG9eeP9mTvtD5XSYWUw64vMyCBFJpMfOf1m7XZYKsQ4K8sXiMW9ZbCKKFr78t6wqchSRH5pVocpuPX3T3Ck/w7CMk89MTZP02GsXMzJ4wEKIcLrrne19Z3iGgTXIxNQJ3E+7M/E0NQrWeXRgN4cznhONhGS7I2E3V2TB4ygTsSYoWpA78WDMcGqakL2QWi1goX5wOrdATOnZMtR1SKHP/nSkpm3Z9jJxjufU8pXsw=
     - secure: W+BvS3DEpZh6oEQL0r0ZfCQy7VsukyQE+39VuKeqseQA5Fa9f7K0bB9X+iTt2EJGYpZx+QWX1z+mtmw1Mfp1q83w2jtf7n4ysyM4ttAlvR5lLKkgOhYBCYiwAb7WBknMck0ub2Nw6pf4NBlkJGvtcZWRfsefBqOHQh5mRh+gLMouSVj+p6mBPtvKdbH9z16cFm5KPBH32+7VAwRaNKsgY9Go4JG1DT5jt/2Et+rUfyeuK9DdRSnmdzjRvWLwpzHeaWGk2i92K04C+R9Ej7Wrf6QyoHvNN2bdEMLUHIR1iuBQbM1/R16WSOSU3YCYY9gMcQiPj+BFjZs/OuzD63m1yZxmtmlTYJ7CZqGa80wHdUnGkgVlshFpObLgqySRBGhlU+wxiR4oM/N2S1Ek0qxrFBjQLKwkZ6ObqiSU5uObxLiDn00kmiInI+1tRRSsE05FRMj78YPar1pgqODQY1iEfIf5WP97tS7TXzWdAHhNrl/sH+2qvsvzbJZe8qQbH84nZ8qNdl4OD4m4kD2YDmQu7Tpl4eQMyTrd1Ehan8oUxM/FUgCxJ6j2TTfb9v6TYGf5S7PuY/oSwSrgbDWu0U/WfV+s2pQBisuT3Oze52d+vVRe3B/WFT1IwhcrOP0lEL3rfccSjZ5ayd/tPr8yrZCJwB3+8DNg8QBXpN6uRVBbeY4=
-    - CXX=g++-4.8
 
 matrix:
   fast_finish: true
@@ -27,6 +30,7 @@ before_install:
   - PUBLISH_BINARY=false
   - if [[ $TRAVIS_BRANCH == `git describe --tags --always HEAD` ]]; then PUBLISH_BINARY=true; fi;
   - if test "${COMMIT_MESSAGE#*'[publish binary]'}" != "$COMMIT_MESSAGE"; then PUBLISH_BINARY=true; fi;
+  - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CC=gcc-4.8; export CXX=g++-4.8; fi
 
 install:
   - npm install --build-from-source

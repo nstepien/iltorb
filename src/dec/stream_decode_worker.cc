@@ -14,25 +14,25 @@ void StreamDecodeWorker::Execute() {
   do {
     void* buf = obj->alloc.Alloc(131072);
     if (!buf) {
-      res = BROTLI_RESULT_ERROR;
+      res = BROTLI_DECODER_RESULT_ERROR;
       return;
     }
 
     uint8_t* next_out = static_cast<uint8_t*>(buf);
     buf_info = Allocator::GetBufferInfo(buf);
-    res = BrotliDecompressStream(&obj->available_in,
+    res = BrotliDecoderDecompressStream(obj->state,
+                                 &obj->available_in,
                                  &obj->next_in,
                                  &buf_info->available,
                                  &next_out,
-                                 NULL,
-                                 obj->state);
+                                 NULL);
 
     obj->pending_output.push_back(static_cast<uint8_t*>(buf));
-  } while(res == BROTLI_RESULT_NEEDS_MORE_OUTPUT);
+  } while(res == BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT);
 }
 
 void StreamDecodeWorker::HandleOKCallback() {
-  if (res == BROTLI_RESULT_ERROR || res == BROTLI_RESULT_NEEDS_MORE_OUTPUT) {
+  if (res == BROTLI_DECODER_RESULT_ERROR || res == BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT) {
     Local<Value> argv[] = {
       Nan::Error("Brotli failed to decompress.")
     };

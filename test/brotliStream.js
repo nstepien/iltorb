@@ -39,6 +39,10 @@ describe('Brotli Stream', function() {
       testStream(brotli.compressStream, 'data10k.bin', 'data10k.bin.compressed', done);
     });
 
+    it('should compress binary data', function(done) {
+      testStream(brotli.compressStream, 'data10k.bin', 'data10k.bin.compressed.dict', done, { dictionary: Buffer.from('0123456789') });
+    });
+
     it('should compress text data', function(done) {
       testStream(brotli.compressStream, 'data.txt', 'data.txt.compressed', done);
     });
@@ -66,6 +70,10 @@ describe('Brotli Stream', function() {
       testStream(brotli.decompressStream, 'data10k.bin.compressed', 'data10k.bin', done);
     });
 
+    it('should decompress binary data', function(done) {
+      testStream(brotli.decompressStream, 'data10k.bin.compressed.dict', 'data10k.bin', done, { dictionary: Buffer.from('0123456789') });
+    });
+
     it('should decompress text data', function(done) {
       testStream(brotli.decompressStream, 'data.txt.compressed', 'data.txt', done);
     });
@@ -80,6 +88,7 @@ describe('Brotli Stream', function() {
     });
 
     it('should decompress to another large buffer', function(done) {
+      this.timeout(30000);
       testStream(brotli.decompressStream, 'large.txt.compressed', 'large.txt', done);
     });
   });

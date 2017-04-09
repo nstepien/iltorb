@@ -12,9 +12,9 @@ class StreamDecode : public StreamCoder {
     const uint8_t* next_in;
     size_t available_in;
 
-    BrotliState* state;
+    BrotliDecoderState* state;
   private:
-    explicit StreamDecode();
+    explicit StreamDecode(Local<Object> params);
     ~StreamDecode();
 
     static NAN_METHOD(New);

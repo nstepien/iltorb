@@ -28,7 +28,7 @@ compress(input, function(err, output) {
 });
 ```
 
-#### decompress(buffer, callback)
+#### decompress(buffer[, brotliDecodeParams], callback)
 
 ```javascript
 const decompress = require('iltorb').decompress;
@@ -52,7 +52,7 @@ try {
 }
 ```
 
-#### decompressSync(buffer)
+#### decompressSync(buffer[, brotliDecodeParams])
 
 ```javascript
 const decompressSync = require('iltorb').decompressSync;
@@ -77,7 +77,7 @@ fs.createReadStream('path/to/input')
   .pipe(fs.createWriteStream('path/to/output'));
 ```
 
-#### decompressStream()
+#### decompressStream([brotliDecodeParams])
 
 ```javascript
 const decompressStream = require('iltorb').decompressStream;
@@ -97,7 +97,18 @@ const brotliParams = {
   mode: 0,
   quality: 11,
   lgwin: 22,
-  lgblock: 0
+  lgblock: 0,
+  dictionary: Buffer
+};
+```
+
+### brotliDecodeParams
+
+The `decompress`, `decompressSync` and `decompressStream` methods may accept an optional `brotliDecodeParams` object to provide a custom dictionary.
+
+```javascript
+const brotliDecodeParams = {
+  dictionary: Buffer
 };
 ```
 

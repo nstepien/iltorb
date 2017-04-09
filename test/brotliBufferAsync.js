@@ -1,15 +1,15 @@
 'use strict';
 
-var brotli = require('../');
-var chai = require('chai');
-var expect = chai.expect;
-var fs = require('fs');
-var path = require('path');
+const brotli = require('../');
+const chai = require('chai');
+const expect = chai.expect;
+const fs = require('fs');
+const path = require('path');
 
 function testBufferAsync(method, bufferFile, resultFile, done, params) {
   params = params || {};
-  var buffer = fs.readFileSync(path.join(__dirname, '/fixtures/', bufferFile));
-  var result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
+  const buffer = fs.readFileSync(path.join(__dirname, '/fixtures/', bufferFile));
+  const result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
 
   if (method.name === 'compress') {
     method(buffer, params, function(err, output) {

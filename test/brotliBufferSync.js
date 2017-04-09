@@ -1,16 +1,16 @@
 'use strict';
 
-var brotli = require('../');
-var chai = require('chai');
-var expect = chai.expect;
-var fs = require('fs');
-var path = require('path');
+const brotli = require('../');
+const chai = require('chai');
+const expect = chai.expect;
+const fs = require('fs');
+const path = require('path');
 
 function testBufferSync(method, bufferFile, resultFile, params) {
   params = params || {};
-  var buffer = fs.readFileSync(path.join(__dirname, '/fixtures/', bufferFile));
-  var result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
-  var output = method(buffer, params);
+  const buffer = fs.readFileSync(path.join(__dirname, '/fixtures/', bufferFile));
+  const result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
+  const output = method(buffer, params);
   expect(output).to.deep.equal(result);
 }
 

@@ -1,33 +1,33 @@
 'use strict';
 
-var brotli = require('../');
-var chai = require('chai');
-var expect = chai.expect;
-var Writable = require('stream').Writable;
-var util = require('util');
-var fs = require('fs');
-var path = require('path');
+const brotli = require('../');
+const chai = require('chai');
+const expect = chai.expect;
+const Writable = require('stream').Writable;
+const fs = require('fs');
+const path = require('path');
 
-function BufferWriter() {
-  Writable.call(this);
-  this.data = new Buffer(0);
+class BufferWriter extends Writable {
+  constructor() {
+    super();
+    this.data = new Buffer(0);
+  }
+
+  _write(chunk, encoding, next) {
+    this.data = Buffer.concat([this.data, chunk], this.data.length + chunk.length);
+    next();
+  }
 }
-util.inherits(BufferWriter, Writable);
-
-BufferWriter.prototype._write = function(chunk, encoding, next) {
-  this.data = Buffer.concat([this.data, chunk], this.data.length + chunk.length);
-  next();
-};
 
 function testStream(method, bufferFile, resultFile, done, params) {
-  var writeStream = new BufferWriter();
+  const writeStream = new BufferWriter();
 
   fs.createReadStream(path.join(__dirname, '/fixtures/', bufferFile))
     .pipe(method(params))
     .pipe(writeStream);
 
   writeStream.on('finish', function() {
-    var result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
+    const result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
     expect(writeStream.data).to.deep.equal(result);
     done();
   });

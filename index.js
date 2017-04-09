@@ -7,10 +7,76 @@ exports.decompressSync = decompressSync;
 exports.compressStream = compressStream;
 exports.decompressStream = decompressStream;
 
-var encode = require('./build/bindings/encode.node');
-var decode = require('./build/bindings/decode.node');
-var Transform = require('stream').Transform;
-var util = require('util');
+const encode = require('./build/bindings/encode.node');
+const decode = require('./build/bindings/decode.node');
+const Transform = require('stream').Transform;
+
+class TransformStreamEncode extends Transform {
+  constructor(params, sync) {
+    super(params);
+    this.sync = sync || false;
+    this.encoder = new encode.StreamEncode(params || {});
+    const blockSize = this.encoder.getBlockSize();
+    this.status = {
+      blockSize,
+      remaining: blockSize
+    };
+  }
+
+  _transform(chunk, encoding, next) {
+    compressStreamChunk(this, chunk, this.encoder, this.status, this.sync, next);
+  }
+
+  _flush(done) {
+    this.encoder.encode(true, (err, output) => {
+      if (err) {
+        return done(err);
+      }
+      if (output) {
+        for (let i = 0; i < output.length; i++) {
+          this.push(output[i]);
+        }
+      }
+      done();
+    }, !this.sync);
+  }
+}
+
+class TransformStreamDecode extends Transform {
+  constructor(params, sync) {
+    super(params);
+    this.sync = sync || false;
+    this.decoder = new decode.StreamDecode(params || {});
+  }
+
+  _transform(chunk, encoding, next) {
+    this.decoder.transform(chunk, (err, output) => {
+      if (err) {
+        return next(err);
+      }
+      if (output) {
+        for (let i = 0; i < output.length; i++) {
+          this.push(output[i]);
+        }
+      }
+      next();
+    }, !this.sync);
+  }
+
+  _flush(done) {
+    this.decoder.flush((err, output) => {
+      if (err) {
+        return done(err);
+      }
+      if (output) {
+        for (let i = 0; i < output.length; i++) {
+          this.push(output[i]);
+        }
+      }
+      done();
+    }, !this.sync);
+  }
+}
 
 function compress(input, params, cb) {
   if (arguments.length === 2) {
@@ -25,12 +91,17 @@ function compress(input, params, cb) {
     process.nextTick(cb, new Error('Second argument is not a function.'));
     return;
   }
-  var stream = new TransformStreamEncode(params);
-  var chunks = [];
-  var length = 0;
+  const stream = new TransformStreamEncode(params);
+  const chunks = [];
+  let length = 0;
   stream.on('error', cb);
-  stream.on('data', function(c) { chunks.push(c); length += c.length; });
-  stream.on('end', function() { cb(null, Buffer.concat(chunks, length)); });
+  stream.on('data', function(c) {
+    chunks.push(c);
+    length += c.length;
+  });
+  stream.on('end', function() {
+    cb(null, Buffer.concat(chunks, length));
+  });
   stream.end(input);
 }
 
@@ -47,12 +118,17 @@ function decompress(input, params, cb) {
     process.nextTick(cb, new Error('Second argument is not a function.'));
     return;
   }
-  var stream = new TransformStreamDecode(params);
-  var chunks = [];
-  var length = 0;
+  const stream = new TransformStreamDecode(params);
+  const chunks = [];
+  let length = 0;
   stream.on('error', cb);
-  stream.on('data', function(c) { chunks.push(c); length += c.length; });
-  stream.on('end', function() { cb(null, Buffer.concat(chunks, length)); });
+  stream.on('data', function(c) {
+    chunks.push(c);
+    length += c.length;
+  });
+  stream.on('end', function() {
+    cb(null, Buffer.concat(chunks, length));
+  });
   stream.end(input);
 }
 
@@ -60,11 +136,16 @@ function compressSync(input, params) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('Brotli input is not a buffer.');
   }
-  var stream = new TransformStreamEncode(params, true);
-  var chunks = [];
-  var length = 0;
-  stream.on('error', function(e) { throw e; });
-  stream.on('data', function(c) { chunks.push(c); length += c.length; });
+  const stream = new TransformStreamEncode(params, true);
+  const chunks = [];
+  let length = 0;
+  stream.on('error', function(e) {
+    throw e;
+  });
+  stream.on('data', function(c) {
+    chunks.push(c);
+    length += c.length;
+  });
   stream.end(input);
   return Buffer.concat(chunks, length);
 }
@@ -73,53 +154,34 @@ function decompressSync(input, params) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('Brotli input is not a buffer.');
   }
-  var stream = new TransformStreamDecode(params, true);
-  var chunks = [];
-  var length = 0;
-  stream.on('error', function(e) { throw e; });
-  stream.on('data', function(c) { chunks.push(c); length += c.length; });
+  const stream = new TransformStreamDecode(params, true);
+  const chunks = [];
+  let length = 0;
+  stream.on('error', function(e) {
+    throw e;
+  });
+  stream.on('data', function(c) {
+    chunks.push(c);
+    length += c.length;
+  });
   stream.end(input);
   return Buffer.concat(chunks, length);
 }
 
-function TransformStreamEncode(params, sync) {
-  Transform.call(this, params);
-
-  this.encoder = new encode.StreamEncode(params || {});
-  this.sync = sync || false;
-  var blockSize = this.encoder.getBlockSize();
-  this.status = {
-    blockSize: blockSize,
-    remaining: blockSize
-  };
+function compressStream(params) {
+  return new TransformStreamEncode(params);
 }
-util.inherits(TransformStreamEncode, Transform);
 
-TransformStreamEncode.prototype._transform = function(chunk, encoding, next) {
-  compressStreamChunk(this, chunk, this.encoder, this.status, this.sync, next);
-};
-
-TransformStreamEncode.prototype._flush = function(done) {
-  var that = this;
-  this.encoder.encode(true, function(err, output) {
-    if (err) {
-      return done(err);
-    }
-    if (output) {
-      for (var i = 0; i < output.length; i++) {
-        that.push(output[i]);
-      }
-    }
-    done();
-  }, !this.sync);
-};
+function decompressStream(params) {
+  return new TransformStreamDecode(params);
+}
 
 // We need to fill the blockSize for better compression results
 function compressStreamChunk(stream, chunk, encoder, status, sync, done) {
-  var length = chunk.length;
+  const length = chunk.length;
 
   if (length > status.remaining) {
-    var slicedChunk = chunk.slice(0, status.remaining);
+    const slicedChunk = chunk.slice(0, status.remaining);
     chunk = chunk.slice(status.remaining);
     status.remaining = status.blockSize;
 
@@ -129,7 +191,7 @@ function compressStreamChunk(stream, chunk, encoder, status, sync, done) {
         return done(err);
       }
       if (output) {
-        for (var i = 0; i < output.length; i++) {
+        for (let i = 0; i < output.length; i++) {
           stream.push(output[i]);
         }
       }
@@ -147,57 +209,11 @@ function compressStreamChunk(stream, chunk, encoder, status, sync, done) {
         return done(err);
       }
       if (output) {
-        for (var i = 0; i < output.length; i++) {
+        for (let i = 0; i < output.length; i++) {
           stream.push(output[i]);
         }
       }
       done();
     }, !sync);
   }
-}
-
-function compressStream(params) {
-  return new TransformStreamEncode(params);
-}
-
-function TransformStreamDecode(params, sync) {
-  Transform.call(this, params);
-
-  this.sync = sync || false;
-  this.decoder = new decode.StreamDecode(params || {});
-}
-util.inherits(TransformStreamDecode, Transform);
-
-TransformStreamDecode.prototype._transform = function(chunk, encoding, next) {
-  var that = this;
-  this.decoder.transform(chunk, function(err, output) {
-    if (err) {
-      return next(err);
-    }
-    if (output) {
-      for (var i = 0; i < output.length; i++) {
-        that.push(output[i]);
-      }
-    }
-    next();
-  }, !this.sync);
-};
-
-TransformStreamDecode.prototype._flush = function(done) {
-  var that = this;
-  this.decoder.flush(function(err, output) {
-    if (err) {
-      return done(err);
-    }
-    if (output) {
-      for (var i = 0; i < output.length; i++) {
-        that.push(output[i]);
-      }
-    }
-    done();
-  }, !this.sync);
-};
-
-function decompressStream(params) {
-  return new TransformStreamDecode(params);
 }

@@ -2,8 +2,8 @@
 
 using namespace v8;
 
-StreamEncodeWorker::StreamEncodeWorker(Nan::Callback *callback, StreamEncode* obj, bool is_last)
-  : Nan::AsyncWorker(callback), obj(obj), is_last(is_last) {}
+StreamEncodeWorker::StreamEncodeWorker(Nan::Callback *callback, StreamEncode* obj, bool is_last, bool force_flush)
+  : Nan::AsyncWorker(callback), obj(obj), is_last(is_last), force_flush(force_flush) {}
 
 StreamEncodeWorker::~StreamEncodeWorker() {
 }
@@ -11,7 +11,7 @@ StreamEncodeWorker::~StreamEncodeWorker() {
 void StreamEncodeWorker::Execute() {
   uint8_t* buffer = NULL;
   size_t output_size = 0;
-  res = BrotliEncoderWriteData(obj->state, is_last, false, &output_size, &buffer);
+  res = BrotliEncoderWriteData(obj->state, is_last, force_flush, &output_size, &buffer);
 
   if (output_size > 0) {
     uint8_t* output = static_cast<uint8_t*>(obj->alloc.Alloc(output_size));

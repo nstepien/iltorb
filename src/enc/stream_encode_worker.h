@@ -7,7 +7,7 @@
 
 class StreamEncodeWorker : public Nan::AsyncWorker {
   public:
-    StreamEncodeWorker(Nan::Callback *callback, StreamEncode* obj, bool is_last);
+    StreamEncodeWorker(Nan::Callback *callback, StreamEncode* obj, bool is_last, bool force_flush);
 
     void Execute();
     void HandleOKCallback();
@@ -17,6 +17,7 @@ class StreamEncodeWorker : public Nan::AsyncWorker {
     StreamEncode* obj;
 
     bool is_last;
+    bool force_flush;
     int res;
 };
 

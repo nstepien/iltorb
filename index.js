@@ -23,8 +23,39 @@ class TransformStreamEncode extends Transform {
     };
   }
 
+  // We need to fill the blockSize for better compression results
   _transform(chunk, encoding, next) {
-    compressStreamChunk(this, chunk, this.encoder, this.status, this.sync, next);
+    const status = this.status;
+    const length = chunk.length;
+
+    if (length > status.remaining) {
+      const slicedChunk = chunk.slice(0, status.remaining);
+      chunk = chunk.slice(status.remaining);
+      status.remaining = status.blockSize;
+
+      this.encoder.copy(slicedChunk);
+      this.encoder.encode(false, (err, output) => {
+        if (err) {
+          return next(err);
+        }
+        this._push(output);
+        this._transform(chunk, encoding, next);
+      }, !this.sync);
+    } else if (length < status.remaining) {
+      status.remaining -= length;
+      this.encoder.copy(chunk);
+      next();
+    } else { // length === status.remaining
+      status.remaining = status.blockSize;
+      this.encoder.copy(chunk);
+      this.encoder.encode(false, (err, output) => {
+        if (err) {
+          return next(err);
+        }
+        this._push(output);
+        next();
+      }, !this.sync);
+    }
   }
 
   _flush(done) {
@@ -32,13 +63,26 @@ class TransformStreamEncode extends Transform {
       if (err) {
         return done(err);
       }
-      if (output) {
-        for (let i = 0; i < output.length; i++) {
-          this.push(output[i]);
-        }
-      }
+      this._push(output);
       done();
     }, !this.sync);
+  }
+
+  _push(output) {
+    if (output) {
+      for (let i = 0; i < output.length; i++) {
+        this.push(output[i]);
+      }
+    }
+  }
+
+  flush() {
+    this.encoder.flush((err, output) => {
+      if (err) {
+        throw err;
+      }
+      this._push(output);
+    });
   }
 }
 
@@ -54,11 +98,7 @@ class TransformStreamDecode extends Transform {
       if (err) {
         return next(err);
       }
-      if (output) {
-        for (let i = 0; i < output.length; i++) {
-          this.push(output[i]);
-        }
-      }
+      this._push(output);
       next();
     }, !this.sync);
   }
@@ -68,13 +108,17 @@ class TransformStreamDecode extends Transform {
       if (err) {
         return done(err);
       }
-      if (output) {
-        for (let i = 0; i < output.length; i++) {
-          this.push(output[i]);
-        }
-      }
+      this._push(output);
       done();
     }, !this.sync);
+  }
+
+  _push(output) {
+    if (output) {
+      for (let i = 0; i < output.length; i++) {
+        this.push(output[i]);
+      }
+    }
   }
 }
 
@@ -174,46 +218,4 @@ function compressStream(params) {
 
 function decompressStream(params) {
   return new TransformStreamDecode(params);
-}
-
-// We need to fill the blockSize for better compression results
-function compressStreamChunk(stream, chunk, encoder, status, sync, done) {
-  const length = chunk.length;
-
-  if (length > status.remaining) {
-    const slicedChunk = chunk.slice(0, status.remaining);
-    chunk = chunk.slice(status.remaining);
-    status.remaining = status.blockSize;
-
-    encoder.copy(slicedChunk);
-    encoder.encode(false, function(err, output) {
-      if (err) {
-        return done(err);
-      }
-      if (output) {
-        for (let i = 0; i < output.length; i++) {
-          stream.push(output[i]);
-        }
-      }
-      compressStreamChunk(stream, chunk, encoder, status, sync, done);
-    }, !sync);
-  } else if (length < status.remaining) {
-    status.remaining -= length;
-    encoder.copy(chunk);
-    done();
-  } else { // length === status.remaining
-    status.remaining = status.blockSize;
-    encoder.copy(chunk);
-    encoder.encode(false, function(err, output) {
-      if (err) {
-        return done(err);
-      }
-      if (output) {
-        for (let i = 0; i < output.length; i++) {
-          stream.push(output[i]);
-        }
-      }
-      done();
-    }, !sync);
-  }
 }

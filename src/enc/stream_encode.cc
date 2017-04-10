@@ -55,6 +55,7 @@ void StreamEncode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
   Nan::SetPrototypeMethod(tpl, "getBlockSize", GetBlockSize);
   Nan::SetPrototypeMethod(tpl, "copy", Copy);
   Nan::SetPrototypeMethod(tpl, "encode", Encode);
+  Nan::SetPrototypeMethod(tpl, "flush", Flush);
 
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("StreamEncode").ToLocalChecked(),
@@ -87,7 +88,7 @@ NAN_METHOD(StreamEncode::Encode) {
 
   bool is_last = info[0]->BooleanValue();
   Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
-  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, is_last);
+  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, is_last, false);
   if (info[2]->BooleanValue()) {
     Nan::AsyncQueueWorker(worker);
   } else {
@@ -95,6 +96,14 @@ NAN_METHOD(StreamEncode::Encode) {
     worker->WorkComplete();
     worker->Destroy();
   }
+}
+
+NAN_METHOD(StreamEncode::Flush) {
+  StreamEncode* obj = ObjectWrap::Unwrap<StreamEncode>(info.Holder());
+
+  Nan::Callback *callback = new Nan::Callback(info[0].As<Function>());
+  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, false, true);
+  Nan::AsyncQueueWorker(worker);
 }
 
 Nan::Persistent<Function> StreamEncode::constructor;

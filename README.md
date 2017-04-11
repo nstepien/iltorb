@@ -77,6 +77,10 @@ fs.createReadStream('path/to/input')
   .pipe(fs.createWriteStream('path/to/output'));
 ```
 
+##### compressionStream.flush()
+
+Call this method to flush pending data. Don't call this frivolously, premature flushes negatively impact the effectiveness of the compression algorithm.
+
 #### decompressStream([brotliDecodeParams])
 
 ```javascript

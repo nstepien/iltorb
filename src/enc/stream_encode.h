@@ -18,6 +18,7 @@ class StreamEncode : public StreamCoder {
     static NAN_METHOD(GetBlockSize);
     static NAN_METHOD(Copy);
     static NAN_METHOD(Encode);
+    static NAN_METHOD(Flush);
     static Nan::Persistent<v8::Function> constructor;
 };
 

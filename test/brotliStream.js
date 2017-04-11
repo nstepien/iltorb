@@ -63,6 +63,29 @@ describe('Brotli Stream', function() {
       this.timeout(30000);
       testStream(brotli.compressStream, 'large.txt', 'large.txt.compressed', done);
     });
+
+    it('should flush data', function(done) {
+      const buf1 = new Buffer('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
+      const buf2 = new Buffer('Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
+
+      const stream = brotli.compressStream();
+      const writeStream = new BufferWriter();
+
+      stream
+        .pipe(brotli.decompressStream())
+        .pipe(writeStream);
+
+      stream.write(buf1);
+      stream.flush();
+      stream.once('data', function() {
+        stream.end(buf2);
+      });
+
+      writeStream.on('finish', function() {
+        expect(writeStream.data).to.deep.equal(Buffer.concat([buf1, buf2]));
+        done();
+      });
+    });
   });
 
   describe('decompress', function() {

@@ -15,6 +15,7 @@ class TransformStreamEncode extends Transform {
   constructor(params, sync) {
     super(params);
     this.sync = sync || false;
+    this.flushing = false;
     this.encoder = new encode.StreamEncode(params || {});
     const blockSize = this.encoder.getBlockSize();
     this.status = {
@@ -77,11 +78,22 @@ class TransformStreamEncode extends Transform {
   }
 
   flush() {
+    if (this.flushing) {
+      return;
+    }
+
+    this.cork();
+    this.flushing = true;
+
     this.encoder.flush((err, output) => {
       if (err) {
-        throw err;
+        this.emit('error', err);
+      } else {
+        this.status.remaining = this.status.blockSize;
+        this._push(output);
       }
-      this._push(output);
+      this.uncork();
+      this.flushing = false;
     });
   }
 }

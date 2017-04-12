@@ -41,7 +41,7 @@ install:
   - cmd: DEL _git_tag.tmp
   - cmd: SET COMMIT_MSG="%APPVEYOR_REPO_COMMIT_MESSAGE%"
   - cmd: IF x%APPVEYOR_REPO_BRANCH%==x%GIT_TAG% SET PUBLISH_BINARY=true
-  - cmd: IF not x%COMMIT_MSG:[publish binary]=%==x%COMMIT_MSG% SET PUBLISH_BINARY=true
+  - cmd: IF "%APPVEYOR_REPO_TAG%"=="true" SET PUBLISH_BINARY=true
   - cmd: ECHO "Env Var PUBLISH_BINARY:"
   - cmd: ECHO %PUBLISH_BINARY%
   - git submodule update --init --recursive

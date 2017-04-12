@@ -29,7 +29,6 @@ before_install:
   - npm install -g node-gyp
   - PUBLISH_BINARY=false
   - if [[ $TRAVIS_BRANCH == `git describe --tags --always HEAD` ]]; then PUBLISH_BINARY=true; fi;
-  - if test "${COMMIT_MESSAGE#*'[publish binary]'}" != "$COMMIT_MESSAGE"; then PUBLISH_BINARY=true; fi;
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CC=gcc-4.8; export CXX=g++-4.8; fi
 
 install:

@@ -6,15 +6,22 @@
 
 [iltorb](https://www.npmjs.com/package/iltorb) is a [Node.js](https://nodejs.org) package offering native bindings for the [brotli](https://github.com/google/brotli) compression library.
 
-## Usage
+## Install
 
-### Install
-
-On Windows, in order to compile the native bindings, it is recommended to install the [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools) beforehand.
+This module uses `node-pre-gyp` to download a pre-compiled binary for your platform, if it exists. Otherwise, it will use `node-gyp` to build the module.
 
 ```
 npm install iltorb
 ```
+
+### Prerequisites for Building
+
+The following is required to build from source or when a pre-compiled binary does not exist.
+
+- Python 2.7
+- GCC 4.8+ (Unix) or [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools) (Windows), see [Node Building tools](https://github.com/nodejs/node-gyp#installation).
+
+## Methods
 
 ### Async
 

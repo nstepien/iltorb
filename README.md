@@ -16,7 +16,7 @@ npm install iltorb
 
 ### Prerequisites for Building
 
-The following is required to build from source or when a pre-compiled binary does not exist.
+The following is required to build from source or when a [pre-compiled binary](https://node-iltorb.s3.amazonaws.com/index.html) does not exist.
 
 - Python 2.7
 - GCC 4.8+ (Unix) or [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools) (Windows), see [Node Building tools](https://github.com/nodejs/node-gyp#installation).

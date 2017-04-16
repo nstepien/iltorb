@@ -119,6 +119,12 @@ ECHO installing node-gyp
 CALL npm install -g node-gyp
 IF %ERRORLEVEL% NEQ 0 GOTO ERROR
 
+IF %NODE_MAJOR% NEQ 4 GOTO NO_HACK_NEEDED
+CALL npm config set -g cafile=package.json
+CALL npm config set -g strict-ssl=false
+
+:NO_HACK_NEEDED
+
 CALL npm install --build-from-source --msvs_version=%msvs_version% %TOOLSET_ARGS% --loglevel=http
 IF %ERRORLEVEL% NEQ 0 GOTO ERROR
 

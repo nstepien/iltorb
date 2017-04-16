@@ -31,6 +31,7 @@ matrix:
 os: Visual Studio 2015
 
 install:
+  - cmd: SET JOBS=max
   - cmd: SET PUBLISH_BINARY=false
   - cmd: git describe --tags --always HEAD > _git_tag.tmp
   - cmd: SET /p GIT_TAG=<_git_tag.tmp

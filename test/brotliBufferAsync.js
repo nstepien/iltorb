@@ -53,6 +53,10 @@ describe('Brotli Buffer Async', function() {
     });
 
     it('should compress a large buffer', function(done) {
+      if (process.env.SKIP_LARGE_BUFFER_TEST) {
+        this.skip();
+      }
+
       this.timeout(30000);
       testBufferAsync(brotli.compress, 'large.txt', 'large.txt.compressed', done);
     });
@@ -81,6 +85,10 @@ describe('Brotli Buffer Async', function() {
     });
 
     it('should decompress to another large buffer', function(done) {
+      if (process.env.SKIP_LARGE_BUFFER_TEST) {
+        this.skip();
+      }
+
       this.timeout(30000);
       testBufferAsync(brotli.decompress, 'large.txt.compressed', 'large.txt', done);
     });

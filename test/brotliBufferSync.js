@@ -41,6 +41,10 @@ describe('Brotli Buffer Sync', function() {
     });
 
     it('should compress a large buffer', function() {
+      if (process.env.SKIP_LARGE_BUFFER_TEST) {
+        this.skip();
+      }
+
       this.timeout(30000);
       testBufferSync(brotli.compressSync, 'large.txt', 'large.txt.compressed');
     });
@@ -69,6 +73,10 @@ describe('Brotli Buffer Sync', function() {
     });
 
     it('should decompress to another large buffer', function() {
+      if (process.env.SKIP_LARGE_BUFFER_TEST) {
+        this.skip();
+      }
+
       this.timeout(30000);
       testBufferSync(brotli.decompressSync, 'large.txt.compressed', 'large.txt');
     });

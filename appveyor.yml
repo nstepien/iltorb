@@ -33,6 +33,9 @@ matrix:
 
 os: Visual Studio 2015
 
+artifacts:
+  - path: 'build\stage\**\*.tar.gz'
+
 install:
   - cmd: SET PUBLISH_BINARY=false
   - cmd: git describe --tags --always HEAD > _git_tag.tmp

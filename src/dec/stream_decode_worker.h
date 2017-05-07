@@ -3,14 +3,14 @@
 
 #include <nan.h>
 #include "stream_decode.h"
-#include "../../brotli/dec/decode.h"
+#include "brotli/decode.h"
 
 class StreamDecodeWorker : public Nan::AsyncWorker {
- public:
-  StreamDecodeWorker(Nan::Callback *callback, StreamDecode* obj);
+  public:
+    StreamDecodeWorker(Nan::Callback *callback, StreamDecode* obj);
 
-  void Execute();
-  void HandleOKCallback();
+    void Execute();
+    void HandleOKCallback();
 
   private:
     ~StreamDecodeWorker();

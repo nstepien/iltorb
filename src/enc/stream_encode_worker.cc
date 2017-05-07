@@ -2,33 +2,34 @@
 
 using namespace v8;
 
-StreamEncodeWorker::StreamEncodeWorker(Nan::Callback *callback, StreamEncode* obj, bool is_last, bool force_flush)
-  : Nan::AsyncWorker(callback), obj(obj), is_last(is_last), force_flush(force_flush) {}
+StreamEncodeWorker::StreamEncodeWorker(Nan::Callback *callback, StreamEncode* obj, BrotliEncoderOperation op)
+  : Nan::AsyncWorker(callback), obj(obj), op(op) {}
 
 StreamEncodeWorker::~StreamEncodeWorker() {
 }
 
 void StreamEncodeWorker::Execute() {
-  uint8_t* buffer = NULL;
-  size_t output_size = 0;
-  res = BrotliEncoderWriteData(obj->state, is_last, force_flush, &output_size, &buffer);
-
-  if (output_size > 0) {
-    uint8_t* output = static_cast<uint8_t*>(obj->alloc.Alloc(output_size));
-    if (!output) {
-      res = 0;
-      return;
-    }
-
-    memcpy(output, buffer, output_size);
-    Allocator::AllocatedBuffer* buf_info = Allocator::GetBufferInfo(output);
-    buf_info->available = 0;
-    obj->pending_output.push_back(output);
+  void* buf = obj->alloc.Alloc(131072);
+  if (!buf) {
+    res = BROTLI_FALSE;
+    return;
   }
+
+  uint8_t* next_out = static_cast<uint8_t*>(buf);
+  Allocator::AllocatedBuffer* buf_info = Allocator::GetBufferInfo(buf);
+  res = BrotliEncoderCompressStream(obj->state,
+                                    op,
+                                    &obj->available_in,
+                                    &obj->next_in,
+                                    &buf_info->available,
+                                    &next_out,
+                                    NULL);
+
+  obj->pending_output.push_back(static_cast<uint8_t*>(buf));
 }
 
 void StreamEncodeWorker::HandleOKCallback() {
-  if (!res) {
+  if (res == BROTLI_FALSE) {
     Local<Value> argv[] = {
       Nan::Error("Brotli failed to compress.")
     };

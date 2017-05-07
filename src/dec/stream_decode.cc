@@ -52,8 +52,6 @@ NAN_METHOD(StreamDecode::Transform) {
   Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
   StreamDecodeWorker *worker = new StreamDecodeWorker(callback, obj);
   if (info[2]->BooleanValue()) {
-    worker->SaveToPersistent(0U, buffer);
-    worker->SaveToPersistent(1U, obj->handle());
     Nan::AsyncQueueWorker(worker);
   } else {
     worker->Execute();

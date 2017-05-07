@@ -91,6 +91,8 @@ NAN_METHOD(StreamEncode::Flush) {
   BrotliEncoderOperation op = info[0]->BooleanValue()
     ? BROTLI_OPERATION_FINISH
     : BROTLI_OPERATION_FLUSH;
+  obj->next_in = nullptr;
+  obj->available_in = 0;
   StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, op);
   if (info[2]->BooleanValue()) {
     Nan::AsyncQueueWorker(worker);

@@ -64,6 +64,8 @@ NAN_METHOD(StreamDecode::Flush) {
   StreamDecode* obj = ObjectWrap::Unwrap<StreamDecode>(info.Holder());
 
   Nan::Callback *callback = new Nan::Callback(info[0].As<Function>());
+  obj->next_in = nullptr;
+  obj->available_in = 0;
   StreamDecodeWorker *worker = new StreamDecodeWorker(callback, obj);
   if (info[1]->BooleanValue()) {
     Nan::AsyncQueueWorker(worker);

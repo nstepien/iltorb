@@ -68,18 +68,20 @@ describe('Brotli Stream', function() {
       const buf1 = new Buffer('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
       const buf2 = new Buffer('Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
 
-      const stream = brotli.compressStream();
+      const encStream = brotli.compressStream();
+      const decStream = brotli.decompressStream();
       const writeStream = new BufferWriter();
 
-      stream
-        .pipe(brotli.decompressStream())
+      encStream
+        .pipe(decStream)
         .pipe(writeStream);
 
-      stream.once('data', function() {
-        stream.end(buf2);
+      encStream.write(buf1);
+      encStream.flush();
+      decStream.once('data', function(data) {
+        console.log('data:', data.toString());
+        encStream.end(buf2);
       });
-      stream.write(buf1);
-      stream.flush();
 
       writeStream.on('finish', function() {
         expect(writeStream.data.toString()).to.equal(Buffer.concat([buf1, buf2]).toString());

@@ -9,27 +9,34 @@ StreamEncodeWorker::~StreamEncodeWorker() {
 }
 
 void StreamEncodeWorker::Execute() {
-  Allocator::AllocatedBuffer* buf_info;
+  size_t available_out = 0;
+  res = BrotliEncoderCompressStream(obj->state,
+                                    op,
+                                    &obj->available_in,
+                                    &obj->next_in,
+                                    &available_out,
+                                    NULL,
+                                    NULL);
 
-  do {
-    void* buf = obj->alloc.Alloc(131072);
+  if (res == BROTLI_FALSE) {
+    return;
+  }
+
+  if (BrotliEncoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
+    size_t size = 0;
+    const uint8_t* output = BrotliEncoderTakeOutput(obj->state, &size);
+
+    void* buf = obj->alloc.Alloc(size);
     if (!buf) {
       res = BROTLI_FALSE;
       return;
     }
 
-    uint8_t* next_out = static_cast<uint8_t*>(buf);
-    buf_info = Allocator::GetBufferInfo(buf);
-    res = BrotliEncoderCompressStream(obj->state,
-                                      op,
-                                      &obj->available_in,
-                                      &obj->next_in,
-                                      &buf_info->available,
-                                      &next_out,
-                                      NULL);
-
+    Allocator::AllocatedBuffer* buf_info = Allocator::GetBufferInfo(buf);
+    buf_info->available -= size;
+    memcpy(buf, output, size);
     obj->pending_output.push_back(static_cast<uint8_t*>(buf));
-  } while(obj->available_in > 0 || BrotliEncoderHasMoreOutput(obj->state) == BROTLI_TRUE);
+  }
 }
 
 void StreamEncodeWorker::HandleOKCallback() {

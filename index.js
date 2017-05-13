@@ -15,17 +15,24 @@ class TransformStreamEncode extends Transform {
   constructor(params, sync) {
     super(params);
     this.sync = sync || false;
+    this.encoding = false;
+    this.corked = false;
     this.flushing = false;
     this.encoder = new encode.StreamEncode(params || {});
   }
 
   _transform(chunk, encoding, next) {
+    this.encoding = true;
     this.encoder.transform(chunk, (err, output) => {
+      this.encoding = false;
       if (err) {
         return next(err);
       }
       this._push(output);
       next();
+      if (this.flushing) {
+        this.flush(true);
+      }
     }, !this.sync);
   }
 
@@ -47,13 +54,20 @@ class TransformStreamEncode extends Transform {
     }
   }
 
-  flush() {
-    if (this.flushing) {
+  flush(force) {
+    if (this.flushing && !force) {
       return;
     }
 
-    this.cork();
+    if (!this.corked) {
+      this.cork();
+    }
+    this.corked = true;
     this.flushing = true;
+
+    if (this.encoding) {
+      return;
+    }
 
     this.encoder.flush(false, (err, output) => {
       if (err) {
@@ -61,8 +75,11 @@ class TransformStreamEncode extends Transform {
       } else {
         this._push(output);
       }
-      this.uncork();
-      this.flushing = false;
+      process.nextTick(() => {
+        this.corked = false;
+        this.flushing = false;
+        this.uncork();
+      });
     }, !this.sync);
   }
 }

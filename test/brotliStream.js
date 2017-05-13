@@ -75,11 +75,11 @@ describe('Brotli Stream', function() {
         .pipe(brotli.decompressStream())
         .pipe(writeStream);
 
-      stream.write(buf1);
-      stream.flush();
       stream.once('data', function() {
         stream.end(buf2);
       });
+      stream.write(buf1);
+      stream.flush();
 
       writeStream.on('finish', function() {
         expect(writeStream.data.toString()).to.equal(Buffer.concat([buf1, buf2]).toString());

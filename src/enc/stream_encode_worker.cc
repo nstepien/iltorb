@@ -9,23 +9,27 @@ StreamEncodeWorker::~StreamEncodeWorker() {
 }
 
 void StreamEncodeWorker::Execute() {
-  void* buf = obj->alloc.Alloc(131072);
-  if (!buf) {
-    res = BROTLI_FALSE;
-    return;
-  }
+  Allocator::AllocatedBuffer* buf_info;
 
-  uint8_t* next_out = static_cast<uint8_t*>(buf);
-  Allocator::AllocatedBuffer* buf_info = Allocator::GetBufferInfo(buf);
-  res = BrotliEncoderCompressStream(obj->state,
-                                    op,
-                                    &obj->available_in,
-                                    &obj->next_in,
-                                    &buf_info->available,
-                                    &next_out,
-                                    NULL);
+  do {
+    void* buf = obj->alloc.Alloc(131072);
+    if (!buf) {
+      res = BROTLI_FALSE;
+      return;
+    }
 
-  obj->pending_output.push_back(static_cast<uint8_t*>(buf));
+    uint8_t* next_out = static_cast<uint8_t*>(buf);
+    buf_info = Allocator::GetBufferInfo(buf);
+    res = BrotliEncoderCompressStream(obj->state,
+                                      op,
+                                      &obj->available_in,
+                                      &obj->next_in,
+                                      &buf_info->available,
+                                      &next_out,
+                                      NULL);
+
+    obj->pending_output.push_back(static_cast<uint8_t*>(buf));
+  } while(obj->available_in > 0 || BrotliEncoderHasMoreOutput(obj->state) == BROTLI_TRUE);
 }
 
 void StreamEncodeWorker::HandleOKCallback() {

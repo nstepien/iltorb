@@ -82,7 +82,7 @@ describe('Brotli Stream', function() {
       });
 
       writeStream.on('finish', function() {
-        expect(writeStream.data.toString()).to.equal(Buffer.concat([buf1, buf2]).toString());
+        expect(writeStream.data).to.deep.equal(Buffer.concat([buf1, buf2]));
         done();
       });
     });

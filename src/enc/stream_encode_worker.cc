@@ -9,18 +9,20 @@ StreamEncodeWorker::~StreamEncodeWorker() {
 }
 
 void StreamEncodeWorker::Execute() {
-  size_t available_out = 0;
-  res = BrotliEncoderCompressStream(obj->state,
-                                    op,
-                                    &obj->available_in,
-                                    &obj->next_in,
-                                    &available_out,
-                                    NULL,
-                                    NULL);
+  do {
+    size_t available_out = 0;
+    res = BrotliEncoderCompressStream(obj->state,
+                                      op,
+                                      &obj->available_in,
+                                      &obj->next_in,
+                                      &available_out,
+                                      NULL,
+                                      NULL);
 
-  if (res == BROTLI_FALSE) {
-    return;
-  }
+    if (res == BROTLI_FALSE) {
+      return;
+    }
+  } while (obj->available_in > 0);
 
   if (BrotliEncoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
     size_t size = 0;

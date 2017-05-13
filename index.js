@@ -75,12 +75,10 @@ class TransformStreamEncode extends Transform {
       } else {
         this._push(output);
       }
-      process.nextTick(() => {
-        this.corked = false;
-        this.flushing = false;
-        this.uncork();
-      });
-    }, !this.sync);
+      this.corked = false;
+      this.flushing = false;
+      this.uncork();
+    }, true);
   }
 }
 

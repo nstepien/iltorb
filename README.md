@@ -25,7 +25,7 @@ The following is required to build from source or when a [pre-compiled binary](h
 
 ### Async
 
-#### compress(buffer[, brotliParams], callback)
+#### compress(buffer[, brotliEncodeParams], callback)
 
 ```javascript
 const compress = require('iltorb').compress;
@@ -47,7 +47,7 @@ decompress(input, function(err, output) {
 
 ### Sync
 
-#### compressSync(buffer[, brotliParams])
+#### compressSync(buffer[, brotliEncodeParams])
 
 ```javascript
 const compressSync = require('iltorb').compressSync;
@@ -73,7 +73,7 @@ try {
 
 ### Stream
 
-#### compressStream([brotliParams])
+#### compressStream([brotliEncodeParams])
 
 ```javascript
 const compressStream = require('iltorb').compressStream;
@@ -99,19 +99,21 @@ fs.createReadStream('path/to/input')
   .pipe(fs.createWriteStream('path/to/output'));
 ```
 
-### brotliParams
+### brotliEncodeParams
 
-The `compress`, `compressSync` and `compressStream` methods may accept an optional `brotliParams` object to define some or all of brotli's compression parameters:
+The `compress`, `compressSync` and `compressStream` methods may accept an optional `brotliEncodeParams` object to define some or all of brotli's compression parameters:
 - [type definition](https://github.com/google/brotli/blob/v0.6.0/enc/quality.h#L42-L51)
 - [defaults](https://github.com/google/brotli/blob/v0.6.0/enc/encode.c#L676-L683)
 - [explanations](https://github.com/google/brotli/blob/v0.6.0/include/brotli/encode.h#L130-L181)
 
 ```javascript
-const brotliParams = {
+const brotliEncodeParams = {
   mode: 0,
   quality: 11,
   lgwin: 22,
   lgblock: 0,
+  size_hint: 0, // automatically set for `compress` and `compressSync`
+  disable_literal_context_modeling: false,
   dictionary: Buffer
 };
 ```

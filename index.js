@@ -131,6 +131,10 @@ function compress(input, params, cb) {
     process.nextTick(cb, new Error('Second argument is not a function.'));
     return;
   }
+  if (typeof params !== 'object') {
+    params = {};
+  }
+  params.size_hint = input.length;
   const stream = new TransformStreamEncode(params);
   const chunks = [];
   let length = 0;
@@ -176,6 +180,10 @@ function compressSync(input, params) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('Brotli input is not a buffer.');
   }
+  if (typeof params !== 'object') {
+    params = {};
+  }
+  params.size_hint = input.length;
   const stream = new TransformStreamEncode(params, true);
   const chunks = [];
   let length = 0;

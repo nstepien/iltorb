@@ -3,11 +3,11 @@
 
 #include <nan.h>
 #include "stream_encode.h"
-#include "../../brotli/enc/encode.h"
+#include "brotli/encode.h"
 
 class StreamEncodeWorker : public Nan::AsyncWorker {
   public:
-    StreamEncodeWorker(Nan::Callback *callback, StreamEncode* obj, bool is_last, bool force_flush);
+    StreamEncodeWorker(Nan::Callback *callback, StreamEncode* obj, BrotliEncoderOperation op);
 
     void Execute();
     void HandleOKCallback();
@@ -15,10 +15,8 @@ class StreamEncodeWorker : public Nan::AsyncWorker {
   private:
     ~StreamEncodeWorker();
     StreamEncode* obj;
-
-    bool is_last;
-    bool force_flush;
-    int res;
+    BrotliEncoderOperation op;
+    bool res;
 };
 
 #endif

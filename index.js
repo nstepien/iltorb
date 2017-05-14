@@ -15,52 +15,29 @@ class TransformStreamEncode extends Transform {
   constructor(params, sync) {
     super(params);
     this.sync = sync || false;
+    this.encoding = false;
+    this.corked = false;
     this.flushing = false;
     this.encoder = new encode.StreamEncode(params || {});
-    const blockSize = this.encoder.getBlockSize();
-    this.status = {
-      blockSize,
-      remaining: blockSize
-    };
   }
 
-  // We need to fill the blockSize for better compression results
   _transform(chunk, encoding, next) {
-    const status = this.status;
-    const length = chunk.length;
-
-    if (length > status.remaining) {
-      const slicedChunk = chunk.slice(0, status.remaining);
-      chunk = chunk.slice(status.remaining);
-      status.remaining = status.blockSize;
-
-      this.encoder.copy(slicedChunk);
-      this.encoder.encode(false, (err, output) => {
-        if (err) {
-          return next(err);
-        }
-        this._push(output);
-        this._transform(chunk, encoding, next);
-      }, !this.sync);
-    } else if (length < status.remaining) {
-      status.remaining -= length;
-      this.encoder.copy(chunk);
+    this.encoding = true;
+    this.encoder.transform(chunk, (err, output) => {
+      this.encoding = false;
+      if (err) {
+        return next(err);
+      }
+      this._push(output);
       next();
-    } else { // length === status.remaining
-      status.remaining = status.blockSize;
-      this.encoder.copy(chunk);
-      this.encoder.encode(false, (err, output) => {
-        if (err) {
-          return next(err);
-        }
-        this._push(output);
-        next();
-      }, !this.sync);
-    }
+      if (this.flushing) {
+        this.flush(true);
+      }
+    }, !this.sync);
   }
 
   _flush(done) {
-    this.encoder.encode(true, (err, output) => {
+    this.encoder.flush(true, (err, output) => {
       if (err) {
         return done(err);
       }
@@ -77,24 +54,31 @@ class TransformStreamEncode extends Transform {
     }
   }
 
-  flush() {
-    if (this.flushing) {
+  flush(force) {
+    if (this.flushing && !force) {
       return;
     }
 
-    this.cork();
+    if (!this.corked) {
+      this.cork();
+    }
+    this.corked = true;
     this.flushing = true;
 
-    this.encoder.flush((err, output) => {
+    if (this.encoding) {
+      return;
+    }
+
+    this.encoder.flush(false, (err, output) => {
       if (err) {
         this.emit('error', err);
       } else {
-        this.status.remaining = this.status.blockSize;
         this._push(output);
       }
-      this.uncork();
+      this.corked = false;
       this.flushing = false;
-    });
+      this.uncork();
+    }, true);
   }
 }
 

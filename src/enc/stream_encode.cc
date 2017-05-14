@@ -52,9 +52,7 @@ void StreamEncode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
   tpl->SetClassName(Nan::New("StreamEncode").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-  Nan::SetPrototypeMethod(tpl, "getBlockSize", GetBlockSize);
-  Nan::SetPrototypeMethod(tpl, "copy", Copy);
-  Nan::SetPrototypeMethod(tpl, "encode", Encode);
+  Nan::SetPrototypeMethod(tpl, "transform", Transform);
   Nan::SetPrototypeMethod(tpl, "flush", Flush);
 
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
@@ -68,27 +66,15 @@ NAN_METHOD(StreamEncode::New) {
   info.GetReturnValue().Set(info.This());
 }
 
-NAN_METHOD(StreamEncode::GetBlockSize) {
-  StreamEncode* obj = ObjectWrap::Unwrap<StreamEncode>(info.Holder());
-  info.GetReturnValue().Set(Nan::New<Number>(BrotliEncoderInputBlockSize(obj->state)));
-}
-
-NAN_METHOD(StreamEncode::Copy) {
+NAN_METHOD(StreamEncode::Transform) {
   StreamEncode* obj = ObjectWrap::Unwrap<StreamEncode>(info.Holder());
 
   Local<Object> buffer = info[0]->ToObject();
-  const size_t input_size = node::Buffer::Length(buffer);
-  const char* input_buffer = node::Buffer::Data(buffer);
+  obj->next_in = (const uint8_t*) node::Buffer::Data(buffer);
+  obj->available_in = node::Buffer::Length(buffer);
 
-  BrotliEncoderCopyInputToRingBuffer(obj->state, input_size, (const uint8_t*) input_buffer);
-}
-
-NAN_METHOD(StreamEncode::Encode) {
-  StreamEncode* obj = ObjectWrap::Unwrap<StreamEncode>(info.Holder());
-
-  bool is_last = info[0]->BooleanValue();
   Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
-  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, is_last, false);
+  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, BROTLI_OPERATION_PROCESS);
   if (info[2]->BooleanValue()) {
     Nan::AsyncQueueWorker(worker);
   } else {
@@ -101,9 +87,20 @@ NAN_METHOD(StreamEncode::Encode) {
 NAN_METHOD(StreamEncode::Flush) {
   StreamEncode* obj = ObjectWrap::Unwrap<StreamEncode>(info.Holder());
 
-  Nan::Callback *callback = new Nan::Callback(info[0].As<Function>());
-  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, false, true);
-  Nan::AsyncQueueWorker(worker);
+  Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
+  BrotliEncoderOperation op = info[0]->BooleanValue()
+    ? BROTLI_OPERATION_FINISH
+    : BROTLI_OPERATION_FLUSH;
+  obj->next_in = nullptr;
+  obj->available_in = 0;
+  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, op);
+  if (info[2]->BooleanValue()) {
+    Nan::AsyncQueueWorker(worker);
+  } else {
+    worker->Execute();
+    worker->WorkComplete();
+    worker->Destroy();
+  }
 }
 
 Nan::Persistent<Function> StreamEncode::constructor;

@@ -3,7 +3,7 @@
 
 #include <nan.h>
 #include "../common/stream_coder.h"
-#include "../../brotli/dec/decode.h"
+#include "brotli/decode.h"
 
 class StreamDecode : public StreamCoder {
   public:

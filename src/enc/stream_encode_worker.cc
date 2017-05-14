@@ -2,33 +2,47 @@
 
 using namespace v8;
 
-StreamEncodeWorker::StreamEncodeWorker(Nan::Callback *callback, StreamEncode* obj, bool is_last, bool force_flush)
-  : Nan::AsyncWorker(callback), obj(obj), is_last(is_last), force_flush(force_flush) {}
+StreamEncodeWorker::StreamEncodeWorker(Nan::Callback *callback, StreamEncode* obj, BrotliEncoderOperation op)
+  : Nan::AsyncWorker(callback), obj(obj), op(op) {}
 
 StreamEncodeWorker::~StreamEncodeWorker() {
 }
 
 void StreamEncodeWorker::Execute() {
-  uint8_t* buffer = NULL;
-  size_t output_size = 0;
-  res = BrotliEncoderWriteData(obj->state, is_last, force_flush, &output_size, &buffer);
+  do {
+    size_t available_out = 0;
+    res = BrotliEncoderCompressStream(obj->state,
+                                      op,
+                                      &obj->available_in,
+                                      &obj->next_in,
+                                      &available_out,
+                                      NULL,
+                                      NULL);
 
-  if (output_size > 0) {
-    uint8_t* output = static_cast<uint8_t*>(obj->alloc.Alloc(output_size));
-    if (!output) {
-      res = 0;
+    if (res == BROTLI_FALSE) {
+      return;
+    }
+  } while (obj->available_in > 0);
+
+  if (BrotliEncoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
+    size_t size = 0;
+    const uint8_t* output = BrotliEncoderTakeOutput(obj->state, &size);
+
+    void* buf = obj->alloc.Alloc(size);
+    if (!buf) {
+      res = BROTLI_FALSE;
       return;
     }
 
-    memcpy(output, buffer, output_size);
-    Allocator::AllocatedBuffer* buf_info = Allocator::GetBufferInfo(output);
-    buf_info->available = 0;
-    obj->pending_output.push_back(output);
+    Allocator::AllocatedBuffer* buf_info = Allocator::GetBufferInfo(buf);
+    buf_info->available -= size;
+    memcpy(buf, output, size);
+    obj->pending_output.push_back(static_cast<uint8_t*>(buf));
   }
 }
 
 void StreamEncodeWorker::HandleOKCallback() {
-  if (!res) {
+  if (res == BROTLI_FALSE) {
     Local<Value> argv[] = {
       Nan::Error("Brotli failed to compress.")
     };

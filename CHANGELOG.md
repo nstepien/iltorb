@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.3.0] - 2017-05-14
 ### Added
 - CHANGELOG
 - Support `size_hint` and `disable_literal_context_modeling` encode parameters
@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.2.0] - 2017-04-11
 ### Added
-- Support for `flush` with streams
+- Support for the `flush()` method on compression streams
 
 ## [1.1.0] - 2017-04-09
 ### Added
@@ -133,7 +133,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## [1.0.0] - 2015-10-18
 
 
-[Unreleased]: https://github.com/MayhemYDG/iltorb/compare/1.2.1...HEAD
+[1.3.0]: https://github.com/MayhemYDG/iltorb/compare/1.3.0...1.2.1
 [1.2.1]: https://github.com/MayhemYDG/iltorb/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/MayhemYDG/iltorb/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/MayhemYDG/iltorb/compare/1.0.13...1.1.0

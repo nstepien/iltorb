@@ -24,7 +24,7 @@ void StreamEncodeWorker::Execute() {
     }
   } while (obj->available_in > 0);
 
-  if (BrotliEncoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
+  while (BrotliEncoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
     size_t size = 0;
     const uint8_t* output = BrotliEncoderTakeOutput(obj->state, &size);
 
@@ -34,8 +34,6 @@ void StreamEncodeWorker::Execute() {
       return;
     }
 
-    Allocator::AllocatedBuffer* buf_info = Allocator::GetBufferInfo(buf);
-    buf_info->available -= size;
     memcpy(buf, output, size);
     obj->pending_output.push_back(static_cast<uint8_t*>(buf));
   }

@@ -9,25 +9,32 @@ StreamDecodeWorker::~StreamDecodeWorker() {
 }
 
 void StreamDecodeWorker::Execute() {
-  Allocator::AllocatedBuffer* buf_info;
-
   do {
-    void* buf = obj->alloc.Alloc(131072);
-    if (!buf) {
-      res = BROTLI_DECODER_RESULT_ERROR;
-      return;
-    }
-
-    uint8_t* next_out = static_cast<uint8_t*>(buf);
-    buf_info = Allocator::GetBufferInfo(buf);
+    size_t available_out = 0;
     res = BrotliDecoderDecompressStream(obj->state,
                                  &obj->available_in,
                                  &obj->next_in,
-                                 &buf_info->available,
-                                 &next_out,
+                                 &available_out,
+                                 NULL,
                                  NULL);
 
-    obj->pending_output.push_back(static_cast<uint8_t*>(buf));
+    if (res == BROTLI_DECODER_RESULT_ERROR) {
+      return;
+    }
+
+    while (BrotliDecoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
+      size_t size = 0;
+      const uint8_t* output = BrotliDecoderTakeOutput(obj->state, &size);
+
+      void* buf = obj->alloc.Alloc(size);
+      if (!buf) {
+        res = BROTLI_DECODER_RESULT_ERROR;
+        return;
+      }
+
+      memcpy(buf, output, size);
+      obj->pending_output.push_back(static_cast<uint8_t*>(buf));
+    }
   } while(res == BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT);
 }
 

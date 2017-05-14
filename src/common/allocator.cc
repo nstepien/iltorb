@@ -13,7 +13,6 @@ void* Allocator::Alloc(size_t size) {
   }
 
   buf->size = size;
-  buf->available = size;
   allocated_unreported_memory += size + sizeof(*buf);
   return static_cast<void*>(buf + 1);
 }
@@ -23,8 +22,9 @@ Allocator::AllocatedBuffer* Allocator::GetBufferInfo(void* address) {
 }
 
 void Allocator::Free(void* opaque, void* address) {
-  if (!address)
+  if (!address) {
     return;
+  }
 
   AllocatedBuffer* buf = GetBufferInfo(address);
 

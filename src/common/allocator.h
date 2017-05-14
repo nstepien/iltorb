@@ -11,7 +11,6 @@ struct Allocator {
 
   struct AllocatedBuffer {
     size_t size;
-    size_t available;
     /* char data[...]; */
   };
 

@@ -32,7 +32,10 @@
         "brotli/include"
       ],
       "defines": ["NOMINMAX"],
-      "cflags" : ["-O2"],
+      "cflags" : [
+        "-include ../src/_memcpy.h",
+        "-O2"
+      ],
       "xcode_settings": {
         "OTHER_CFLAGS" : ["-O2"]
       }
@@ -55,7 +58,10 @@
         "<!(node -e \"require('nan')\")",
         "brotli/include"
       ],
-      "cflags" : ["-O2"],
+      "cflags" : [
+        "-include ../src/_memcpy.h",
+        "-O2"
+      ],
       "xcode_settings": {
         "OTHER_CFLAGS" : ["-O2"]
       }

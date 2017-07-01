@@ -140,7 +140,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
-[1.3.1]: https://github.com/MayhemYDG/iltorb/compare/1.3.1...1.3.2
+[1.3.2]: https://github.com/MayhemYDG/iltorb/compare/1.3.1...1.3.2
 [1.3.1]: https://github.com/MayhemYDG/iltorb/compare/1.3.0...1.3.1
 [1.3.0]: https://github.com/MayhemYDG/iltorb/compare/1.2.1...1.3.0
 [1.2.1]: https://github.com/MayhemYDG/iltorb/compare/1.2.0...1.2.1

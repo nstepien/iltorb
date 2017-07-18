@@ -5,6 +5,8 @@ environment:
     secure: 7nm7VvyIyBo9FKCCe3EeJfo06ms6mZSvkONjwS78Thw=
   node_pre_gyp_secretAccessKey:
     secure: mLU2PF28c0fKyjSFSSufKr7w/KwHCKQEouWPdJRUzNg6/yRiHc5SEU3BMkHzG18M
+  NODE_PRE_GYP_GITHUB_TOKEN:
+    secure: LSw1Y8ymx9ujH3ExcfoRYr32Pr+XU4w61pdlGDleIhJHzi/FOVURAruyUBcgLnhc
   matrix:
     - nodejs_version: "4"
       platform: x64

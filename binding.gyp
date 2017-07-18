@@ -1,6 +1,19 @@
 {
   "targets": [
     {
+      "target_name": "iltorb",
+      "sources": [
+        "src/_iltorb.h"
+      ],
+      "defines": ["NOMINMAX"],
+      "cflags" : [
+        "-O2"
+      ],
+      "xcode_settings": {
+        "OTHER_CFLAGS" : ["-O2"]
+      }
+    },
+    {
       "target_name": "encode",
       "sources": [
         "brotli/common/dictionary.c",
@@ -70,12 +83,14 @@
       "target_name": "action_after_build",
       "type": "none",
       "dependencies": [
+        "iltorb",
         "encode",
         "decode"
       ],
       "copies": [
         {
           "files": [
+            "<(PRODUCT_DIR)/iltorb.node",
             "<(PRODUCT_DIR)/encode.node",
             "<(PRODUCT_DIR)/decode.node"
           ],

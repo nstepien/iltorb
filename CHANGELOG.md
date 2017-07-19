@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.5] - 2017-07-18
+### Changed
+- Update CI build pipeline to publish to GitHub instead of S3
+
 ## [1.3.4] - 2017-07-09
 ### Fixed
 - Link failure on ARM
@@ -148,6 +152,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
+[1.3.5]: https://github.com/MayhemYDG/iltorb/compare/1.3.4...1.3.5
 [1.3.4]: https://github.com/MayhemYDG/iltorb/compare/1.3.3...1.3.4
 [1.3.3]: https://github.com/MayhemYDG/iltorb/compare/1.3.2...1.3.3
 [1.3.2]: https://github.com/MayhemYDG/iltorb/compare/1.3.1...1.3.2

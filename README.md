@@ -16,7 +16,7 @@ npm install iltorb
 
 ### Prerequisites for Building
 
-The following is required to build from source or when a [pre-compiled binary](https://node-iltorb.s3.amazonaws.com/index.html) does not exist.
+The following is required to build from source or when a [pre-compiled binary](https://github.com/MayhemYDG/iltorb/releases) does not exist.
 
 - Python 2.7
 - GCC 4.8+ (Unix) or [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools) (Windows), see [Node Building tools](https://github.com/nodejs/node-gyp#installation).
@@ -127,6 +127,17 @@ const brotliDecodeParams = {
   dictionary: Buffer
 };
 ```
+
+## Troubleshooting
+
+1. I am unable to install `iltorb` because the host (GitHub) that serves the binaries is blocked by my firewall.
+
+    a) By **default**, if the binaries could not be downloaded for any reason, `npm` will attempt to compile the binaries locally on your machine. This requires having all of the build requirements fulfilled.
+
+    b) You can override the `binary.host` value found in `package.json` with the following methods:
+
+      - using the following ENV variable `npm_config_iltorb_binary_host_mirror=url`
+      - as an additional argument with npm install `--iltorb_binary_host_mirror=url`
 
 [npm-badge]: https://img.shields.io/npm/v/iltorb.svg
 [npm-url]: https://www.npmjs.com/package/iltorb

@@ -22,21 +22,21 @@ void StreamEncodeWorker::Execute() {
     if (res == BROTLI_FALSE) {
       return;
     }
-  } while (obj->available_in > 0);
 
-  while (BrotliEncoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
-    size_t size = 0;
-    const uint8_t* output = BrotliEncoderTakeOutput(obj->state, &size);
+    if (BrotliEncoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
+      size_t size = 0;
+      const uint8_t* output = BrotliEncoderTakeOutput(obj->state, &size);
 
-    void* buf = obj->alloc.Alloc(size);
-    if (!buf) {
-      res = BROTLI_FALSE;
-      return;
+      void* buf = obj->alloc.Alloc(size);
+      if (!buf) {
+        res = BROTLI_FALSE;
+        return;
+      }
+
+      memcpy(buf, output, size);
+      obj->pending_output.push_back(static_cast<uint8_t*>(buf));
     }
-
-    memcpy(buf, output, size);
-    obj->pending_output.push_back(static_cast<uint8_t*>(buf));
-  }
+  } while (obj->available_in > 0);
 }
 
 void StreamEncodeWorker::HandleOKCallback() {

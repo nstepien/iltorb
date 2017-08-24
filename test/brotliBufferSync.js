@@ -40,6 +40,10 @@ describe('Brotli Buffer Sync', function() {
       testBufferSync(brotli.compressSync, 'empty', 'empty.compressed');
     });
 
+    it('should compress a random buffer', function() {
+      testBufferSync(brotli.compressSync, 'rand', 'rand.compressed');
+    });
+
     it('should compress a large buffer', function() {
       if (process.env.SKIP_LARGE_BUFFER_TEST) {
         this.skip();
@@ -65,6 +69,10 @@ describe('Brotli Buffer Sync', function() {
 
     it('should decompress to an empty buffer', function() {
       testBufferSync(brotli.decompressSync, 'empty.compressed', 'empty');
+    });
+
+    it('should decompress a random buffer', function() {
+      testBufferSync(brotli.decompressSync, 'rand.compressed', 'rand');
     });
 
     it('should decompress to a large buffer', function() {

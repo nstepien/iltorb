@@ -59,6 +59,10 @@ describe('Brotli Stream', function() {
       testStream(brotli.compressStream, 'empty', 'empty.compressed', done);
     });
 
+    it('should compress a random buffer', function(done) {
+      testStream(brotli.compressStream, 'rand', 'rand.compressed', done);
+    });
+
     it('should compress a large buffer', function(done) {
       this.timeout(30000);
       testStream(brotli.compressStream, 'large.txt', 'large.txt.compressed', done);
@@ -103,6 +107,10 @@ describe('Brotli Stream', function() {
 
     it('should decompress to an empty buffer', function(done) {
       testStream(brotli.decompressStream, 'empty.compressed', 'empty', done);
+    });
+
+    it('should decompress to a random buffer', function(done) {
+      testStream(brotli.decompressStream, 'rand.compressed', 'rand', done);
     });
 
     it('should decompress to a large buffer', function(done) {

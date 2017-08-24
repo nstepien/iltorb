@@ -52,6 +52,10 @@ describe('Brotli Buffer Async', function() {
       testBufferAsync(brotli.compress, 'empty', 'empty.compressed', done);
     });
 
+    it('should compress a random buffer', function(done) {
+      testBufferAsync(brotli.compress, 'rand', 'rand.compressed', done);
+    })
+
     it('should compress a large buffer', function(done) {
       if (process.env.SKIP_LARGE_BUFFER_TEST) {
         this.skip();
@@ -78,6 +82,10 @@ describe('Brotli Buffer Async', function() {
     it('should decompress to an empty buffer', function(done) {
       testBufferAsync(brotli.decompress, 'empty.compressed', 'empty', done);
     });
+
+    it('should decompress a random buffer', function(done) {
+      testBufferAsync(brotli.decompress, 'rand.compressed', 'rand', done);
+    })
 
     it('should decompress to a large buffer', function(done) {
       this.timeout(30000);

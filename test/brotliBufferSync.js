@@ -41,6 +41,7 @@ describe('Brotli Buffer Sync', function() {
     });
 
     it('should compress a random buffer', function() {
+      this.timeout(30000);
       testBufferSync(brotli.compressSync, 'rand', 'rand.compressed');
     });
 

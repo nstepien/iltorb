@@ -60,6 +60,7 @@ describe('Brotli Stream', function() {
     });
 
     it('should compress a random buffer', function(done) {
+      this.timeout(30000);
       testStream(brotli.compressStream, 'rand', 'rand.compressed', done);
     });
 

@@ -48,7 +48,7 @@
   },
   "scripts": {
     "prepublish": "npm ls",
-    "install": "node-pre-gyp install --fallback-to-build",
+    "install": "node-pre-gyp install testbinary --fallback-to-build",
     "build": "npm install --build-from-source",
     "test": "mocha"
   },

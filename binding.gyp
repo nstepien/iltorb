@@ -46,7 +46,6 @@
       ],
       "defines": ["NOMINMAX"],
       "cflags" : [
-        "-include ../src/_memcpy.h",
         "-O2"
       ],
       "xcode_settings": {
@@ -72,7 +71,6 @@
         "brotli/include"
       ],
       "cflags" : [
-        "-include ../src/_memcpy.h",
         "-O2"
       ],
       "xcode_settings": {

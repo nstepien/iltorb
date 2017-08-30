@@ -22,7 +22,7 @@ void StreamDecodeWorker::Execute() {
       return;
     }
 
-    if (BrotliDecoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
+    while (BrotliDecoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
       size_t size = 0;
       const uint8_t* output = BrotliDecoderTakeOutput(obj->state, &size);
 

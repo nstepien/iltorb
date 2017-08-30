@@ -2,12 +2,15 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.3.6] - 2017-08-30
 ### Changed
 - Removed workaround for distros with old libc versions
 
 ### Fixed
 - Infinite compression loop
+
+### Removed
+- Drop support for Node 7
 
 ## [1.3.5] - 2017-07-18
 ### Changed
@@ -159,7 +162,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
-[Unreleased]: https://github.com/MayhemYDG/iltorb/compare/1.3.5...HEAD
+[1.3.6]: https://github.com/MayhemYDG/iltorb/compare/1.3.5...1.3.6
 [1.3.5]: https://github.com/MayhemYDG/iltorb/compare/1.3.4...1.3.5
 [1.3.4]: https://github.com/MayhemYDG/iltorb/compare/1.3.3...1.3.4
 [1.3.3]: https://github.com/MayhemYDG/iltorb/compare/1.3.2...1.3.3

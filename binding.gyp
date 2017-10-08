@@ -1,7 +1,7 @@
 {
   "targets": [
     {
-      "target_name": "iltorb",
+      "target_name": "encode",
       "sources": [
         "brotli/common/dictionary.c",
         "brotli/enc/backward_references.c",
@@ -68,16 +68,16 @@
       "target_name": "action_after_build",
       "type": "none",
       "dependencies": [
-        "iltorb",
+        "encode",
         "decode"
       ],
       "copies": [
         {
           "files": [
-            "<(PRODUCT_DIR)/iltorb.node",
+            "<(PRODUCT_DIR)/encode.node",
             "<(PRODUCT_DIR)/decode.node"
           ],
-          "destination": "<(module_path)"
+          "destination": "build/bindings"
         }
       ]
     }

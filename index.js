@@ -7,7 +7,7 @@ exports.decompressSync = decompressSync;
 exports.compressStream = compressStream;
 exports.decompressStream = decompressStream;
 
-const encode = require('./build/bindings/iltorb.node');
+const encode = require('./build/bindings/encode.node');
 const decode = require('./build/bindings/decode.node');
 const Transform = require('stream').Transform;
 

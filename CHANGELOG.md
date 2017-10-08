@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.7] - 2017-10-08
+### Changed
+- Replace `node-pre-gyp` with `prebuild`
+
 ## [1.3.6] - 2017-08-30
 ### Changed
 - Removed workaround for distros with old libc versions
@@ -162,6 +166,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
+[1.3.7]: https://github.com/MayhemYDG/iltorb/compare/1.3.6...1.3.7
 [1.3.6]: https://github.com/MayhemYDG/iltorb/compare/1.3.5...1.3.6
 [1.3.5]: https://github.com/MayhemYDG/iltorb/compare/1.3.4...1.3.5
 [1.3.4]: https://github.com/MayhemYDG/iltorb/compare/1.3.3...1.3.4

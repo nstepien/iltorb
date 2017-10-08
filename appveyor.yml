@@ -36,7 +36,7 @@ matrix:
 os: Visual Studio 2015
 
 artifacts:
-  - path: 'build\stage\**\*.tar.gz'
+  - path: 'prebuilds\*.tar.gz'
 
 install:
   - cmd: SET JOBS=max

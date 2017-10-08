@@ -39,15 +39,12 @@ install:
 
 before_script:
   - echo "Publishing native platform Binary Package? ->" $PUBLISH_BINARY
-  - if [[ $PUBLISH_BINARY == true ]]; then node-pre-gyp package || true ; fi;
-  - if [[ $PUBLISH_BINARY == true ]]; then node-pre-gyp-github publish --release || true ; fi;
-  - node-pre-gyp clean
+  - if [[ $PUBLISH_BINARY == true ]]; then prebuild-ci || true ; fi;
 
 script:
   - INSTALL_RESULT=0
   - if [[ $PUBLISH_BINARY == true ]]; then INSTALL_RESULT=$(npm install --fallback-to-build=false > /dev/null)$? || true; fi;
   - if [[ $INSTALL_RESULT != 0 ]]; then echo "returned $INSTALL_RESULT"; false; fi
-  - node-pre-gyp clean
 
 after_success:
   - node-pre-gyp info

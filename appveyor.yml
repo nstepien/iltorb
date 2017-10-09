@@ -1,57 +1,63 @@
 clone_depth: 10
 
+os: Visual Studio 2017
+
 environment:
   PREBUILD_TOKEN:
     secure: 7t92yForo995jn/5Afeo6A3wcmEyus0nlybU4a9MYQ1FSoMvkjLeihbEQYr99F9S
+
   matrix:
     - nodejs_version: "4"
-      platform: x64
-      msvs_toolset: 12
-    - nodejs_version: "4"
-      platform: x86
-      msvs_toolset: 12
-      SKIP_LARGE_BUFFER_TEST: true
     - nodejs_version: "6"
-      platform: x64
-      msvs_toolset: 12
-    - nodejs_version: "6"
-      platform: x86
-      msvs_toolset: 12
-      SKIP_LARGE_BUFFER_TEST: true
     - nodejs_version: "8"
-      platform: x64
-      msvs_toolset: 12
+
     - nodejs_version: "8"
-      platform: x86
-      msvs_toolset: 12
-      SKIP_LARGE_BUFFER_TEST: true
+      BINARY_BUILDER: "true"
+
+platform:
+  - x86
+  - x64
 
 matrix:
   fast_finish: true
-
-os: Visual Studio 2015
 
 artifacts:
   - path: 'prebuilds\*.tar.gz'
 
 install:
-  - cmd: SET JOBS=max
-  - cmd: SET PUBLISH_BINARY=false
-  - cmd: git describe --tags --always HEAD > _git_tag.tmp
-  - cmd: SET /p GIT_TAG=<_git_tag.tmp
-  - cmd: ECHO "LATEST LOCAL TAG:"
-  - cmd: ECHO %GIT_TAG%
-  - cmd: ECHO "APPVEYOR REPO BRANCH/TAG:"
-  - cmd: ECHO %APPVEYOR_REPO_BRANCH%
-  - cmd: DEL _git_tag.tmp
-  - cmd: SET COMMIT_MSG="%APPVEYOR_REPO_COMMIT_MESSAGE%"
-  - cmd: IF x%APPVEYOR_REPO_BRANCH%==x%GIT_TAG% SET PUBLISH_BINARY=true
-  - cmd: IF "%APPVEYOR_REPO_TAG%"=="true" SET PUBLISH_BINARY=true
-  - cmd: ECHO "Env Var PUBLISH_BINARY:"
-  - cmd: ECHO %PUBLISH_BINARY%
-  - git submodule update --init --recursive
-  - scripts\build-appveyor.bat
+  - cmd: git submodule update --init --recursive
+  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) $env:platform;
+  - ps: >
+      if ($env:nodejs_version -eq "4") {
+        npm i -g npm | Write-Host;
+      }
+      npm config set progress false
+      npm config set spin false
+  - ps: >
+      SET JOBS max;
+      SET PUBLISH_BINARY false;
+      SET GIT_TAG $(git describe --tags --always HEAD);
+      if ($env:BINARY_BUILDER -eq "true" -and $env:APPVEYOR_REPO_BRANCH -match $env:GIT_TAG) {
+        SET PUBLISH_BINARY true;
+      }
+      if ($env:BINARY_BUILDER -eq "true" -and $env:APPVEYOR_REPO_TAG -match "true") {
+        SET PUBLISH_BINARY true;
+      }
+  - ps: >
+      @{
+        "APPVEYOR_REPO_BRANCH" = $env:APPVEYOR_REPO_BRANCH
+        "APPVEYOR_REPO_TAG" = $env:APPVEYOR_REPO_TAG
+        "APPVEYOR_REPO_COMMIT_MESSAGE" = $env:APPVEYOR_REPO_COMMIT_MESSAGE
+        "LATEST TAG" = $env:GIT_TAG
+        "PUBLISHING" = $env:PUBLISH_BINARY
+      } | Out-String | Write-Host;
 
-build: OFF
-test: OFF
-deploy: OFF
+build_script:
+  - npm install --build-from-source
+
+test_script:
+  - npm test
+  - ps: >
+      if ($env:PUBLISH_BINARY -eq "true") {
+        npm run prebuild-ci
+      }

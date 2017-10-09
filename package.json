@@ -48,6 +48,7 @@
   "scripts": {
     "install": "detect-libc prebuild-install || node-gyp rebuild",
     "rebuild": "prebuild --compile",
+    "prebuild-ci": "prebuild-ci",
     "test": "mocha"
   },
   "license": "MIT"

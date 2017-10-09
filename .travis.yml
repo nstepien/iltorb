@@ -20,29 +20,28 @@ env:
   global:
     - secure: "X+baBB4m60a19f2Azr4wR0SYbIV47DsbiDWiCV4d3zx3OM6yJONwcpZn/Ln0XN8Q8+dNgOQQCbBxtrXqTbHV2OFCAeCbREpn/KyTRpSzrpZKHqHxq8LK26hwI+kGVVRVOQOaDk2Tzt9CAwpkC4KJ1d9xulS4hYGef7HH/5tXdDc8vTR5i4iiugskwOEWF2a61diIaQP65E+lNNoYcoU/3L7CmVp775qnJSUa5nJoDPEFM8EtjgcwX0W1CY5oQehTxXjV9zlza9Im4hmgI8k4NgdD5O/9b/Nzj+qwccFjnwoedPqJFx7pNQsa5g7IlLIe8pUYncf8fOXusNSHm0NdSi1f0PfjtSKNxD3VJUqrLqctHfhg/inJFED9cMrFQTiTsfhUsmzFhr7ynXhlw8diZ9/IyDrAImYiVNCuoBEHzpH+3KMzxgDxxULDeWfI65fqVi89Lix7a2BkXt4/ZcRbrTRsEBCkr0Lw2wUgZayA6HoWn2kRVzn5UJcCNRt01OlPhkdBEutsUtQPryjSJalPwl4rRxHH+gdTl8G3lJOI5PJtynUp0UompPe4U7rQ0EzCg9tK+yPiVLF75pCpmm3el3cGbFUb5MHaNiU1hZ8KgSLUuRjBlPJnzMBZdWSgP2OanqKPGYBpdmIaA7p+iWBrZGYfhm9CUx3ohNPDlurHj18="
 
+  matrix:
+    - NODE_VERSION="4"
+    - NODE_VERSION="6"
+    - NODE_VERSION="8" BINARY_BUILDER="true"
+
 matrix:
   fast_finish: true
 
 before_install:
+  - nvm install $NODE_VERSION
+  - npm install -g node-gyp
+
   - export JOBS=max
   - export PATH=./node_modules/.bin/:$PATH
-  - npm install -g node-gyp
   - PUBLISH_BINARY=false
-  - if [[ $TRAVIS_BRANCH == `git describe --tags --always HEAD` ]]; then PUBLISH_BINARY=true; fi;
+  - if [[ $TRAVIS_BRANCH == `git describe --tags --always HEAD` ]]; then PUBLISH_BINARY=$BINARY_BUILDER; fi;
   - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CC=gcc-4.8; export CXX=g++-4.8; fi
+  - echo "Publishing native platform Binary Package? ->" $PUBLISH_BINARY
 
 install:
   - npm install --build-from-source
-  - npm test
-
-before_script:
-  - echo "Publishing native platform Binary Package? ->" $PUBLISH_BINARY
-  - if [[ $PUBLISH_BINARY == true ]]; then prebuild-ci || true ; fi;
 
 script:
-  - INSTALL_RESULT=0
-  - if [[ $PUBLISH_BINARY == true ]]; then INSTALL_RESULT=$(npm install --fallback-to-build=false > /dev/null)$? || true; fi;
-  - if [[ $INSTALL_RESULT != 0 ]]; then echo "returned $INSTALL_RESULT"; false; fi
-
-after_success:
-  - node-pre-gyp info
+  - npm test
+  - if [[ $PUBLISH_BINARY == true ]]; then npm run prebuild-ci || true ; fi;

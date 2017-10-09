@@ -8,7 +8,7 @@
 
 ## Install
 
-This module uses `node-pre-gyp` to download a pre-compiled binary for your platform, if it exists. Otherwise, it will use `node-gyp` to build the module.
+This module uses `prebuild` to download a pre-compiled binary for your platform, if it exists. Otherwise, it will use `node-gyp` to build the module.
 
 ```
 npm install iltorb
@@ -127,17 +127,6 @@ const brotliDecodeParams = {
   dictionary: Buffer
 };
 ```
-
-## Troubleshooting
-
-1. I am unable to install `iltorb` because the host (GitHub) that serves the binaries is blocked by my firewall.
-
-    a) By **default**, if the binaries could not be downloaded for any reason, `npm` will attempt to compile the binaries locally on your machine. This requires having all of the build requirements fulfilled.
-
-    b) You can override the `binary.host` value found in `package.json` with the following methods:
-
-      - using the following ENV variable `npm_config_iltorb_binary_host_mirror=url`
-      - as an additional argument with npm install `--iltorb_binary_host_mirror=url`
 
 [npm-badge]: https://img.shields.io/npm/v/iltorb.svg
 [npm-url]: https://www.npmjs.com/package/iltorb

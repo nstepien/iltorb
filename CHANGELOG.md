@@ -2,9 +2,14 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.8] - 2017-10-08
+### Removed
+- README no longer contains a TROUBLESHOOT section
+
 ## [1.3.7] - 2017-10-08
 ### Changed
-- Replace `node-pre-gyp` with `prebuild`
+- Replaced `node-pre-gyp` with `prebuild`
+- Update build pipeline to output single binary
 
 ## [1.3.6] - 2017-08-30
 ### Changed

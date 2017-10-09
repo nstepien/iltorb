@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.9] - 2017-10-09
+### Fixed
+- Revert `package.json` change which removed the `binary` key containing module name and path
+- Update CI to build all supported versions
+- Update Appyveyor to properly upload binaries
+
 ## [1.3.8] - 2017-10-08
 ### Removed
 - README no longer contains a TROUBLESHOOT section
@@ -171,6 +177,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
+[1.3.9]: https://github.com/MayhemYDG/iltorb/compare/1.3.8...1.3.9
+[1.3.8]: https://github.com/MayhemYDG/iltorb/compare/1.3.7...1.3.8
 [1.3.7]: https://github.com/MayhemYDG/iltorb/compare/1.3.6...1.3.7
 [1.3.6]: https://github.com/MayhemYDG/iltorb/compare/1.3.5...1.3.6
 [1.3.5]: https://github.com/MayhemYDG/iltorb/compare/1.3.4...1.3.5

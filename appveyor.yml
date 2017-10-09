@@ -11,9 +11,6 @@ environment:
     - nodejs_version: "6"
     - nodejs_version: "8"
 
-    - nodejs_version: "8"
-      BINARY_BUILDER: "true"
-
 platform:
   - x86
   - x64
@@ -34,15 +31,16 @@ install:
       npm config set progress false
       npm config set spin false
   - ps: >
-      SET JOBS max;
-      SET PUBLISH_BINARY false;
-      SET GIT_TAG $(git describe --tags --always HEAD);
-      if ($env:BINARY_BUILDER -eq "true" -and $env:APPVEYOR_REPO_BRANCH -match $env:GIT_TAG) {
-        SET PUBLISH_BINARY true;
+      $env:JOBS = "max";
+      $env:PUBLISH_BINARY = "false";
+      $env:GIT_TAG = "$(git describe --tags --always HEAD)";
+      if ($env:APPVEYOR_REPO_BRANCH -match $env:GIT_TAG) {
+        $env:PUBLISH_BINARY = "true";
       }
-      if ($env:BINARY_BUILDER -eq "true" -and $env:APPVEYOR_REPO_TAG -match "true") {
-        SET PUBLISH_BINARY true;
+      if ($env:APPVEYOR_REPO_TAG -match "true") {
+        $env:PUBLISH_BINARY = "true";
       }
+      true;
   - ps: >
       @{
         "APPVEYOR_REPO_BRANCH" = $env:APPVEYOR_REPO_BRANCH
@@ -59,5 +57,8 @@ test_script:
   - npm test
   - ps: >
       if ($env:PUBLISH_BINARY -eq "true") {
-        npm run prebuild-ci
+        npm run prebuild-ci | Write-Host;
       }
+      true;
+
+deploy: OFF

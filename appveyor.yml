@@ -25,7 +25,7 @@ artifacts:
   - path: 'prebuilds\*.tar.gz'
 
 install:
-  - ps: git submodule update --init --recursive
+  - cmd: git submodule update --init --recursive
   - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) $env:platform;
   - ps: >
       if ($env:nodejs_version -eq "4") {

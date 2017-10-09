@@ -27,29 +27,29 @@ artifacts:
 install:
   - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) $env:platform;
   - ps: >
-    if ($env:nodejs_version -eq "4") {
-      npm i -g npm | Write-Host;
-    }
-    npm config set progress false
-    npm config set spin false
+      if ($env:nodejs_version -eq "4") {
+        npm i -g npm | Write-Host;
+      }
+      npm config set progress false
+      npm config set spin false
   - ps: >
-    SET JOBS=max
-    SET PUBLISH_BINARY=false
-    SET GIT_TAG=$(git describe --tags --always HEAD)
-    if ($env:BINARY_BUILDER -eq "true" -and $env:APPVEYOR_REPO_BRANCH -match $env:GIT_TAG) {
-      SET PUBLISH_BINARY=true
-    }
-    if ($env:BINARY_BUILDER -eq "true" -and $env:APPVEYOR_REPO_TAG -match "true") {
-      SET PUBLISH_BINARY=true
-    }
+      SET JOBS=max
+      SET PUBLISH_BINARY=false
+      SET GIT_TAG=$(git describe --tags --always HEAD)
+      if ($env:BINARY_BUILDER -eq "true" -and $env:APPVEYOR_REPO_BRANCH -match $env:GIT_TAG) {
+        SET PUBLISH_BINARY=true
+      }
+      if ($env:BINARY_BUILDER -eq "true" -and $env:APPVEYOR_REPO_TAG -match "true") {
+        SET PUBLISH_BINARY=true
+      }
   - ps: >
-    @{
-      "APPVEYOR_REPO_BRANCH" = $env:APPVEYOR_REPO_BRANCH
-      "APPVEYOR_REPO_TAG" = $env:APPVEYOR_REPO_TAG
-      "APPVEYOR_REPO_COMMIT_MESSAGE" = $env:APPVEYOR_REPO_COMMIT_MESSAGE
-      "LATEST TAG" = $env:GIT_TAG
-      "PUBLISHING" = $env:PUBLISH_BINARY
-    } | Out-String | Write-Host;
+      @{
+        "APPVEYOR_REPO_BRANCH" = $env:APPVEYOR_REPO_BRANCH
+        "APPVEYOR_REPO_TAG" = $env:APPVEYOR_REPO_TAG
+        "APPVEYOR_REPO_COMMIT_MESSAGE" = $env:APPVEYOR_REPO_COMMIT_MESSAGE
+        "LATEST TAG" = $env:GIT_TAG
+        "PUBLISHING" = $env:PUBLISH_BINARY
+      } | Out-String | Write-Host;
 
 build_script:
   - npm install --build-from-source
@@ -57,6 +57,6 @@ build_script:
 test_script:
   - npm test
   - ps: >
-    if ($env:PUBLISH_BINARY -eq "true") {
-      npm run prebuild-ci
-    }
+      if ($env:PUBLISH_BINARY -eq "true") {
+        npm run prebuild-ci
+      }

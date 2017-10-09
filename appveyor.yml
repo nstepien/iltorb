@@ -33,14 +33,14 @@ install:
       npm config set progress false
       npm config set spin false
   - ps: >
-      SET JOBS max
-      SET PUBLISH_BINARY false
-      SET GIT_TAG $(git describe --tags --always HEAD)
+      SET JOBS max;
+      SET PUBLISH_BINARY false;
+      SET GIT_TAG $(git describe --tags --always HEAD);
       if ($env:BINARY_BUILDER -eq "true" -and $env:APPVEYOR_REPO_BRANCH -match $env:GIT_TAG) {
-        SET PUBLISH_BINARY true
+        SET PUBLISH_BINARY true;
       }
       if ($env:BINARY_BUILDER -eq "true" -and $env:APPVEYOR_REPO_TAG -match "true") {
-        SET PUBLISH_BINARY true
+        SET PUBLISH_BINARY true;
       }
   - ps: >
       @{

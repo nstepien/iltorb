@@ -7,8 +7,7 @@ exports.decompressSync = decompressSync;
 exports.compressStream = compressStream;
 exports.decompressStream = decompressStream;
 
-const encode = require('./build/bindings/encode.node');
-const decode = require('./build/bindings/decode.node');
+const iltorb = require('./build/bindings/iltorb.node');
 const Transform = require('stream').Transform;
 
 class TransformStreamEncode extends Transform {
@@ -18,7 +17,7 @@ class TransformStreamEncode extends Transform {
     this.encoding = false;
     this.corked = false;
     this.flushing = false;
-    this.encoder = new encode.StreamEncode(params || {});
+    this.encoder = new iltorb.StreamEncode(params || {});
   }
 
   _transform(chunk, encoding, next) {
@@ -86,7 +85,7 @@ class TransformStreamDecode extends Transform {
   constructor(params, sync) {
     super(params);
     this.sync = sync || false;
-    this.decoder = new decode.StreamDecode(params || {});
+    this.decoder = new iltorb.StreamDecode(params || {});
   }
 
   _transform(chunk, encoding, next) {

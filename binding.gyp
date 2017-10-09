@@ -1,9 +1,15 @@
 {
   "targets": [
     {
-      "target_name": "encode",
+      "target_name": "iltorb",
       "sources": [
         "brotli/common/dictionary.c",
+
+        "brotli/dec/bit_reader.c",
+        "brotli/dec/decode.c",
+        "brotli/dec/huffman.c",
+        "brotli/dec/state.c",
+
         "brotli/enc/backward_references.c",
         "brotli/enc/backward_references_hq.c",
         "brotli/enc/bit_cost.c",
@@ -21,11 +27,17 @@
         "brotli/enc/metablock.c",
         "brotli/enc/static_dict.c",
         "brotli/enc/utf8_util.c",
+
         "src/common/allocator.cc",
         "src/common/stream_coder.cc",
-        "src/enc/encode_index.cc",
+
+        "src/dec/stream_decode.cc",
+        "src/dec/stream_decode_worker.cc",
+
         "src/enc/stream_encode.cc",
-        "src/enc/stream_encode_worker.cc"
+        "src/enc/stream_encode_worker.cc",
+
+        "src/iltorb.cc"
       ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")",
@@ -40,42 +52,15 @@
       }
     },
     {
-      "target_name": "decode",
-      "sources": [
-        "brotli/common/dictionary.c",
-        "brotli/dec/bit_reader.c",
-        "brotli/dec/decode.c",
-        "brotli/dec/huffman.c",
-        "brotli/dec/state.c",
-        "src/common/allocator.cc",
-        "src/common/stream_coder.cc",
-        "src/dec/decode_index.cc",
-        "src/dec/stream_decode.cc",
-        "src/dec/stream_decode_worker.cc"
-      ],
-      "include_dirs": [
-        "<!(node -e \"require('nan')\")",
-        "brotli/include"
-      ],
-      "cflags" : [
-        "-O2"
-      ],
-      "xcode_settings": {
-        "OTHER_CFLAGS" : ["-O2"]
-      }
-    },
-    {
       "target_name": "action_after_build",
       "type": "none",
       "dependencies": [
-        "encode",
-        "decode"
+        "iltorb"
       ],
       "copies": [
         {
           "files": [
-            "<(PRODUCT_DIR)/encode.node",
-            "<(PRODUCT_DIR)/decode.node"
+            "<(PRODUCT_DIR)/iltorb.node"
           ],
           "destination": "build/bindings"
         }

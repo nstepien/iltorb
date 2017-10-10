@@ -53,7 +53,9 @@
   },
   "binary": {
     "module_name": "iltorb",
-    "module_path": "./build/bindings"
+    "module_path": "./build/bindings",
+    "remote_path": "v{version}",
+    "host": "https://github.com/MayhemYDG/iltorb/releases/download/"
   },
   "license": "MIT"
 }

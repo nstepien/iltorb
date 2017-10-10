@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.10] - 2017-10-10
+### Fixed
+- Revert `package.json` change which removed the `binary` key containing remote path and host
+
 ## [1.3.9] - 2017-10-09
 ### Fixed
 - Revert `package.json` change which removed the `binary` key containing module name and path
@@ -177,6 +181,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
+[1.3.10]: https://github.com/MayhemYDG/iltorb/compare/1.3.9...1.3.10
 [1.3.9]: https://github.com/MayhemYDG/iltorb/compare/1.3.8...1.3.9
 [1.3.8]: https://github.com/MayhemYDG/iltorb/compare/1.3.7...1.3.8
 [1.3.7]: https://github.com/MayhemYDG/iltorb/compare/1.3.6...1.3.7

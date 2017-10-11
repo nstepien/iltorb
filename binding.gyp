@@ -41,7 +41,7 @@
       ],
       "include_dirs": [
         "<!(node -e \"require('nan')\")",
-        "brotli/c/include/brotli"
+        "brotli/c/include"
       ],
       "defines": ["NOMINMAX"],
       "cflags" : [

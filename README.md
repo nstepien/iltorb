@@ -35,7 +35,7 @@ compress(input, function(err, output) {
 });
 ```
 
-#### decompress(buffer[, brotliDecodeParams], callback)
+#### decompress(buffer, callback)
 
 ```javascript
 const decompress = require('iltorb').decompress;
@@ -59,7 +59,7 @@ try {
 }
 ```
 
-#### decompressSync(buffer[, brotliDecodeParams])
+#### decompressSync(buffer)
 
 ```javascript
 const decompressSync = require('iltorb').decompressSync;
@@ -88,7 +88,7 @@ fs.createReadStream('path/to/input')
 
 Call this method to flush pending data. Don't call this frivolously, premature flushes negatively impact the effectiveness of the compression algorithm.
 
-#### decompressStream([brotliDecodeParams])
+#### decompressStream()
 
 ```javascript
 const decompressStream = require('iltorb').decompressStream;
@@ -102,9 +102,9 @@ fs.createReadStream('path/to/input')
 ### brotliEncodeParams
 
 The `compress`, `compressSync` and `compressStream` methods may accept an optional `brotliEncodeParams` object to define some or all of brotli's compression parameters:
-- [type definition](https://github.com/google/brotli/blob/v0.6.0/enc/quality.h#L42-L51)
-- [defaults](https://github.com/google/brotli/blob/v0.6.0/enc/encode.c#L676-L683)
-- [explanations](https://github.com/google/brotli/blob/v0.6.0/include/brotli/encode.h#L130-L181)
+- [type definition](https://github.com/google/brotli/blob/v1.0.1/c/enc/quality.h#L42-L51)
+- [defaults](https://github.com/google/brotli/blob/v1.0.1/c/enc/encode.c#L672-L679)
+- [explanations](https://github.com/google/brotli/blob/v1.0.1/c/include/brotli/encode.h#L128-L180)
 
 ```javascript
 const brotliEncodeParams = {
@@ -113,18 +113,7 @@ const brotliEncodeParams = {
   lgwin: 22,
   lgblock: 0,
   size_hint: 0, // automatically set for `compress` and `compressSync`
-  disable_literal_context_modeling: false,
-  dictionary: Buffer
-};
-```
-
-### brotliDecodeParams
-
-The `decompress`, `decompressSync` and `decompressStream` methods may accept an optional `brotliDecodeParams` object to provide a custom dictionary.
-
-```javascript
-const brotliDecodeParams = {
-  dictionary: Buffer
+  disable_literal_context_modeling: false
 };
 ```
 

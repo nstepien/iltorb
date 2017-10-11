@@ -3,7 +3,7 @@
 
 #include <nan.h>
 #include "stream_encode.h"
-#include "brotli/encode.h"
+#include "encode.h"
 
 class StreamEncodeWorker : public Nan::AsyncWorker {
   public:

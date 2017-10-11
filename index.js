@@ -12,7 +12,7 @@ const Transform = require('stream').Transform;
 
 class TransformStreamEncode extends Transform {
   constructor(params, sync) {
-    super(params);
+    super();
     this.sync = sync || false;
     this.encoding = false;
     this.corked = false;
@@ -82,10 +82,10 @@ class TransformStreamEncode extends Transform {
 }
 
 class TransformStreamDecode extends Transform {
-  constructor(params, sync) {
-    super(params);
+  constructor(sync) {
+    super();
     this.sync = sync || false;
-    this.decoder = new iltorb.StreamDecode(params || {});
+    this.decoder = new iltorb.StreamDecode();
   }
 
   _transform(chunk, encoding, next) {
@@ -148,11 +148,7 @@ function compress(input, params, cb) {
   stream.end(input);
 }
 
-function decompress(input, params, cb) {
-  if (arguments.length === 2) {
-    cb = params;
-    params = {};
-  }
+function decompress(input, cb) {
   if (!Buffer.isBuffer(input)) {
     process.nextTick(cb, new Error('Brotli input is not a buffer.'));
     return;
@@ -161,7 +157,7 @@ function decompress(input, params, cb) {
     process.nextTick(cb, new Error('Second argument is not a function.'));
     return;
   }
-  const stream = new TransformStreamDecode(params);
+  const stream = new TransformStreamDecode();
   const chunks = [];
   let length = 0;
   stream.on('error', cb);
@@ -197,11 +193,11 @@ function compressSync(input, params) {
   return Buffer.concat(chunks, length);
 }
 
-function decompressSync(input, params) {
+function decompressSync(input) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('Brotli input is not a buffer.');
   }
-  const stream = new TransformStreamDecode(params, true);
+  const stream = new TransformStreamDecode(true);
   const chunks = [];
   let length = 0;
   stream.on('error', function(e) {
@@ -219,6 +215,6 @@ function compressStream(params) {
   return new TransformStreamEncode(params);
 }
 
-function decompressStream(params) {
-  return new TransformStreamDecode(params);
+function decompressStream() {
+  return new TransformStreamDecode();
 }

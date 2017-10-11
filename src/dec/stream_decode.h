@@ -3,7 +3,7 @@
 
 #include <nan.h>
 #include "../common/stream_coder.h"
-#include "brotli/decode.h"
+#include "decode.h"
 
 class StreamDecode : public StreamCoder {
   public:
@@ -14,7 +14,7 @@ class StreamDecode : public StreamCoder {
 
     BrotliDecoderState* state;
   private:
-    explicit StreamDecode(Local<Object> params);
+    explicit StreamDecode();
     ~StreamDecode();
 
     static NAN_METHOD(New);

@@ -32,10 +32,6 @@ describe('Brotli Buffer Async', function() {
       testBufferAsync(brotli.compress, 'data10k.bin', 'data10k.bin.compressed', done);
     });
 
-    it('should compress binary data with a custom dictionary', function(done) {
-      testBufferAsync(brotli.compress, 'data10k.bin', 'data10k.bin.compressed.dict', done, { dictionary: Buffer.from('0123456789') });
-    });
-
     it('should compress text data', function(done) {
       testBufferAsync(brotli.compress, 'data.txt', 'data.txt.compressed', done);
     });
@@ -70,10 +66,6 @@ describe('Brotli Buffer Async', function() {
   describe('decompress', function() {
     it('should decompress binary data', function(done) {
       testBufferAsync(brotli.decompress, 'data10k.bin.compressed', 'data10k.bin', done);
-    });
-
-    it('should decompress binary data with a custom dictionary', function(done) {
-      testBufferAsync(brotli.decompress, 'data10k.bin.compressed.dict', 'data10k.bin', done, { dictionary: Buffer.from('0123456789') });
     });
 
     it('should decompress text data', function(done) {

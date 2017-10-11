@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## master
+### Changed
+- Updated brotli from [v0.6.0] to [v1.0.1]
+
+### Removed
+- Removed custom dictionary support
+
 ## [1.3.10] - 2017-10-10
 ### Fixed
 - Revert `package.json` change which removed the `binary` key containing remote path and host
@@ -210,6 +217,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [1.0.1]: https://github.com/MayhemYDG/iltorb/compare/1.0.0...1.0.1
 [1.0.1]: https://github.com/MayhemYDG/iltorb/releases/tag/1.0.0
 
+[v1.0.1]: https://github.com/google/brotli/releases/tag/v1.0.1
+[v0.6.0]: https://github.com/google/brotli/releases/tag/v0.6.0
 [brotli-0.6.0]: https://github.com/google/brotli/releases/tag/v0.6.0
 [brotli-0.5.2]: https://github.com/google/brotli/releases/tag/v0.5.2
 [brotli-0.5.0]: https://github.com/google/brotli/tree/v0.5.0

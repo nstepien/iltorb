@@ -3,7 +3,7 @@
 
 #include <nan.h>
 #include "stream_decode.h"
-#include "brotli/decode.h"
+#include "decode.h"
 
 class StreamDecodeWorker : public Nan::AsyncWorker {
   public:

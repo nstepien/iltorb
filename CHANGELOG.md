@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## master
+## [2.0.0] - 2017-10-12
 ### Changed
 - Updated brotli from [v0.6.0] to [v1.0.1]
 
@@ -188,10 +188,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
-[1.3.10]: https://github.com/MayhemYDG/iltorb/compare/1.3.9...1.3.10
-[1.3.9]: https://github.com/MayhemYDG/iltorb/compare/1.3.8...1.3.9
-[1.3.8]: https://github.com/MayhemYDG/iltorb/compare/1.3.7...1.3.8
-[1.3.7]: https://github.com/MayhemYDG/iltorb/compare/1.3.6...1.3.7
+[2.0.0]: https://github.com/MayhemYDG/iltorb/compare/v1.3.10...v2.0.0
+[1.3.10]: https://github.com/MayhemYDG/iltorb/compare/v1.3.9...v1.3.10
+[1.3.9]: https://github.com/MayhemYDG/iltorb/compare/v1.3.8...v1.3.9
+[1.3.8]: https://github.com/MayhemYDG/iltorb/compare/v1.3.7...v1.3.8
+[1.3.7]: https://github.com/MayhemYDG/iltorb/compare/1.3.6...v1.3.7
 [1.3.6]: https://github.com/MayhemYDG/iltorb/compare/1.3.5...1.3.6
 [1.3.5]: https://github.com/MayhemYDG/iltorb/compare/1.3.4...1.3.5
 [1.3.4]: https://github.com/MayhemYDG/iltorb/compare/1.3.3...1.3.4

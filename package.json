@@ -48,7 +48,8 @@
   "scripts": {
     "install": "detect-libc prebuild-install || node-gyp rebuild",
     "rebuild": "prebuild --compile",
-    "prebuild-ci": "prebuild-ci",
+    "prebuild": "detect-libc prebuild",
+    "prebuild-ci": "detect-libc prebuild-ci",
     "test": "mocha"
   },
   "binary": {

@@ -1,0 +1,111 @@
+config: &config
+  working_directory: ~/repo
+  steps:
+    - run:
+        name: Install Build Tools
+        command: |
+          if [[ $DISTRO == "ALPINE" ]]; then
+            apk add --no-cache make gcc g++ python git
+          fi
+
+          if [[ $DISTRO == "CENTOS" ]]; then
+            curl --silent --location "https://rpm.nodesource.com/setup_${NODEJS}.x" | bash -
+            yum -y install centos-release-scl-rh epel-release https://centos6.iuscommunity.org/ius-release.rpm
+            yum -y install devtoolset-3-gcc devtoolset-3-gcc-c++ git2u make
+            yum -y install nodejs
+            echo 'export PATH=/opt/rh/devtoolset-3/root/usr/bin/:$PATH' >> $BASH_ENV
+          fi
+
+    - checkout
+
+    - run:
+        name: Checkout code submodules
+        command: git submodule update --init --recursive --remote
+
+    - run:
+        name: 'Configure Environment'
+        command: |
+          echo 'export JOBS=max' >> $BASH_ENV
+          echo 'export PUBLISH_BINARY=false' >> $BASH_ENV
+          if [[ $CIRCLE_BRANCH == `git describe --tags --always HEAD` ]]; then
+            echo 'export PUBLISH_BINARY="true"' >> $BASH_ENV
+          fi
+
+    - run: npm install -g node-gyp
+    - run: npm install --build-from-source --unsafe-perm
+    - run: npm test
+
+    - run:
+        name: Publish Binaries
+        command: |
+          source $BASH_ENV
+          echo -e 'Publish? ->' $PUBLISH_BINARY
+          if [[ $PUBLISH_BINARY == "true" ]]; then
+            npm run prebuild
+          fi
+          true
+
+    - store_artifacts:
+        path: ~/repo/prebuilds
+
+version: 2
+
+jobs:
+  "node-4":
+    <<: *config
+    docker:
+      - image: centos:6.6
+        environment:
+          DISTRO: CENTOS
+          NODEJS: 4
+
+  "node-6":
+    <<: *config
+    docker:
+      - image: centos:6.6
+        environment:
+          DISTRO: CENTOS
+          NODEJS: 6
+
+  "node-8":
+    <<: *config
+    docker:
+      - image: centos:6.6
+        environment:
+          DISTRO: CENTOS
+          NODEJS: 8
+
+  "node-4 musl":
+    <<: *config
+    docker:
+      - image: mhart/alpine-node:4
+        environment:
+          DISTRO: ALPINE
+          NODEJS: 4
+
+  "node-6 musl":
+    <<: *config
+    docker:
+      - image: mhart/alpine-node:6
+        environment:
+          DISTRO: ALPINE
+          NODEJS: 6
+
+  "node-8 musl":
+    <<: *config
+    docker:
+      - image: mhart/alpine-node:8
+        environment:
+          DISTRO: ALPINE
+          NODEJS: 8
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - "node-4"
+      - "node-4 musl"
+      - "node-6"
+      - "node-6 musl"
+      - "node-8"
+      - "node-8 musl"

@@ -1,7 +1,6 @@
 language: node_js
 
 os:
-  - linux
   - osx
 
 node_js:
@@ -30,7 +29,6 @@ before_install:
   - export PATH=./node_modules/.bin/:$PATH
   - PUBLISH_BINARY=false
   - if [[ $TRAVIS_BRANCH == `git describe --tags --always HEAD` ]]; then PUBLISH_BINARY=true; fi;
-  - if [[ $TRAVIS_OS_NAME == "linux" ]]; then export CC=gcc-4.8; export CXX=g++-4.8; fi
   - echo "Publishing native platform Binary Package? ->" $PUBLISH_BINARY
 
 install:

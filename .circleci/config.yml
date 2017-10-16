@@ -1,4 +1,4 @@
-config: &config
+config_steps: &config_steps
   working_directory: ~/repo
   steps:
     - run:
@@ -52,7 +52,7 @@ version: 2
 
 jobs:
   "node-4":
-    <<: *config
+    <<: *config_steps
     docker:
       - image: centos:6.6
         environment:
@@ -60,7 +60,7 @@ jobs:
           NODEJS: 4
 
   "node-6":
-    <<: *config
+    <<: *config_steps
     docker:
       - image: centos:6.6
         environment:
@@ -68,7 +68,7 @@ jobs:
           NODEJS: 6
 
   "node-8":
-    <<: *config
+    <<: *config_steps
     docker:
       - image: centos:6.6
         environment:
@@ -76,7 +76,7 @@ jobs:
           NODEJS: 8
 
   "node-4 musl":
-    <<: *config
+    <<: *config_steps
     docker:
       - image: mhart/alpine-node:4
         environment:
@@ -84,7 +84,7 @@ jobs:
           NODEJS: 4
 
   "node-6 musl":
-    <<: *config
+    <<: *config_steps
     docker:
       - image: mhart/alpine-node:6
         environment:
@@ -92,7 +92,7 @@ jobs:
           NODEJS: 6
 
   "node-8 musl":
-    <<: *config
+    <<: *config_steps
     docker:
       - image: mhart/alpine-node:8
         environment:

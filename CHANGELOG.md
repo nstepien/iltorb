@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## master
+### Added
+- Support Linux distributions both glibc and musql systems with pre-compiled binaries for both
+
+### Changed
+- Replace Travis-CI with CircleCI for Linux platforms
+
 ## [2.0.0] - 2017-10-12
 ### Changed
 - Updated brotli from [v0.6.0] to [v1.0.1]

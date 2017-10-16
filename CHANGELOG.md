@@ -4,6 +4,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## master
 ### Added
+- Added CircleCI status badge to README
 - Support Linux distributions both glibc and musql systems with pre-compiled binaries for both
 
 ### Changed

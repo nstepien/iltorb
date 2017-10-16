@@ -3,6 +3,7 @@
 [![NPM Version][npm-badge]][npm-url]
 [![Travis Build Status][travis-badge]][travis-url]
 [![AppVeyor Build Status][appveyor-badge]][appveyor-url]
+[![CircleCI Build Status][circleci-badge]][circleci-url]
 
 [iltorb](https://www.npmjs.com/package/iltorb) is a [Node.js](https://nodejs.org) package offering native bindings for the [brotli](https://github.com/google/brotli) compression library.
 
@@ -123,3 +124,5 @@ const brotliEncodeParams = {
 [travis-url]: https://travis-ci.org/MayhemYDG/iltorb
 [appveyor-badge]: https://ci.appveyor.com/api/projects/status/ysib4o1bfey84lqk/branch/master?svg=true
 [appveyor-url]: https://ci.appveyor.com/project/MayhemYDG/iltorb
+[circleci-badge]: https://circleci.com/gh/MayhemYDG/iltorb/tree/master.svg?style=shield
+[circleci-url]: https://circleci.com/gh/MayhemYDG/iltorb/tree/master

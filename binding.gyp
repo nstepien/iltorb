@@ -49,6 +49,24 @@
       ],
       "xcode_settings": {
         "OTHER_CFLAGS" : ["-O2"]
+      },
+      "configurations": {
+        "Debug": {
+          "conditions": [
+            ['OS=="android"', {
+              "cflags": ["-fPIC"],
+              "ldflags!": ["-pie"]
+            }]
+          ]
+        },
+        "Release": {
+          "conditions": [
+            ['OS=="android"', {
+              "cflags": ["-fPIC"],
+              "ldflags!": ["-pie"]
+            }]
+          ]
+        }
       }
     },
     {

@@ -75,6 +75,14 @@ jobs:
           DISTRO: CENTOS
           NODEJS: 8
 
+  "node-9":
+    <<: *config_steps
+    docker:
+      - image: centos:6.6
+        environment:
+          DISTRO: CENTOS
+          NODEJS: 9
+
   "node-4 musl":
     <<: *config_steps
     docker:
@@ -98,6 +106,14 @@ jobs:
         environment:
           DISTRO: ALPINE
           NODEJS: 8
+
+  "node-9 musl":
+    <<: *config_steps
+    docker:
+      - image: mhart/alpine-node:8
+        environment:
+          DISTRO: ALPINE
+          NODEJS: 9
 
 workflows:
   version: 2
@@ -124,6 +140,14 @@ workflows:
             tags:
               only: /v[0-9]+(\.[0-9]+)*/
       - "node-8 musl":
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+      - "node-9":
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+      - "node-9 musl":
           filters:
             tags:
               only: /v[0-9]+(\.[0-9]+)*/

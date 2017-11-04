@@ -41,15 +41,18 @@
   },
   "devDependencies": {
     "chai": "^4.1.1",
+    "cross-spawn": "^5.1.0",
     "mocha": "^3.5.0",
-    "prebuild": "^6.2.2",
-    "prebuild-ci": "^2.2.3"
+    "node-abi": "^2.1.2",
+    "npm-run-path-compat": "^2.0.3",
+    "prebuild": "^6.2.2"
   },
   "scripts": {
     "install": "detect-libc prebuild-install || node-gyp rebuild",
     "rebuild": "prebuild --compile",
     "prebuild": "detect-libc prebuild",
-    "prebuild-ci": "detect-libc prebuild-ci",
+    "prebuild-ci": "node build.js",
+    "prebuild-upload": "PUBLISH_BINARY=1 npm run prebuild-ci",
     "test": "mocha"
   },
   "binary": {

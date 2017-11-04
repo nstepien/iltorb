@@ -27,19 +27,21 @@ install:
   - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) $env:platform;
   - ps: >
       if ($env:nodejs_version -eq "4") {
-        npm i -g npm | Write-Host;
+        npm i -g npm node-gyp | Write-Host;
+        npm config set -g cafile=package.json
+        npm config set -g strict-ssl=false
       }
       npm config set progress false
       npm config set spin false
   - ps: >
       $env:JOBS = "max";
-      $env:PUBLISH_BINARY = "false";
+      $env:PUBLISH = "false";
       $env:GIT_TAG = "$(git describe --tags --always HEAD)";
       if ($env:APPVEYOR_REPO_BRANCH -match $env:GIT_TAG) {
-        $env:PUBLISH_BINARY = "true";
+        $env:PUBLISH = "true";
       }
       if ($env:APPVEYOR_REPO_TAG -match "true") {
-        $env:PUBLISH_BINARY = "true";
+        $env:PUBLISH = "true";
       }
       true;
   - ps: >
@@ -48,7 +50,7 @@ install:
         "APPVEYOR_REPO_TAG" = $env:APPVEYOR_REPO_TAG
         "APPVEYOR_REPO_COMMIT_MESSAGE" = $env:APPVEYOR_REPO_COMMIT_MESSAGE
         "LATEST TAG" = $env:GIT_TAG
-        "PUBLISHING" = $env:PUBLISH_BINARY
+        "PUBLISHING" = $env:PUBLISH
       } | Out-String | Write-Host;
 
 build_script:
@@ -56,9 +58,10 @@ build_script:
 
 test_script:
   - npm test
+  - npm run prebuild-ci
   - ps: >
-      if ($env:PUBLISH_BINARY -eq "true") {
-        npm run prebuild-ci | Write-Host;
+      if ($env:PUBLISH -eq "true") {
+        npm run prebuild-upload | Write-Host;
       }
       true;
 

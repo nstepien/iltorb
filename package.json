@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.1",
+    "cross-env": "^5.1.1",
     "cross-spawn": "^5.1.0",
     "mocha": "^3.5.0",
     "node-abi": "^2.1.2",
@@ -52,7 +53,7 @@
     "rebuild": "prebuild --compile",
     "prebuild": "detect-libc prebuild",
     "prebuild-ci": "node build.js",
-    "prebuild-upload": "PUBLISH_BINARY=1 npm run prebuild-ci",
+    "prebuild-upload": "cross-env PUBLISH_BINARY=1 npm run prebuild-ci",
     "test": "mocha"
   },
   "binary": {

@@ -119,7 +119,7 @@ jobs:
 build_releases: &build_releases
   filters:
     tags:
-      only: /v[0-9]+(\.[0-9]+)*/
+      only: /v[0-9]+(\.[0-9]+)*(\-\w+)?/
 
 workflows:
   version: 2

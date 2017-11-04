@@ -111,7 +111,7 @@ jobs:
   "node-9 musl":
     <<: *config_steps
     docker:
-      - image: mhart/alpine-node:8
+      - image: mhart/alpine-node:9
         environment:
           DISTRO: ALPINE
           NODEJS: 9

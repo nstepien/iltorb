@@ -133,7 +133,11 @@ workflows:
           <<: *build_releases
       - "node-6 musl":
           <<: *build_releases
+      - "node-8":
+          <<: *build_releases
       - "node-8 musl":
+          <<: *build_releases
+      - "node-9":
           <<: *build_releases
       - "node-9 musl":
           <<: *build_releases

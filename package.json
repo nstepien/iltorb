@@ -34,16 +34,16 @@
     "index.js"
   ],
   "dependencies": {
-    "detect-libc": "^0.2.0",
-    "nan": "^2.6.2",
+    "detect-libc": "^1.0.3",
+    "nan": "^2.8.0",
     "node-gyp": "^3.6.2",
     "prebuild-install": "^2.3.0"
   },
   "devDependencies": {
-    "chai": "^4.1.1",
+    "chai": "^4.1.2",
     "cross-env": "^5.1.1",
     "cross-spawn": "^5.1.0",
-    "mocha": "^3.5.0",
+    "mocha": "^4.0.1",
     "node-abi": "^2.1.2",
     "npm-run-path-compat": "^2.0.3",
     "prebuild": "^6.2.2"

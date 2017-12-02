@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.3] - 2017-12-02
+### Changed
+- Updated brotli from [v1.0.1] to [v1.0.2]
+
 ## [2.0.2] - 2017-10-24
 ### Fixed
 - Link failure on Android
@@ -200,6 +204,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
+[2.0.3]: https://github.com/MayhemYDG/iltorb/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/MayhemYDG/iltorb/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/MayhemYDG/iltorb/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/MayhemYDG/iltorb/compare/v1.3.10...v2.0.0
@@ -232,6 +237,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [1.0.1]: https://github.com/MayhemYDG/iltorb/compare/1.0.0...1.0.1
 [1.0.1]: https://github.com/MayhemYDG/iltorb/releases/tag/1.0.0
 
+[v1.0.2]: https://github.com/google/brotli/releases/tag/v1.0.2
 [v1.0.1]: https://github.com/google/brotli/releases/tag/v1.0.1
 [v0.6.0]: https://github.com/google/brotli/releases/tag/v0.6.0
 [brotli-0.6.0]: https://github.com/google/brotli/releases/tag/v0.6.0

@@ -103,9 +103,9 @@ fs.createReadStream('path/to/input')
 ### brotliEncodeParams
 
 The `compress`, `compressSync` and `compressStream` methods may accept an optional `brotliEncodeParams` object to define some or all of brotli's compression parameters:
-- [type definition](https://github.com/google/brotli/blob/v1.0.1/c/enc/quality.h#L42-L51)
-- [defaults](https://github.com/google/brotli/blob/v1.0.1/c/enc/encode.c#L672-L679)
-- [explanations](https://github.com/google/brotli/blob/v1.0.1/c/include/brotli/encode.h#L128-L180)
+- [type definition](https://github.com/google/brotli/blob/v1.0.2/c/enc/quality.h#L43-L52)
+- [defaults](https://github.com/google/brotli/blob/v1.0.2/c/enc/encode.c#L672-L679)
+- [explanations](https://github.com/google/brotli/blob/v1.0.2/c/include/brotli/encode.h#L128-L180)
 
 ```javascript
 const brotliEncodeParams = {

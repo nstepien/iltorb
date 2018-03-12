@@ -4,6 +4,7 @@
       "target_name": "iltorb",
       "sources": [
         "brotli/c/common/dictionary.c",
+        "brotli/c/common/transform.c",
 
         "brotli/c/dec/bit_reader.c",
         "brotli/c/dec/decode.c",
@@ -20,6 +21,7 @@
         "brotli/c/enc/compress_fragment_two_pass.c",
         "brotli/c/enc/dictionary_hash.c",
         "brotli/c/enc/encode.c",
+        "brotli/c/enc/encoder_dict.c",
         "brotli/c/enc/entropy_encode.c",
         "brotli/c/enc/histogram.c",
         "brotli/c/enc/literal_cost.c",

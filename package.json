@@ -49,7 +49,7 @@
     "prebuild": "^6.2.2"
   },
   "scripts": {
-    "install": "node ./node_modules/detect-libc/bin/detect-libc.js node ./node_modules/prebuild-install/bin.js || node-gyp rebuild",
+    "install": "detect-libc prebuild-install || node-gyp rebuild",
     "rebuild": "prebuild --compile",
     "prebuild": "detect-libc prebuild",
     "prebuild-ci": "node build.js",

@@ -37,6 +37,7 @@
     "detect-libc": "^1.0.3",
     "nan": "^2.8.0",
     "node-gyp": "^3.6.2",
+    "npmlog": "^4.1.2",
     "prebuild-install": "^2.3.0"
   },
   "devDependencies": {
@@ -49,7 +50,7 @@
     "prebuild": "^6.2.2"
   },
   "scripts": {
-    "install": "detect-libc prebuild-install || node-gyp rebuild",
+    "install": "node ./scripts/install.js || node-gyp rebuild",
     "rebuild": "prebuild --compile",
     "prebuild": "detect-libc prebuild",
     "prebuild-ci": "node ./scripts/build.js",

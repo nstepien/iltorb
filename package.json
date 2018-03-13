@@ -29,6 +29,7 @@
     "brotli/c/dec",
     "brotli/c/enc",
     "brotli/c/include",
+    "scripts",
     "src",
     "binding.gyp",
     "index.js"

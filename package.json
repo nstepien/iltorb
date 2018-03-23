@@ -35,11 +35,11 @@
     "index.js"
   ],
   "dependencies": {
-    "detect-libc": "^1.0.3",
     "nan": "^2.8.0",
     "node-gyp": "^3.6.2",
     "npmlog": "^4.1.2",
-    "prebuild-install": "^2.3.0"
+    "prebuild-install": "^2.3.0",
+    "which-pm-runs": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",

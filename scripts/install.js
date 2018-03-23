@@ -11,14 +11,17 @@
  */
 
 const path = require('path');
-const libc = require('detect-libc');
 const prebuildRC = require('prebuild-install/rc');
 const prebuildDL = require('prebuild-install/download');
+const whichPM = require('which-pm-runs');
 const log = require('npmlog');
 const pkg = require(path.resolve(__dirname, '../package.json'));
 
 const conf = prebuildRC(pkg);
 const opts = Object.assign({}, conf, { pkg, log });
+
+const pm = whichPM();
+const npm = !pm || pm.name === 'npm';
 
 if (conf.verbose) {
   log.level = 'verbose';
@@ -27,6 +30,9 @@ if (conf.verbose) {
 if (opts.force) {
   log.warn('install', 'prebuilt binaries enforced with --force!')
   log.warn('install', 'prebuilt binaries may be out of date!')
+} else if (!npm && /node_modules/.test(process.cwd())) {
+  // This is a NOOP conditional that is used to handle certain situations where
+  // the PM may build from source instead of attempting to download the binary.
 } else if (!(typeof pkg._from === 'string')) {
   log.info('install', 'installing standalone, skipping download.')
   process.exit(1)

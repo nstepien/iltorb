@@ -45,6 +45,7 @@
     "chai": "^4.1.2",
     "cross-env": "^5.1.1",
     "cross-spawn": "^5.1.0",
+    "detect-libc": "^1.0.3",
     "mocha": "^4.0.1",
     "node-abi": "^2.1.2",
     "npm-run-path-compat": "^2.0.3",

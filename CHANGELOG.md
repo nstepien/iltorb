@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.9] - 2018-03-23
+### Fixed
+- Build dependencies were incorrectly fixed
+
 ## [2.0.8] - 2018-03-23
 ### Fixed
 - Missing dependency was added back
@@ -230,6 +234,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
+[2.0.9]: https://github.com/MayhemYDG/iltorb/compare/v2.0.8...v2.0.9
 [2.0.8]: https://github.com/MayhemYDG/iltorb/compare/v2.0.7...v2.0.8
 [2.0.7]: https://github.com/MayhemYDG/iltorb/compare/v2.0.6...v2.0.7
 [2.0.6]: https://github.com/MayhemYDG/iltorb/compare/v2.0.5...v2.0.6

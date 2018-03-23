@@ -1,6 +1,6 @@
 {
   "name": "iltorb",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "Brotli compression/decompression with native bindings",
   "homepage": "https://github.com/MayhemYDG/iltorb",
   "bugs": "https://github.com/MayhemYDG/iltorb/issues",
@@ -35,6 +35,7 @@
     "index.js"
   ],
   "dependencies": {
+    "detect-libc": "^1.0.3",
     "nan": "^2.8.0",
     "node-gyp": "^3.6.2",
     "npmlog": "^4.1.2",
@@ -45,7 +46,6 @@
     "chai": "^4.1.2",
     "cross-env": "^5.1.1",
     "cross-spawn": "^5.1.0",
-    "detect-libc": "^1.0.3",
     "mocha": "^4.0.1",
     "node-abi": "^2.1.2",
     "npm-run-path-compat": "^2.0.3",

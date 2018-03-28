@@ -33,16 +33,34 @@ StreamEncode::StreamEncode(Local<Object> params) {
     BrotliEncoderSetParameter(state, BROTLI_PARAM_LGBLOCK, val);
   }
 
-  key = Nan::New<String>("size_hint").ToLocalChecked();
+  key = Nan::New<String>("disable_literal_context_modeling").ToLocalChecked();
   if (Nan::Has(params, key).FromJust()) {
     val = Nan::Get(params, key).ToLocalChecked()->BooleanValue();
+    BrotliEncoderSetParameter(state, BROTLI_PARAM_DISABLE_LITERAL_CONTEXT_MODELING, val);
+  }
+
+  key = Nan::New<String>("size_hint").ToLocalChecked();
+  if (Nan::Has(params, key).FromJust()) {
+    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
     BrotliEncoderSetParameter(state, BROTLI_PARAM_SIZE_HINT, val);
   }
 
-  key = Nan::New<String>("disable_literal_context_modeling").ToLocalChecked();
+  key = Nan::New<String>("large_window").ToLocalChecked();
+  if (Nan::Has(params, key).FromJust()) {
+    val = Nan::Get(params, key).ToLocalChecked()->BooleanValue();
+    BrotliEncoderSetParameter(state, BROTLI_PARAM_LARGE_WINDOW, val);
+  }
+
+  key = Nan::New<String>("npostfix").ToLocalChecked();
   if (Nan::Has(params, key).FromJust()) {
     val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
-    BrotliEncoderSetParameter(state, BROTLI_PARAM_DISABLE_LITERAL_CONTEXT_MODELING, val);
+    BrotliEncoderSetParameter(state, BROTLI_PARAM_NPOSTFIX, val);
+  }
+
+  key = Nan::New<String>("ndirect").ToLocalChecked();
+  if (Nan::Has(params, key).FromJust()) {
+    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    BrotliEncoderSetParameter(state, BROTLI_PARAM_NDIRECT, val);
   }
 }
 

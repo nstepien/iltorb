@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+### Changed
+- Updated brotli from [v1.0.3] to [v1.0.4]
+
+### Added
+- Support for new brotli compression parameters:
+ - `large_window`
+ - `npostfix`
+ - `ndirect`
+
+### Fixed
+- brotli parameter `size_hint` was being parsed as a boolean instead of an integer.
+
 ## [2.1.0] - 2018-03-24
 ### Changed
 - Reduced package size by ~9M
@@ -281,6 +293,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [1.0.1]: https://github.com/MayhemYDG/iltorb/compare/1.0.0...1.0.1
 [1.0.1]: https://github.com/MayhemYDG/iltorb/releases/tag/1.0.0
 
+[v1.0.4]: https://github.com/google/brotli/releases/tag/v1.0.4
 [v1.0.3]: https://github.com/google/brotli/releases/tag/v1.0.3
 [v1.0.2]: https://github.com/google/brotli/releases/tag/v1.0.2
 [v1.0.1]: https://github.com/google/brotli/releases/tag/v1.0.1

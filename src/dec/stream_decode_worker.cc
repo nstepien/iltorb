@@ -43,13 +43,13 @@ void StreamDecodeWorker::HandleOKCallback() {
     Local<Value> argv[] = {
       Nan::Error("Brotli failed to decompress.")
     };
-    callback->Call(1, argv);
+    callback->Call(1, argv, async_resource);
   } else {
     Local<Value> argv[] = {
       Nan::Null(),
       obj->PendingChunksAsArray()
     };
-    callback->Call(2, argv);
+    callback->Call(2, argv, async_resource);
   }
 
   obj->alloc.ReportMemoryToV8();

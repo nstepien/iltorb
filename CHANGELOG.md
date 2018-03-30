@@ -8,9 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 - Support for new brotli compression parameters:
- - `large_window`
- - `npostfix`
- - `ndirect`
+  - `large_window`
+  - `npostfix`
+  - `ndirect`
 
 ### Fixed
 - brotli parameter `size_hint` was being parsed as a boolean instead of an integer.

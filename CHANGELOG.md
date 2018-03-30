@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.0] - 2018-03-30
 ### Changed
 - Updated brotli from [v1.0.3] to [v1.0.4]
 
@@ -253,6 +254,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
+[2.2.0]: https://github.com/MayhemYDG/iltorb/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/MayhemYDG/iltorb/compare/v2.0.9...v2.1.0
 [2.0.9]: https://github.com/MayhemYDG/iltorb/compare/v2.0.8...v2.0.9
 [2.0.8]: https://github.com/MayhemYDG/iltorb/compare/v2.0.7...v2.0.8
@@ -293,7 +295,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [1.0.1]: https://github.com/MayhemYDG/iltorb/compare/1.0.0...1.0.1
 [1.0.1]: https://github.com/MayhemYDG/iltorb/releases/tag/1.0.0
 
-[v1.0.4]: https://github.com/google/brotli/releases/tag/v1.0.4
+[v1.0.4]: https://github.com/google/brotli/compare/v1.0.3...c6333e1e79fb62ea088443f192293f964409b04e
 [v1.0.3]: https://github.com/google/brotli/releases/tag/v1.0.3
 [v1.0.2]: https://github.com/google/brotli/releases/tag/v1.0.2
 [v1.0.1]: https://github.com/google/brotli/releases/tag/v1.0.1

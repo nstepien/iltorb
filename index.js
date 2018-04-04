@@ -118,22 +118,39 @@ class TransformStreamDecode extends Transform {
 }
 
 function compress(input, params, cb) {
-  if (arguments.length === 2) {
+  if (typeof params === 'function') {
     cb = params;
     params = {};
   }
+
+  const gotCallback = typeof cb === 'function';
+
   if (!Buffer.isBuffer(input)) {
-    process.nextTick(cb, new Error('Brotli input is not a buffer.'));
-    return;
+    const err = new Error('Brotli input is not a buffer.');
+    if (gotCallback) {
+      return process.nextTick(cb, err);
+    }
+    return Promise.reject(err);
   }
-  if (typeof cb !== 'function') {
-    process.nextTick(cb, new Error('Second argument is not a function.'));
-    return;
+
+  params = Object.assign({}, params, {size_hint: input.length});
+
+  if (gotCallback) {
+    return compressBuffer(input, params, cb);
   }
-  if (typeof params !== 'object') {
-    params = {};
-  }
-  params.size_hint = input.length;
+
+  return new Promise(function(resolve, reject) {
+    compressBuffer(input, params, function(err, output) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(output);
+      }
+    });
+  });
+}
+
+function compressBuffer(input, params, cb) {
   const stream = new TransformStreamEncode(params);
   const chunks = [];
   let length = 0;
@@ -149,14 +166,32 @@ function compress(input, params, cb) {
 }
 
 function decompress(input, cb) {
+  const gotCallback = typeof cb === 'function';
+
   if (!Buffer.isBuffer(input)) {
-    process.nextTick(cb, new Error('Brotli input is not a buffer.'));
-    return;
+    const err = new Error('Brotli input is not a buffer.');
+    if (gotCallback) {
+      return process.nextTick(cb, err);
+    }
+    return Promise.reject(err);
   }
-  if (typeof cb !== 'function') {
-    process.nextTick(cb, new Error('Second argument is not a function.'));
-    return;
+
+  if (gotCallback) {
+    return decompressBuffer(input, cb);
   }
+
+  return new Promise(function(resolve, reject) {
+    decompressBuffer(input, function(err, output) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(output);
+      }
+    });
+  });
+}
+
+function decompressBuffer(input, cb) {
   const stream = new TransformStreamDecode();
   const chunks = [];
   let length = 0;

@@ -26,24 +26,52 @@ The following is required to build from source or when a [pre-compiled binary](h
 
 ### Async
 
-#### compress(buffer[, brotliEncodeParams], callback)
+Omitting the callback argument will result in the compress and decompress methods to return a Promise.
+
+#### compress(buffer[, brotliEncodeParams][, callback])
 
 ```javascript
 const compress = require('iltorb').compress;
 
+// callback style
 compress(input, function(err, output) {
   // ...
 });
+
+// promise style
+compress(input)
+  .then(output => /* ... */)
+  .catch(err => /* ... */);
+
+// async/await style
+try {
+  const output = await compress(input);
+} catch(err) {
+  // ...
+}
 ```
 
-#### decompress(buffer, callback)
+#### decompress(buffer[, callback])
 
 ```javascript
 const decompress = require('iltorb').decompress;
 
+// callback style
 decompress(input, function(err, output) {
   // ...
 });
+
+// promise style
+decompress(input)
+  .then(output => /* ... */)
+  .catch(err => /* ... */);
+
+// async/await style
+try {
+  const output = await decompress(input);
+} catch(err) {
+  // ...
+}
 ```
 
 ### Sync

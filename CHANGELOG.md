@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+### Added
+- The compress and decompress methods will now return a promise when the callback argument is missing.
+  - This change enables using those methods in async/await flow.
+
 ## [2.2.0] - 2018-03-30
 ### Changed
 - Updated brotli from [v1.0.3] to [v1.0.4]

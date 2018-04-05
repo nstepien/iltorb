@@ -26,6 +26,13 @@ function testBufferAsync(method, bufferFile, resultFile, done, params) {
   }
 }
 
+function testBufferError(method, done) {
+  method('not a buffer', function(err) {
+    expect(err).an.instanceof(Error);
+    done();
+  });
+}
+
 describe('Brotli Buffer Async', function() {
   describe('compress', function() {
     it('should compress binary data', function(done) {
@@ -61,6 +68,10 @@ describe('Brotli Buffer Async', function() {
       this.timeout(30000);
       testBufferAsync(brotli.compress, 'large.txt', 'large.txt.compressed', done);
     });
+
+    it('should call back with an error when the input is not a buffer', function(done) {
+      testBufferError(brotli.compress, done);
+    });
   });
 
   describe('decompress', function() {
@@ -92,6 +103,10 @@ describe('Brotli Buffer Async', function() {
 
       this.timeout(30000);
       testBufferAsync(brotli.decompress, 'large.txt.compressed', 'large.txt', done);
+    });
+
+    it('should call back with an error when the input is not a buffer', function(done) {
+      testBufferError(brotli.decompress, done);
     });
   });
 });

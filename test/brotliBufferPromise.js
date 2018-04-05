@@ -26,6 +26,13 @@ function testBufferPromise(method, bufferFile, resultFile, done, params) {
   }
 }
 
+function testBufferError(method, done) {
+  method('not a buffer').catch(function(err) {
+    expect(err).an.instanceof(Error);
+    done();
+  });
+}
+
 describe('Brotli Buffer Promise', function() {
   describe('compress', function() {
     it('should compress binary data', function(done) {
@@ -61,6 +68,10 @@ describe('Brotli Buffer Promise', function() {
       this.timeout(30000);
       testBufferPromise(brotli.compress, 'large.txt', 'large.txt.compressed', done);
     });
+
+    it('should reject with an error when the input is not a buffer', function(done) {
+      testBufferError(brotli.compress, done);
+    });
   });
 
   describe('decompress', function() {
@@ -92,6 +103,10 @@ describe('Brotli Buffer Promise', function() {
 
       this.timeout(30000);
       testBufferPromise(brotli.decompress, 'large.txt.compressed', 'large.txt', done);
+    });
+
+    it('should reject with an error when the input is not a buffer', function(done) {
+      testBufferError(brotli.decompress, done);
     });
   });
 });

@@ -14,6 +14,12 @@ function testBufferSync(method, bufferFile, resultFile, params) {
   expect(output).to.deep.equal(result);
 }
 
+function testBufferError(method) {
+  expect(function() {
+    method('not a buffer');
+  }).to.throw(Error);
+}
+
 describe('Brotli Buffer Sync', function() {
   describe('compress', function() {
     it('should compress binary data', function() {
@@ -49,6 +55,10 @@ describe('Brotli Buffer Sync', function() {
       this.timeout(30000);
       testBufferSync(brotli.compressSync, 'large.txt', 'large.txt.compressed');
     });
+
+    it('should throw when the input is not a buffer', function() {
+      testBufferError(brotli.compressSync);
+    });
   });
 
   describe('decompress', function() {
@@ -80,6 +90,10 @@ describe('Brotli Buffer Sync', function() {
 
       this.timeout(30000);
       testBufferSync(brotli.decompressSync, 'large.txt.compressed', 'large.txt');
+    });
+
+    it('should throw when the input is not a buffer', function() {
+      testBufferError(brotli.decompressSync);
     });
   });
 });

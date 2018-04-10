@@ -301,7 +301,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [1.0.1]: https://github.com/MayhemYDG/iltorb/compare/1.0.0...1.0.1
 [1.0.1]: https://github.com/MayhemYDG/iltorb/releases/tag/1.0.0
 
-[v1.0.4]: https://github.com/google/brotli/compare/v1.0.3...c6333e1e79fb62ea088443f192293f964409b04e
+[v1.0.4]: https://github.com/google/brotli/releases/tag/v1.0.4
 [v1.0.3]: https://github.com/google/brotli/releases/tag/v1.0.3
 [v1.0.2]: https://github.com/google/brotli/releases/tag/v1.0.2
 [v1.0.1]: https://github.com/google/brotli/releases/tag/v1.0.1

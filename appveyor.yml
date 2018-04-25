@@ -7,7 +7,6 @@ environment:
     secure: 7t92yForo995jn/5Afeo6A3wcmEyus0nlybU4a9MYQ1FSoMvkjLeihbEQYr99F9S
 
   matrix:
-    - nodejs_version: "4"
     - nodejs_version: "6"
     - nodejs_version: "8"
     - nodejs_version: "9"
@@ -27,11 +26,6 @@ install:
   - cmd: git submodule update --init --recursive
   - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) $env:platform;
   - ps: >
-      if ($env:nodejs_version -eq "4") {
-        npm i -g npm node-gyp | Write-Host;
-        npm config set -g cafile=package.json
-        npm config set -g strict-ssl=false
-      }
       npm config set progress false
       npm config set spin false
   - ps: >

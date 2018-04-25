@@ -10,7 +10,7 @@ const path = require('path');
 class BufferWriter extends Writable {
   constructor() {
     super();
-    this.data = new Buffer(0);
+    this.data = Buffer.alloc(0);
   }
 
   _write(chunk, encoding, next) {
@@ -66,8 +66,8 @@ describe('Brotli Stream', function() {
     });
 
     it('should flush data', function(done) {
-      const buf1 = new Buffer('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
-      const buf2 = new Buffer('Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
+      const buf1 = Buffer.from('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
+      const buf2 = Buffer.from('Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
 
       const stream = brotli.compressStream();
       const writeStream = new BufferWriter();

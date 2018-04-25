@@ -1,9 +1,8 @@
 'use strict';
 
 const brotli = require('../');
-const chai = require('chai');
-const expect = chai.expect;
-const Writable = require('stream').Writable;
+const { expect } = require('chai');
+const { Writable } = require('stream');
 const fs = require('fs');
 const path = require('path');
 

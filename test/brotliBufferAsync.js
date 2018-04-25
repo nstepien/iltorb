@@ -1,13 +1,11 @@
 'use strict';
 
 const brotli = require('../');
-const chai = require('chai');
-const expect = chai.expect;
+const { expect } = require('chai');
 const fs = require('fs');
 const path = require('path');
 
-function testBufferAsync(method, bufferFile, resultFile, done, params) {
-  params = params || {};
+function testBufferAsync(method, bufferFile, resultFile, done, params={}) {
   const buffer = fs.readFileSync(path.join(__dirname, '/fixtures/', bufferFile));
   const result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
 

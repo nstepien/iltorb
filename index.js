@@ -35,7 +35,10 @@ class TransformStreamEncode extends Transform {
   }
 
   _flush(done) {
-    this.encoder.flush(true, done, !this.sync);
+    this.encoder.flush(true, err => {
+      done(err);
+      delete this.encoder;
+    }, !this.sync);
   }
 
   flush(force) {
@@ -76,7 +79,10 @@ class TransformStreamDecode extends Transform {
   }
 
   _flush(done) {
-    this.decoder.flush(done, !this.sync);
+    this.decoder.flush((err) => {
+      done(err);
+      delete this.decoder;
+    }, !this.sync);
   }
 }
 

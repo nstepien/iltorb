@@ -65,6 +65,7 @@ StreamEncode::StreamEncode(Local<Object> params, Callback *progress): progress(p
 StreamEncode::~StreamEncode() {
   BrotliEncoderDestroyInstance(state);
   delete progress;
+  alloc.ReportMemoryToV8();
 }
 
 void StreamEncode::Init(ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {

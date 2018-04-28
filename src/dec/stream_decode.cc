@@ -9,6 +9,7 @@ StreamDecode::StreamDecode(Callback *progress) : progress(progress) {
 StreamDecode::~StreamDecode() {
   BrotliDecoderDestroyInstance(state);
   delete progress;
+  alloc.ReportMemoryToV8();
 }
 
 void StreamDecode::Init(ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {

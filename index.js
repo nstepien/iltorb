@@ -17,17 +17,16 @@ class TransformStreamEncode extends Transform {
     this.encoding = false;
     this.corked = false;
     this.flushing = false;
-    this.encoder = new iltorb.StreamEncode(params);
+    this.encoder = new iltorb.StreamEncode(params, output => this.push(output));
   }
 
   _transform(chunk, encoding, next) {
     this.encoding = true;
-    this.encoder.transform(chunk, (err, output) => {
+    this.encoder.transform(chunk, (err) => {
       this.encoding = false;
       if (err) {
         return next(err);
       }
-      this._push(output);
       next();
       if (this.flushing) {
         this.flush(true);
@@ -36,21 +35,7 @@ class TransformStreamEncode extends Transform {
   }
 
   _flush(done) {
-    this.encoder.flush(true, (err, output) => {
-      if (err) {
-        return done(err);
-      }
-      this._push(output);
-      done();
-    }, !this.sync);
-  }
-
-  _push(output) {
-    if (output) {
-      for (let i = 0; i < output.length; i++) {
-        this.push(output[i]);
-      }
-    }
+    this.encoder.flush(true, done, !this.sync);
   }
 
   flush(force) {
@@ -68,11 +53,9 @@ class TransformStreamEncode extends Transform {
       return;
     }
 
-    this.encoder.flush(false, (err, output) => {
+    this.encoder.flush(false, (err) => {
       if (err) {
         this.emit('error', err);
-      } else {
-        this._push(output);
       }
       this.corked = false;
       this.flushing = false;
@@ -85,35 +68,15 @@ class TransformStreamDecode extends Transform {
   constructor(sync=false) {
     super();
     this.sync = sync;
-    this.decoder = new iltorb.StreamDecode();
+    this.decoder = new iltorb.StreamDecode(output => this.push(output));
   }
 
   _transform(chunk, encoding, next) {
-    this.decoder.transform(chunk, (err, output) => {
-      if (err) {
-        return next(err);
-      }
-      this._push(output);
-      next();
-    }, !this.sync);
+    this.decoder.transform(chunk, next, !this.sync);
   }
 
   _flush(done) {
-    this.decoder.flush((err, output) => {
-      if (err) {
-        return done(err);
-      }
-      this._push(output);
-      done();
-    }, !this.sync);
-  }
-
-  _push(output) {
-    if (output) {
-      for (let i = 0; i < output.length; i++) {
-        this.push(output[i]);
-      }
-    }
+    this.decoder.flush(done, !this.sync);
   }
 }
 

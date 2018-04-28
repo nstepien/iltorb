@@ -1,9 +1,7 @@
 #include "stream_encode.h"
 #include "stream_encode_worker.h"
 
-using namespace v8;
-
-StreamEncode::StreamEncode(Local<Object> params) {
+StreamEncode::StreamEncode(Local<Object> params, Callback *progress): progress(progress) {
   state = BrotliEncoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
 
   Local<String> key;
@@ -66,9 +64,10 @@ StreamEncode::StreamEncode(Local<Object> params) {
 
 StreamEncode::~StreamEncode() {
   BrotliEncoderDestroyInstance(state);
+  delete progress;
 }
 
-void StreamEncode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
+void StreamEncode::Init(ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
   Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
   tpl->SetClassName(Nan::New("StreamEncode").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
@@ -82,7 +81,8 @@ void StreamEncode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
 }
 
 NAN_METHOD(StreamEncode::New) {
-  StreamEncode* obj = new StreamEncode(info[0]->ToObject());
+  Nan::Callback *progress = new Nan::Callback(info[1].As<Function>());
+  StreamEncode* obj = new StreamEncode(info[0]->ToObject(), progress);
   obj->Wrap(info.This());
   info.GetReturnValue().Set(info.This());
 }
@@ -95,7 +95,7 @@ NAN_METHOD(StreamEncode::Transform) {
   obj->available_in = node::Buffer::Length(buffer);
 
   Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
-  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, BROTLI_OPERATION_PROCESS);
+  AsyncWorker *worker = new StreamEncodeWorker(callback, obj, BROTLI_OPERATION_PROCESS);
   if (info[2]->BooleanValue()) {
     Nan::AsyncQueueWorker(worker);
   } else {
@@ -114,7 +114,7 @@ NAN_METHOD(StreamEncode::Flush) {
     : BROTLI_OPERATION_FLUSH;
   obj->next_in = nullptr;
   obj->available_in = 0;
-  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, op);
+  AsyncWorker *worker = new StreamEncodeWorker(callback, obj, op);
   if (info[2]->BooleanValue()) {
     Nan::AsyncQueueWorker(worker);
   } else {

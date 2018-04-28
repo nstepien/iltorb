@@ -2,19 +2,25 @@
 #define STREAM_ENCODE_H
 
 #include <nan.h>
-#include "../common/stream_coder.h"
+#include "../common/allocator.h"
 #include "brotli/encode.h"
 
-class StreamEncode : public StreamCoder {
+using namespace v8;
+using namespace Nan;
+
+class StreamEncode : public Nan::ObjectWrap {
   public:
-    static void Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target);
+    static void Init(ADDON_REGISTER_FUNCTION_ARGS_TYPE target);
+
+    Allocator alloc;
 
     const uint8_t* next_in;
     size_t available_in;
 
+    Callback *progress;
     BrotliEncoderState* state;
   private:
-    explicit StreamEncode(Local<Object> params);
+    explicit StreamEncode(Local<Object> params, Callback *progress);
     ~StreamEncode();
 
     static NAN_METHOD(New);

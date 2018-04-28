@@ -9,12 +9,18 @@ const path = require('path');
 class BufferWriter extends Writable {
   constructor() {
     super();
-    this.data = Buffer.alloc(0);
+    this.chunks = [];
+    this.size = 0;
   }
 
   _write(chunk, encoding, next) {
-    this.data = Buffer.concat([this.data, chunk], this.data.length + chunk.length);
+    this.chunks.push(chunk);
+    this.size += chunk.length;
     next();
+  }
+
+  get data() {
+    return Buffer.concat(this.chunks, this.size);
   }
 }
 

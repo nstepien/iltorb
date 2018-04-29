@@ -7,17 +7,16 @@ exports.decompressSync = decompressSync;
 exports.compressStream = compressStream;
 exports.decompressStream = decompressStream;
 
-const iltorb = require('./build/bindings/iltorb.node');
+const { StreamEncode, StreamDecode } = require('./build/bindings/iltorb.node');
 const { Transform } = require('stream');
 
 class TransformStreamEncode extends Transform {
-  constructor(params={}, sync=false) {
+  constructor(params={}, async=true) {
     super();
-    this.sync = sync;
     this.encoding = false;
     this.corked = false;
     this.flushing = false;
-    this.encoder = new iltorb.StreamEncode(params, output => this.push(output));
+    this.encoder = new StreamEncode(params, async, chunk => this.push(chunk));
   }
 
   _transform(chunk, encoding, next) {
@@ -31,14 +30,14 @@ class TransformStreamEncode extends Transform {
       if (this.flushing) {
         this.flush(true);
       }
-    }, !this.sync);
+    });
   }
 
   _flush(done) {
     this.encoder.flush(true, err => {
       done(err);
       delete this.encoder;
-    }, !this.sync);
+    });
   }
 
   flush(force) {
@@ -63,26 +62,25 @@ class TransformStreamEncode extends Transform {
       this.corked = false;
       this.flushing = false;
       this.uncork();
-    }, true);
+    });
   }
 }
 
 class TransformStreamDecode extends Transform {
-  constructor(sync=false) {
+  constructor(async=true) {
     super();
-    this.sync = sync;
-    this.decoder = new iltorb.StreamDecode(output => this.push(output));
+    this.decoder = new StreamDecode(async, chunk => this.push(chunk));
   }
 
   _transform(chunk, encoding, next) {
-    this.decoder.transform(chunk, next, !this.sync);
+    this.decoder.transform(chunk, next);
   }
 
   _flush(done) {
     this.decoder.flush((err) => {
       done(err);
       delete this.decoder;
-    }, !this.sync);
+    });
   }
 }
 
@@ -182,8 +180,8 @@ function compressSync(input, params) {
   if (typeof params !== 'object') {
     params = {};
   }
-  params.size_hint = input.length;
-  const stream = new TransformStreamEncode(params, true);
+  params = Object.assign({}, params, {size_hint: input.length});
+  const stream = new TransformStreamEncode(params, false);
   const chunks = [];
   let length = 0;
   stream.on('error', function(e) {
@@ -201,7 +199,7 @@ function decompressSync(input) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('Brotli input is not a buffer.');
   }
-  const stream = new TransformStreamDecode(true);
+  const stream = new TransformStreamDecode(false);
   const chunks = [];
   let length = 0;
   stream.on('error', function(e) {

@@ -1,7 +1,7 @@
 #include "stream_decode.h"
 #include "stream_decode_worker.h"
 
-StreamDecode::StreamDecode(Callback *progress) : progress(progress) {
+StreamDecode::StreamDecode(bool async, Callback *progress) : async(async), progress(progress) {
   state = BrotliDecoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
   alloc.ReportMemoryToV8();
 }
@@ -26,8 +26,8 @@ void StreamDecode::Init(ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
 }
 
 NAN_METHOD(StreamDecode::New) {
-  Nan::Callback *progress = new Nan::Callback(info[0].As<Function>());
-  StreamDecode* obj = new StreamDecode(progress);
+  Nan::Callback *progress = new Nan::Callback(info[1].As<Function>());
+  StreamDecode* obj = new StreamDecode(info[0]->BooleanValue(), progress);
   obj->Wrap(info.This());
   info.GetReturnValue().Set(info.This());
 }
@@ -41,7 +41,7 @@ NAN_METHOD(StreamDecode::Transform) {
 
   Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
   AsyncWorker *worker = new StreamDecodeWorker(callback, obj);
-  if (info[2]->BooleanValue()) {
+  if (obj->async) {
     Nan::AsyncQueueWorker(worker);
   } else {
     worker->Execute();
@@ -57,7 +57,7 @@ NAN_METHOD(StreamDecode::Flush) {
   obj->next_in = nullptr;
   obj->available_in = 0;
   AsyncWorker *worker = new StreamDecodeWorker(callback, obj);
-  if (info[1]->BooleanValue()) {
+  if (obj->async) {
     Nan::AsyncQueueWorker(worker);
   } else {
     worker->Execute();

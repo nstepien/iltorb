@@ -1,7 +1,8 @@
 #include "stream_encode.h"
 #include "stream_encode_worker.h"
 
-StreamEncode::StreamEncode(Local<Object> params, Callback *progress): progress(progress) {
+StreamEncode::StreamEncode(Local<Object> params, bool async, Callback *progress)
+  : async(async), progress(progress) {
   state = BrotliEncoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
 
   Local<String> key;
@@ -82,8 +83,8 @@ void StreamEncode::Init(ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
 }
 
 NAN_METHOD(StreamEncode::New) {
-  Nan::Callback *progress = new Nan::Callback(info[1].As<Function>());
-  StreamEncode* obj = new StreamEncode(info[0]->ToObject(), progress);
+  Nan::Callback *progress = new Nan::Callback(info[2].As<Function>());
+  StreamEncode* obj = new StreamEncode(info[0]->ToObject(), info[1]->BooleanValue(), progress);
   obj->Wrap(info.This());
   info.GetReturnValue().Set(info.This());
 }
@@ -97,7 +98,7 @@ NAN_METHOD(StreamEncode::Transform) {
 
   Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
   AsyncWorker *worker = new StreamEncodeWorker(callback, obj, BROTLI_OPERATION_PROCESS);
-  if (info[2]->BooleanValue()) {
+  if (obj->async) {
     Nan::AsyncQueueWorker(worker);
   } else {
     worker->Execute();
@@ -116,7 +117,7 @@ NAN_METHOD(StreamEncode::Flush) {
   obj->next_in = nullptr;
   obj->available_in = 0;
   AsyncWorker *worker = new StreamEncodeWorker(callback, obj, op);
-  if (info[2]->BooleanValue()) {
+  if (obj->async) {
     Nan::AsyncQueueWorker(worker);
   } else {
     worker->Execute();

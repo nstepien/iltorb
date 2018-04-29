@@ -17,10 +17,11 @@ class StreamDecode : public Nan::ObjectWrap {
     const uint8_t* next_in;
     size_t available_in;
 
+    bool async;
     Callback *progress;
     BrotliDecoderState* state;
   private:
-    explicit StreamDecode(Callback *progress);
+    explicit StreamDecode(bool async, Callback *progress);
     ~StreamDecode();
 
     static NAN_METHOD(New);

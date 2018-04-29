@@ -4,7 +4,6 @@ StreamDecodeWorker::StreamDecodeWorker(Callback *callback, StreamDecode* obj)
   : AsyncProgressQueueWorker<uint8_t>(callback), obj(obj) {}
 
 StreamDecodeWorker::~StreamDecodeWorker() {
-  obj->alloc.ReportMemoryToV8();
 }
 
 void StreamDecodeWorker::Execute(const ExecutionProgress& progress) {

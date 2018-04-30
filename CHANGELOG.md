@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.3.1] - 2018-04-30
+### Added
+- Support for Node 10
+
+### Removed
+- Dropped support for Node 4
+
 ## [2.3.0] - 2018-04-06
 ### Added
 - The compress and decompress methods will now return a promise when the callback argument is missing.
@@ -259,6 +266,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
+[2.3.1]: https://github.com/MayhemYDG/iltorb/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/MayhemYDG/iltorb/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/MayhemYDG/iltorb/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/MayhemYDG/iltorb/compare/v2.0.9...v2.1.0

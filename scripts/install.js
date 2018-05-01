@@ -13,6 +13,7 @@
 const path = require('path');
 const prebuildRC = require('prebuild-install/rc');
 const prebuildDL = require('prebuild-install/download');
+const prebuildUtil = require('prebuild-install/util');
 const whichPM = require('which-pm-runs');
 const log = require('npmlog');
 const pkg = require(path.resolve(__dirname, '../package.json'));
@@ -44,7 +45,7 @@ if (opts.force) {
   process.exit(1)
 }
 
-prebuildDL(opts, function(err) {
+prebuildDL(prebuildUtil.getDownloadUrl(opts), opts, function(err) {
   if (err) {
     log.warn('install', err.message);
     process.exit(1);

@@ -7,50 +7,37 @@ exports.decompressSync = decompressSync;
 exports.compressStream = compressStream;
 exports.decompressStream = decompressStream;
 
-const iltorb = require('./build/bindings/iltorb.node');
+const { StreamEncode, StreamDecode } = require('./build/bindings/iltorb.node');
 const { Transform } = require('stream');
 
 class TransformStreamEncode extends Transform {
-  constructor(params={}, sync=false) {
+  constructor(params={}, async=true) {
     super();
-    this.sync = sync;
     this.encoding = false;
     this.corked = false;
     this.flushing = false;
-    this.encoder = new iltorb.StreamEncode(params);
+    this.encoder = new StreamEncode(params, async, chunk => this.push(chunk));
   }
 
   _transform(chunk, encoding, next) {
     this.encoding = true;
-    this.encoder.transform(chunk, (err, output) => {
+    this.encoder.transform(chunk, (err) => {
       this.encoding = false;
       if (err) {
         return next(err);
       }
-      this._push(output);
       next();
       if (this.flushing) {
         this.flush(true);
       }
-    }, !this.sync);
+    });
   }
 
   _flush(done) {
-    this.encoder.flush(true, (err, output) => {
-      if (err) {
-        return done(err);
-      }
-      this._push(output);
-      done();
-    }, !this.sync);
-  }
-
-  _push(output) {
-    if (output) {
-      for (let i = 0; i < output.length; i++) {
-        this.push(output[i]);
-      }
-    }
+    this.encoder.flush(true, err => {
+      done(err);
+      delete this.encoder;
+    });
   }
 
   flush(force) {
@@ -68,52 +55,32 @@ class TransformStreamEncode extends Transform {
       return;
     }
 
-    this.encoder.flush(false, (err, output) => {
+    this.encoder.flush(false, (err) => {
       if (err) {
         this.emit('error', err);
-      } else {
-        this._push(output);
       }
       this.corked = false;
       this.flushing = false;
       this.uncork();
-    }, true);
+    });
   }
 }
 
 class TransformStreamDecode extends Transform {
-  constructor(sync=false) {
+  constructor(async=true) {
     super();
-    this.sync = sync;
-    this.decoder = new iltorb.StreamDecode();
+    this.decoder = new StreamDecode(async, chunk => this.push(chunk));
   }
 
   _transform(chunk, encoding, next) {
-    this.decoder.transform(chunk, (err, output) => {
-      if (err) {
-        return next(err);
-      }
-      this._push(output);
-      next();
-    }, !this.sync);
+    this.decoder.transform(chunk, next);
   }
 
   _flush(done) {
-    this.decoder.flush((err, output) => {
-      if (err) {
-        return done(err);
-      }
-      this._push(output);
-      done();
-    }, !this.sync);
-  }
-
-  _push(output) {
-    if (output) {
-      for (let i = 0; i < output.length; i++) {
-        this.push(output[i]);
-      }
-    }
+    this.decoder.flush((err) => {
+      done(err);
+      delete this.decoder;
+    });
   }
 }
 
@@ -213,8 +180,8 @@ function compressSync(input, params) {
   if (typeof params !== 'object') {
     params = {};
   }
-  params.size_hint = input.length;
-  const stream = new TransformStreamEncode(params, true);
+  params = Object.assign({}, params, {size_hint: input.length});
+  const stream = new TransformStreamEncode(params, false);
   const chunks = [];
   let length = 0;
   stream.on('error', function(e) {
@@ -232,7 +199,7 @@ function decompressSync(input) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('Brotli input is not a buffer.');
   }
-  const stream = new TransformStreamDecode(true);
+  const stream = new TransformStreamDecode(false);
   const chunks = [];
   let length = 0;
   stream.on('error', function(e) {

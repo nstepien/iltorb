@@ -31,7 +31,6 @@
         "brotli/c/enc/utf8_util.c",
 
         "src/common/allocator.cc",
-        "src/common/stream_coder.cc",
 
         "src/dec/stream_decode.cc",
         "src/dec/stream_decode_worker.cc",

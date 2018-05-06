@@ -16,7 +16,6 @@ class StreamEncodeWorker : public Nan::AsyncWorker {
     ~StreamEncodeWorker();
     StreamEncode* obj;
     BrotliEncoderOperation op;
-    bool res;
 };
 
 #endif

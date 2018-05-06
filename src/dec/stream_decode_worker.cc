@@ -9,17 +9,18 @@ StreamDecodeWorker::~StreamDecodeWorker() {
 }
 
 void StreamDecodeWorker::Execute() {
+  BrotliDecoderResult res;
   do {
     size_t available_out = 0;
     res = BrotliDecoderDecompressStream(obj->state,
-                                 &obj->available_in,
-                                 &obj->next_in,
-                                 &available_out,
-                                 NULL,
-                                 NULL);
+                                        &obj->available_in,
+                                        &obj->next_in,
+                                        &available_out,
+                                        NULL,
+                                        NULL);
 
     if (res == BROTLI_DECODER_RESULT_ERROR) {
-      return;
+      return SetErrorMessage("Brotli failed to decompress.");
     }
 
     while (BrotliDecoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
@@ -28,29 +29,20 @@ void StreamDecodeWorker::Execute() {
 
       void* buf = obj->alloc.Alloc(size);
       if (!buf) {
-        res = BROTLI_DECODER_RESULT_ERROR;
-        return;
+        return SetErrorMessage("Brotli failed to decompress.");
       }
 
       memcpy(buf, output, size);
       obj->pending_output.push_back(static_cast<uint8_t*>(buf));
     }
-  } while(res == BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT);
+  } while (res == BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT);
 }
 
 void StreamDecodeWorker::HandleOKCallback() {
-  if (res == BROTLI_DECODER_RESULT_ERROR || res == BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT) {
-    Local<Value> argv[] = {
-      Nan::Error("Brotli failed to decompress.")
-    };
-    callback->Call(1, argv, async_resource);
-  } else {
-    Local<Value> argv[] = {
-      Nan::Null(),
-      obj->PendingChunksAsArray()
-    };
-    callback->Call(2, argv, async_resource);
-  }
-
+  Local<Value> argv[] = {
+    Nan::Null(),
+    obj->PendingChunksAsArray()
+  };
+  callback->Call(2, argv, async_resource);
   obj->alloc.ReportMemoryToV8();
 }

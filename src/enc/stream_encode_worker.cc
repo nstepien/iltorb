@@ -11,26 +11,25 @@ StreamEncodeWorker::~StreamEncodeWorker() {
 void StreamEncodeWorker::Execute() {
   do {
     size_t available_out = 0;
-    res = BrotliEncoderCompressStream(obj->state,
-                                      op,
-                                      &obj->available_in,
-                                      &obj->next_in,
-                                      &available_out,
-                                      NULL,
-                                      NULL);
+    bool res = BrotliEncoderCompressStream(obj->state,
+                                           op,
+                                           &obj->available_in,
+                                           &obj->next_in,
+                                           &available_out,
+                                           NULL,
+                                           NULL);
 
     if (res == BROTLI_FALSE) {
-      return;
+      return SetErrorMessage("Brotli failed to compress.");
     }
 
-    if (BrotliEncoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
+    while (BrotliEncoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
       size_t size = 0;
       const uint8_t* output = BrotliEncoderTakeOutput(obj->state, &size);
 
       void* buf = obj->alloc.Alloc(size);
       if (!buf) {
-        res = BROTLI_FALSE;
-        return;
+        return SetErrorMessage("Brotli failed to compress.");
       }
 
       memcpy(buf, output, size);
@@ -40,18 +39,10 @@ void StreamEncodeWorker::Execute() {
 }
 
 void StreamEncodeWorker::HandleOKCallback() {
-  if (res == BROTLI_FALSE) {
-    Local<Value> argv[] = {
-      Nan::Error("Brotli failed to compress.")
-    };
-    callback->Call(1, argv, async_resource);
-  } else {
-    Local<Value> argv[] = {
-      Nan::Null(),
-      obj->PendingChunksAsArray()
-    };
-    callback->Call(2, argv, async_resource);
-  }
-
+  Local<Value> argv[] = {
+    Nan::Null(),
+    obj->PendingChunksAsArray()
+  };
+  callback->Call(2, argv, async_resource);
   obj->alloc.ReportMemoryToV8();
 }

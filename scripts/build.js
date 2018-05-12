@@ -8,14 +8,14 @@ const PREBUILD_TOKEN = process.env.PREBUILD_TOKEN;
 const PUBLISH_BINARY = process.env.PUBLISH_BINARY || false;
 
 
-function build(item) {
+function build({target, runtime, abi}) {
   try {
-    item.abi && getTarget(item.target, item.runtime);
+    abi && getTarget(target, runtime);
   } catch (err) {
     return Promise.resolve();
   }
 
-  const args = ['--verbose', '-r', item.runtime, '-t', item.target];
+  const args = ['--verbose', '-r', runtime, '-t', target];
 
   if (libc.isNonGlibcLinux) {
     process.env.LIBC = libc.family;
@@ -57,4 +57,3 @@ builds
   .reduce((promise, item) => {
     return promise.then(() => build(item)).catch((code) => process.exit(code));
   }, Promise.resolve());
-

@@ -1,12 +1,11 @@
-#include <nan.h>
+#include <node_api.h>
 #include "dec/stream_decode.h"
 #include "enc/stream_encode.h"
 
-using namespace v8;
-
-NAN_MODULE_INIT(Init) {
-  StreamDecode::Init(target);
-  StreamEncode::Init(target);
+napi_value Init(napi_env env, napi_value exports) {
+  StreamDecode::Init(env, exports);
+  StreamEncode::Init(env, exports);
+  return exports;
 }
 
-NODE_MODULE(iltorb, Init)
+NAPI_MODULE(NODE_GYP_MODULE_NAME, Init)

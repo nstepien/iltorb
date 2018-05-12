@@ -1,0 +1,11 @@
+#ifndef STREAM_ENCODE_WORKER_H
+#define STREAM_ENCODE_WORKER_H
+
+#include <node_api.h>
+#include "brotli/encode.h"
+#include "stream_encode.h"
+
+void ExecuteEncode(napi_env env, void* data);
+void CompleteEncode(napi_env env, napi_status status, void* data);
+
+#endif

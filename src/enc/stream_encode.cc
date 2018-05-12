@@ -1,127 +1,209 @@
 #include "stream_encode.h"
-#include "stream_encode_worker.h"
 
-using namespace v8;
+napi_ref StreamEncode::constructor;
 
-StreamEncode::StreamEncode(Local<Object> params) {
+StreamEncode::StreamEncode(napi_env env, napi_value params) {
   state = BrotliEncoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
 
-  Local<String> key;
-  uint32_t val;
+  SetParameter(env, params, "mode", BROTLI_PARAM_MODE);
+  SetParameter(env, params, "quality", BROTLI_PARAM_QUALITY);
+  SetParameter(env, params, "lgwin", BROTLI_PARAM_LGWIN);
+  SetParameter(env, params, "lgblock", BROTLI_PARAM_LGBLOCK);
+  SetParameter(env, params, "disable_literal_context_modeling", BROTLI_PARAM_DISABLE_LITERAL_CONTEXT_MODELING);
+  SetParameter(env, params, "size_hint", BROTLI_PARAM_SIZE_HINT);
+  SetParameter(env, params, "large_window", BROTLI_PARAM_LARGE_WINDOW);
+  SetParameter(env, params, "npostfix", BROTLI_PARAM_NPOSTFIX);
+  SetParameter(env, params, "ndirect", BROTLI_PARAM_NDIRECT);
 
-  key = Nan::New<String>("mode").ToLocalChecked();
-  if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
-    BrotliEncoderSetParameter(state, BROTLI_PARAM_MODE, val);
-  }
-
-  key = Nan::New<String>("quality").ToLocalChecked();
-  if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
-    BrotliEncoderSetParameter(state, BROTLI_PARAM_QUALITY, val);
-  }
-
-  key = Nan::New<String>("lgwin").ToLocalChecked();
-  if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
-    BrotliEncoderSetParameter(state, BROTLI_PARAM_LGWIN, val);
-  }
-
-  key = Nan::New<String>("lgblock").ToLocalChecked();
-  if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
-    BrotliEncoderSetParameter(state, BROTLI_PARAM_LGBLOCK, val);
-  }
-
-  key = Nan::New<String>("disable_literal_context_modeling").ToLocalChecked();
-  if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->BooleanValue();
-    BrotliEncoderSetParameter(state, BROTLI_PARAM_DISABLE_LITERAL_CONTEXT_MODELING, val);
-  }
-
-  key = Nan::New<String>("size_hint").ToLocalChecked();
-  if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
-    BrotliEncoderSetParameter(state, BROTLI_PARAM_SIZE_HINT, val);
-  }
-
-  key = Nan::New<String>("large_window").ToLocalChecked();
-  if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->BooleanValue();
-    BrotliEncoderSetParameter(state, BROTLI_PARAM_LARGE_WINDOW, val);
-  }
-
-  key = Nan::New<String>("npostfix").ToLocalChecked();
-  if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
-    BrotliEncoderSetParameter(state, BROTLI_PARAM_NPOSTFIX, val);
-  }
-
-  key = Nan::New<String>("ndirect").ToLocalChecked();
-  if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
-    BrotliEncoderSetParameter(state, BROTLI_PARAM_NDIRECT, val);
-  }
+  // alloc.ReportMemoryToV8();
 }
 
 StreamEncode::~StreamEncode() {
+  napi_delete_reference(env_, wrapper_);
   BrotliEncoderDestroyInstance(state);
 }
 
-void StreamEncode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
-  Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
-  tpl->SetClassName(Nan::New("StreamEncode").ToLocalChecked());
-  tpl->InstanceTemplate()->SetInternalFieldCount(1);
-
-  Nan::SetPrototypeMethod(tpl, "transform", Transform);
-  Nan::SetPrototypeMethod(tpl, "flush", Flush);
-
-  constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
-  Nan::Set(target, Nan::New("StreamEncode").ToLocalChecked(),
-    Nan::GetFunction(tpl).ToLocalChecked());
+void StreamEncode::Destructor(napi_env env, void* nativeObject, void* /*finalize_hint*/) {
+  reinterpret_cast<StreamEncode*>(nativeObject)->~StreamEncode();
 }
 
-NAN_METHOD(StreamEncode::New) {
-  StreamEncode* obj = new StreamEncode(info[0]->ToObject());
-  obj->Wrap(info.This());
-  info.GetReturnValue().Set(info.This());
-}
+void StreamEncode::SetParameter(napi_env env, napi_value params, const char* key, BrotliEncoderParameter p) {
+  napi_status status;
 
-NAN_METHOD(StreamEncode::Transform) {
-  StreamEncode* obj = ObjectWrap::Unwrap<StreamEncode>(info.Holder());
+  bool hasProp;
+  status = napi_has_named_property(env, params, key, &hasProp);
+  assert(status == napi_ok);
 
-  Local<Object> buffer = info[0]->ToObject();
-  obj->next_in = (const uint8_t*) node::Buffer::Data(buffer);
-  obj->available_in = node::Buffer::Length(buffer);
-
-  Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
-  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, BROTLI_OPERATION_PROCESS);
-  if (info[2]->BooleanValue()) {
-    Nan::AsyncQueueWorker(worker);
-  } else {
-    worker->Execute();
-    worker->WorkComplete();
-    worker->Destroy();
+  if (!hasProp) {
+    return;
   }
+
+  napi_value prop;
+  status = napi_get_named_property(env, params, key, &prop);
+  assert(status == napi_ok);
+
+  napi_valuetype valuetype;
+  status = napi_typeof(env, prop, &valuetype);
+  assert(status == napi_ok);
+
+  if (valuetype != napi_number) {
+    status = napi_coerce_to_number(env, prop, &prop);
+    assert(status == napi_ok);
+  }
+
+  uint32_t value;
+  status = napi_get_value_uint32(env, prop, &value);
+  assert(status == napi_ok);
+
+  BrotliEncoderSetParameter(state, p, value);
 }
 
-NAN_METHOD(StreamEncode::Flush) {
-  StreamEncode* obj = ObjectWrap::Unwrap<StreamEncode>(info.Holder());
+#define DECLARE_NAPI_METHOD(name, func) \
+  { name, 0, func, 0, 0, 0, napi_default, 0 }
 
-  Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
-  BrotliEncoderOperation op = info[0]->BooleanValue()
+napi_value StreamEncode::Init(napi_env env, napi_value exports) {
+  napi_status status;
+  napi_property_descriptor properties[] = {
+    DECLARE_NAPI_METHOD("transform", Transform),
+    DECLARE_NAPI_METHOD("flush", Flush)
+  };
+
+  napi_value cons;
+  status = napi_define_class(env, "StreamEncode", NAPI_AUTO_LENGTH, New, nullptr, 2, properties, &cons);
+  assert(status == napi_ok);
+
+  status = napi_create_reference(env, cons, 1, &constructor);
+  assert(status == napi_ok);
+
+  status = napi_set_named_property(env, exports, "StreamEncode", cons);
+  assert(status == napi_ok);
+
+  return exports;
+}
+
+napi_value StreamEncode::New(napi_env env, napi_callback_info info) {
+  napi_status status;
+
+  size_t argc = 1;
+  napi_value argv[1];
+  napi_value jsthis;
+  status = napi_get_cb_info(env, info, &argc, argv, &jsthis, nullptr);
+  assert(status == napi_ok);
+
+  StreamEncode* obj = new StreamEncode(env, argv[0]);
+
+  obj->env_ = env;
+  status = napi_wrap(env,
+                     jsthis,
+                     reinterpret_cast<void*>(obj),
+                     StreamEncode::Destructor,
+                     nullptr,
+                     &obj->wrapper_);
+  assert(status == napi_ok);
+
+  return jsthis;
+}
+
+napi_value StreamEncode::Transform(napi_env env, napi_callback_info info) {
+  napi_status status;
+
+  size_t argc = 3;
+  napi_value argv[3];
+  napi_value jsthis;
+  status = napi_get_cb_info(env, info, &argc, argv, &jsthis, nullptr);
+  assert(status == napi_ok);
+
+  StreamEncode* obj;
+  status = napi_unwrap(env, jsthis, reinterpret_cast<void**>(&obj));
+  assert(status == napi_ok);
+
+  status = napi_get_buffer_info(env, argv[0], (void**)&obj->next_in, &obj->available_in);
+  assert(status == napi_ok);
+
+  status = napi_create_reference(env, argv[1], 1, &obj->cb);
+  assert(status == napi_ok);
+
+  bool isAsync;
+  status = napi_get_value_bool(env, argv[2], &isAsync);
+  assert(status == napi_ok);
+
+  obj->op = BROTLI_OPERATION_PROCESS;
+
+  if (isAsync) {
+    napi_value resource_name;
+    napi_create_string_utf8(env, "EncodeResource", NAPI_AUTO_LENGTH, &resource_name);
+
+    napi_async_work work;
+    status = napi_create_async_work(env,
+                                    nullptr,
+                                    resource_name,
+                                    ExecuteEncode,
+                                    CompleteEncode,
+                                    obj,
+                                    &work);
+    assert(status == napi_ok);
+
+    status = napi_queue_async_work(env, work);
+    assert(status == napi_ok);
+  } else {
+    ExecuteEncode(env, obj);
+    CompleteEncode(env, status, obj);
+  }
+
+  return nullptr;
+}
+
+napi_value StreamEncode::Flush(napi_env env, napi_callback_info info) {
+  napi_status status;
+
+  size_t argc = 3;
+  napi_value argv[3];
+  napi_value jsthis;
+  status = napi_get_cb_info(env, info, &argc, argv, &jsthis, nullptr);
+  assert(status == napi_ok);
+
+  StreamEncode* obj;
+  status = napi_unwrap(env, jsthis, reinterpret_cast<void**>(&obj));
+  assert(status == napi_ok);
+
+  bool isFinish;
+  status = napi_get_value_bool(env, argv[0], &isFinish);
+  assert(status == napi_ok);
+
+  status = napi_create_reference(env, argv[1], 1, &obj->cb);
+  assert(status == napi_ok);
+
+  bool isAsync;
+  status = napi_get_value_bool(env, argv[2], &isAsync);
+  assert(status == napi_ok);
+
+  obj->op = isFinish
     ? BROTLI_OPERATION_FINISH
     : BROTLI_OPERATION_FLUSH;
+
   obj->next_in = nullptr;
   obj->available_in = 0;
-  StreamEncodeWorker *worker = new StreamEncodeWorker(callback, obj, op);
-  if (info[2]->BooleanValue()) {
-    Nan::AsyncQueueWorker(worker);
-  } else {
-    worker->Execute();
-    worker->WorkComplete();
-    worker->Destroy();
-  }
-}
 
-Nan::Persistent<Function> StreamEncode::constructor;
+  if (isAsync) {
+    napi_value resource_name;
+    napi_create_string_utf8(env, "EncodeResource", NAPI_AUTO_LENGTH, &resource_name);
+
+    napi_async_work work;
+    status = napi_create_async_work(env,
+                                    nullptr,
+                                    resource_name,
+                                    ExecuteEncode,
+                                    CompleteEncode,
+                                    obj,
+                                    &work);
+    assert(status == napi_ok);
+
+    status = napi_queue_async_work(env, work);
+    assert(status == napi_ok);
+  } else {
+    ExecuteEncode(env, obj);
+    CompleteEncode(env, status, obj);
+  }
+
+  return nullptr;
+}

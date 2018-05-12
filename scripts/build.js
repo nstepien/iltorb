@@ -8,14 +8,14 @@ const PREBUILD_TOKEN = process.env.PREBUILD_TOKEN;
 const PUBLISH_BINARY = process.env.PUBLISH_BINARY || false;
 
 
-function build(runtime, target) {
+function build(item) {
   try {
-    getTarget(target, runtime);
+    item.abi && getTarget(item.target, item.runtime);
   } catch (err) {
     return Promise.resolve();
   }
 
-  const args = ['--verbose', '-r', runtime, '-t', target];
+  const args = ['--verbose', '-r', item.runtime, '-t', item.target];
 
   if (libc.isNonGlibcLinux) {
     process.env.LIBC = libc.family;
@@ -42,19 +42,19 @@ function build(runtime, target) {
 
 
 const builds = [
-  { runtime: 'node', target: process.versions.modules }
+  { runtime: 'node', target: process.versions.node, abi: false }
 ];
 
 if (PUBLISH_BINARY) {
   builds.push(
-    { runtime: 'electron', target: '50' },
-    { runtime: 'electron', target: '53' },
-    { runtime: 'electron', target: process.versions.modules }
+    { runtime: 'electron', target: '50', abi: true },
+    { runtime: 'electron', target: '53', abi: true },
+    { runtime: 'electron', target: process.versions.modules, abi: true }
   );
 }
 
 builds
   .reduce((promise, item) => {
-    return promise.then(() => build(item.runtime, item.target)).catch((code) => process.exit(code));
+    return promise.then(() => build(item)).catch((code) => process.exit(code));
   }, Promise.resolve());
 

@@ -53,5 +53,5 @@ void CompleteEncode(napi_env env, napi_status status, void* data) {
   status = napi_call_function(env, null, cb, 2, argv, nullptr);
   assert(status == napi_ok);
 
-  // obj->alloc.ReportMemoryToV8(env);
+  obj->alloc.ReportMemoryToV8(env);
 }

@@ -4,7 +4,7 @@ napi_ref StreamDecode::constructor;
 
 StreamDecode::StreamDecode(napi_env env) {
   state = BrotliDecoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
-  // alloc.ReportMemoryToV8();
+  alloc.ReportMemoryToV8(env);
 }
 
 StreamDecode::~StreamDecode() {
@@ -13,7 +13,9 @@ StreamDecode::~StreamDecode() {
 }
 
 void StreamDecode::Destructor(napi_env env, void* nativeObject, void* /*finalize_hint*/) {
-  reinterpret_cast<StreamDecode*>(nativeObject)->~StreamDecode();
+  StreamDecode* obj = reinterpret_cast<StreamDecode*>(nativeObject);
+  obj->~StreamDecode();
+  obj->ClearPendingOutput(env);
 }
 
 #define DECLARE_NAPI_METHOD(name, func) \

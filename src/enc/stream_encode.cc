@@ -15,7 +15,7 @@ StreamEncode::StreamEncode(napi_env env, napi_value params) {
   SetParameter(env, params, "npostfix", BROTLI_PARAM_NPOSTFIX);
   SetParameter(env, params, "ndirect", BROTLI_PARAM_NDIRECT);
 
-  // alloc.ReportMemoryToV8();
+  alloc.ReportMemoryToV8(env);
 }
 
 StreamEncode::~StreamEncode() {
@@ -24,7 +24,9 @@ StreamEncode::~StreamEncode() {
 }
 
 void StreamEncode::Destructor(napi_env env, void* nativeObject, void* /*finalize_hint*/) {
-  reinterpret_cast<StreamEncode*>(nativeObject)->~StreamEncode();
+  StreamEncode* obj = reinterpret_cast<StreamEncode*>(nativeObject);
+  obj->~StreamEncode();
+  obj->ClearPendingOutput(env);
 }
 
 void StreamEncode::SetParameter(napi_env env, napi_value params, const char* key, BrotliEncoderParameter p) {

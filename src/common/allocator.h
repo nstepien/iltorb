@@ -19,7 +19,7 @@ struct Allocator {
   void Free(void* address);
 
   static AllocatedBuffer* GetBufferInfo(void* address);
-  napi_status ReportMemoryToV8(napi_env env);
+  void ReportMemoryToV8(napi_env env);
 
   // Brotli-style parameter order.
   static void* Alloc(void* opaque, size_t size);

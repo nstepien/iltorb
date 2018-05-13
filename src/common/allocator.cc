@@ -42,9 +42,9 @@ void Allocator::Free(void* address) {
   Free(this, address);
 }
 
-napi_status Allocator::ReportMemoryToV8(napi_env env) {
-  napi_status status = napi_adjust_external_memory(env, allocated_unreported_memory, nullptr);
+void Allocator::ReportMemoryToV8(napi_env env) {
+  int64_t result;
+  napi_status status = napi_adjust_external_memory(env, allocated_unreported_memory, &result);
   assert(status == napi_ok);
   allocated_unreported_memory = 0;
-  return status;
 }

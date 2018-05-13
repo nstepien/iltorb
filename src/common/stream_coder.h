@@ -10,6 +10,7 @@ class StreamCoder {
     Allocator alloc;
     std::vector<uint8_t*> pending_output;
 
+    void ClearPendingOutput(napi_env env);
     void PendingChunksAsArray(napi_env env, napi_value* arr);
   protected:
     explicit StreamCoder();

@@ -20,26 +20,28 @@ Allocator::AllocatedBuffer* Allocator::GetBufferInfo(void* address) {
   return static_cast<AllocatedBuffer*>(address) - 1;
 }
 
-void Allocator::Free(void* opaque, void* address) {
+void Allocator::Free(void* opaque, void* address, napi_env env) {
   if (!address) {
     return;
   }
 
   AllocatedBuffer* buf = GetBufferInfo(address);
+  int64_t size = buf->size + sizeof(*buf);
 
   if (opaque) {
     Allocator* alloc = static_cast<Allocator*>(opaque);
-    alloc->allocated_unreported_memory -= buf->size + sizeof(*buf);
+    alloc->allocated_unreported_memory -= size;
   } else {
-    // napi_status status = napi_adjust_external_memory(env, -(buf->size + sizeof(*buf)), nullptr);
-    // assert(status == napi_ok);
+    int64_t result;
+    napi_status status = napi_adjust_external_memory(env, -size, &result);
+    assert(status == napi_ok);
   }
 
   free(buf);
 }
 
 void Allocator::Free(void* address) {
-  Free(this, address);
+  Free(this, address, NULL);
 }
 
 void Allocator::ReportMemoryToV8(napi_env env) {

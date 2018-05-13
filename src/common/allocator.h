@@ -23,11 +23,14 @@ struct Allocator {
 
   // Brotli-style parameter order.
   static void* Alloc(void* opaque, size_t size);
-  static void Free(void* opaque, void* address);
+  static void Free(void* opaque, void* address) {
+    Free(opaque, address, NULL);
+  }
+  static void Free(void* opaque, void* address, napi_env env);
 
   // Like Free, but in node::Buffer::FreeCallback style.
   static void NodeFree(napi_env env, void* address, void* opaque) {
-    return Free(opaque, address);
+    Free(opaque, address, env);
   }
 };
 

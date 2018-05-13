@@ -16,6 +16,7 @@ class StreamEncode : public StreamCoder {
     const uint8_t* next_in;
     size_t available_in;
     BrotliEncoderState* state;
+    bool hasError = false;
 
   private:
     explicit StreamEncode(napi_env env, napi_value params);

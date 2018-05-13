@@ -11,6 +11,9 @@ function testBufferAsync(method, bufferFile, resultFile, done, params={}) {
 
   if (method.name === 'compress') {
     method(buffer, params, function(err, output) {
+      if (err) {
+        return done(err);
+      }
       expect(output).to.deep.equal(result);
       done();
     });
@@ -18,6 +21,9 @@ function testBufferAsync(method, bufferFile, resultFile, done, params={}) {
 
   if (method.name === 'decompress') {
     method(buffer, function(err, output) {
+      if (err) {
+        return done(err);
+      }
       expect(output).to.deep.equal(result);
       done();
     });

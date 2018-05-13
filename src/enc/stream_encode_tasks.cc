@@ -13,18 +13,20 @@ void ExecuteEncode(napi_env env, void* data) {
                                            NULL,
                                            NULL);
 
-    // if (res == BROTLI_FALSE) {
-    //   return SetErrorMessage("Brotli failed to compress.");
-    // }
+    if (res == BROTLI_FALSE) {
+      obj->hasError = true;
+      return;
+    }
 
     while (BrotliEncoderHasMoreOutput(obj->state) == BROTLI_TRUE) {
       size_t size = 0;
       const uint8_t* output = BrotliEncoderTakeOutput(obj->state, &size);
 
       void* buf = obj->alloc.Alloc(size);
-      // if (!buf) {
-      //   return SetErrorMessage("Brotli failed to compress.");
-      // }
+      if (!buf) {
+        obj->hasError = true;
+        return;
+      }
 
       memcpy(buf, output, size);
       obj->pending_output.push_back(static_cast<uint8_t*>(buf));
@@ -46,12 +48,26 @@ void CompleteEncode(napi_env env, napi_status status, void* data) {
   status = napi_delete_reference(env, obj->cb);
   assert(status == napi_ok);
 
-  napi_value arr;
-  obj->PendingChunksAsArray(env, &arr);
+  if (obj->hasError) {
+    napi_value msg;
+    status = napi_create_string_utf8(env, "Brotli failed to compress.", NAPI_AUTO_LENGTH, &msg);
+    assert(status == napi_ok);
 
-  napi_value argv[] = {null, arr};
-  status = napi_call_function(env, null, cb, 2, argv, nullptr);
-  assert(status == napi_ok);
+    napi_value err;
+    status = napi_create_error(env, NULL, msg, &err);
+    assert(status == napi_ok);
+
+    napi_value argv[] = {err};
+    status = napi_call_function(env, null, cb, 1, argv, nullptr);
+    assert(status == napi_ok || status == napi_pending_exception);
+  } else {
+    napi_value arr;
+    obj->PendingChunksAsArray(env, &arr);
+
+    napi_value argv[] = {null, arr};
+    status = napi_call_function(env, null, cb, 2, argv, nullptr);
+    assert(status == napi_ok);
+  }
 
   obj->alloc.ReportMemoryToV8(env);
 }

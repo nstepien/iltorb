@@ -13,14 +13,14 @@ function testBufferPromise(method, bufferFile, resultFile, done, params={}) {
     method(buffer, params).then(function(output) {
       expect(output).to.deep.equal(result);
       done();
-    });
+    }).catch(done);
   }
 
   if (method.name === 'decompress') {
     method(buffer).then(function(output) {
       expect(output).to.deep.equal(result);
       done();
-    });
+    }).catch(done);
   }
 }
 

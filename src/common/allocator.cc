@@ -33,8 +33,7 @@ void Allocator::Free(void* opaque, void* address, napi_env env) {
     alloc->allocated_unreported_memory -= size;
   } else {
     int64_t result;
-    napi_status status = napi_adjust_external_memory(env, -size, &result);
-    assert(status == napi_ok);
+    napi_adjust_external_memory(env, -size, &result);
   }
 
   free(buf);
@@ -46,7 +45,6 @@ void Allocator::Free(void* address) {
 
 void Allocator::ReportMemoryToV8(napi_env env) {
   int64_t result;
-  napi_status status = napi_adjust_external_memory(env, allocated_unreported_memory, &result);
-  assert(status == napi_ok);
+  napi_adjust_external_memory(env, allocated_unreported_memory, &result);
   allocated_unreported_memory = 0;
 }

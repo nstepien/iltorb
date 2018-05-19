@@ -34,39 +34,32 @@ void ExecuteDecode(napi_env env, void* data) {
   } while (res == BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT);
 }
 
-void CompleteDecode(napi_env env, napi_status status, void* data) {
+void CompleteDecode(napi_env env, napi_status, void* data) {
   StreamDecode* obj = reinterpret_cast<StreamDecode*>(data);
 
   napi_value null;
-  status = napi_get_null(env, &null);
-  assert(status == napi_ok);
+  napi_get_null(env, &null);
 
   napi_value cb;
-  status = napi_get_reference_value(env, obj->cb, &cb);
-  assert(status == napi_ok);
+  napi_get_reference_value(env, obj->cb, &cb);
 
-  status = napi_delete_reference(env, obj->cb);
-  assert(status == napi_ok);
+  napi_delete_reference(env, obj->cb);
 
   if (obj->hasError) {
     napi_value msg;
-    status = napi_create_string_utf8(env, "Brotli failed to decompress.", NAPI_AUTO_LENGTH, &msg);
-    assert(status == napi_ok);
+    napi_create_string_utf8(env, "Brotli failed to decompress.", NAPI_AUTO_LENGTH, &msg);
 
     napi_value err;
-    status = napi_create_error(env, NULL, msg, &err);
-    assert(status == napi_ok);
+    napi_create_error(env, NULL, msg, &err);
 
     napi_value argv[] = {err};
-    status = napi_call_function(env, null, cb, 1, argv, nullptr);
-    assert(status == napi_ok || status == napi_pending_exception);
+    napi_call_function(env, null, cb, 1, argv, nullptr);
   } else {
     napi_value arr;
     obj->PendingChunksAsArray(env, &arr);
 
     napi_value argv[] = {null, arr};
-    status = napi_call_function(env, null, cb, 2, argv, nullptr);
-    assert(status == napi_ok);
+    napi_call_function(env, null, cb, 2, argv, nullptr);
   }
 
   obj->alloc.ReportMemoryToV8(env);

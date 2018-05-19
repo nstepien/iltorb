@@ -2,7 +2,6 @@
 #define ILTORB_ALLOCATOR_H
 
 #include <stdlib.h>
-#include <assert.h>
 #include <node_api.h>
 
 struct Allocator {

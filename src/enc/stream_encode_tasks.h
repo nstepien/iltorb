@@ -7,6 +7,6 @@
 #include "stream_encode.h"
 
 void ExecuteEncode(napi_env env, void* data);
-void CompleteEncode(napi_env env, napi_status status, void* data);
+void CompleteEncode(napi_env env, napi_status, void* data);
 
 #endif

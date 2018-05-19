@@ -61,7 +61,8 @@ napi_value StreamDecode::Transform(napi_env env, napi_callback_info info) {
 
   napi_get_buffer_info(env, argv[0], (void**)&obj->next_in, &obj->available_in);
 
-  napi_create_reference(env, argv[1], 1, &obj->cb);
+  napi_create_reference(env, argv[0], 1, &obj->bufref);
+  napi_create_reference(env, argv[1], 1, &obj->cbref);
 
   bool isAsync;
   napi_get_value_bool(env, argv[2], &isAsync);
@@ -98,7 +99,7 @@ napi_value StreamDecode::Flush(napi_env env, napi_callback_info info) {
   StreamDecode* obj;
   napi_unwrap(env, jsthis, reinterpret_cast<void**>(&obj));
 
-  napi_create_reference(env, argv[0], 1, &obj->cb);
+  napi_create_reference(env, argv[0], 1, &obj->cbref);
 
   bool isAsync;
   napi_get_value_bool(env, argv[1], &isAsync);

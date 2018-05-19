@@ -99,7 +99,8 @@ napi_value StreamEncode::Transform(napi_env env, napi_callback_info info) {
 
   napi_get_buffer_info(env, argv[0], (void**)&obj->next_in, &obj->available_in);
 
-  napi_create_reference(env, argv[1], 1, &obj->cb);
+  napi_create_reference(env, argv[0], 1, &obj->bufref);
+  napi_create_reference(env, argv[1], 1, &obj->cbref);
 
   bool isAsync;
   napi_get_value_bool(env, argv[2], &isAsync);
@@ -141,7 +142,7 @@ napi_value StreamEncode::Flush(napi_env env, napi_callback_info info) {
   bool isFinish;
   napi_get_value_bool(env, argv[0], &isFinish);
 
-  napi_create_reference(env, argv[1], 1, &obj->cb);
+  napi_create_reference(env, argv[1], 1, &obj->cbref);
 
   bool isAsync;
   napi_get_value_bool(env, argv[2], &isAsync);

@@ -11,7 +11,8 @@ class StreamDecode : public StreamCoder {
     static napi_value Init(napi_env env, napi_value exports);
     static void Destructor(napi_env env, void* nativeObject, void* finalize_hint);
 
-    napi_ref cb;
+    napi_ref bufref = NULL;
+    napi_ref cbref = NULL;
     const uint8_t* next_in;
     size_t available_in;
     BrotliDecoderState* state;

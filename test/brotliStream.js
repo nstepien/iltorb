@@ -1,10 +1,8 @@
-'use strict';
-
-const brotli = require('../');
-const { expect } = require('chai');
-const { Writable } = require('stream');
-const fs = require('fs');
-const path = require('path');
+import test from 'ava';
+import * as brotli from '../';
+import { Writable } from 'stream';
+import { createReadStream, readFileSync } from 'fs';
+import { join } from 'path';
 
 class BufferWriter extends Writable {
   constructor() {
@@ -24,101 +22,91 @@ class BufferWriter extends Writable {
   }
 }
 
-function testStream(method, bufferFile, resultFile, done, params) {
+function testStream(method, bufferFile, resultFile, t, params) {
   const writeStream = new BufferWriter();
 
-  fs.createReadStream(path.join(__dirname, '/fixtures/', bufferFile))
+  createReadStream(join(__dirname, '/fixtures/', bufferFile))
     .pipe(method(params))
     .pipe(writeStream);
 
   writeStream.on('finish', function() {
-    const result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
-    expect(writeStream.data).to.deep.equal(result);
-    done();
+    const result = readFileSync(join(__dirname, '/fixtures/', resultFile));
+    t.truthy(writeStream.data.equals(result));
+    t.end();
   });
 }
 
-describe('Brotli Stream', function() {
-  describe('compress', function() {
-    it('should compress binary data', function(done) {
-      testStream(brotli.compressStream, 'data10k.bin', 'data10k.bin.compressed', done);
-    });
+test.cb('compress binary data', function(t) {
+  testStream(brotli.compressStream, 'data10k.bin', 'data10k.bin.compressed', t);
+});
 
-    it('should compress text data', function(done) {
-      testStream(brotli.compressStream, 'data.txt', 'data.txt.compressed', done);
-    });
+test.cb('compress text data', function(t) {
+  testStream(brotli.compressStream, 'data.txt', 'data.txt.compressed', t);
+});
 
-    it('should compress text data with quality=3', function(done) {
-      testStream(brotli.compressStream, 'data.txt', 'data.txt.compressed.03', done, { quality: 3 });
-    });
+test.cb('compress text data with quality=3', function(t) {
+  testStream(brotli.compressStream, 'data.txt', 'data.txt.compressed.03', t, { quality: 3 });
+});
 
-    it('should compress text data with quality=9', function(done) {
-      testStream(brotli.compressStream, 'data.txt', 'data.txt.compressed.09', done, { quality: 9 });
-    });
+test.cb('compress text data with quality=9', function(t) {
+  testStream(brotli.compressStream, 'data.txt', 'data.txt.compressed.09', t, { quality: 9 });
+});
 
-    it('should compress an empty buffer', function(done) {
-      testStream(brotli.compressStream, 'empty', 'empty.compressed', done);
-    });
+test.cb('compress an empty buffer', function(t) {
+  testStream(brotli.compressStream, 'empty', 'empty.compressed', t);
+});
 
-    it('should compress a random buffer', function(done) {
-      this.timeout(30000);
-      testStream(brotli.compressStream, 'rand', 'rand.compressed', done);
-    });
+test.cb('compress a random buffer', function(t) {
+  testStream(brotli.compressStream, 'rand', 'rand.compressed', t);
+});
 
-    it('should compress a large buffer', function(done) {
-      this.timeout(30000);
-      testStream(brotli.compressStream, 'large.txt', 'large.txt.compressed', done);
-    });
+test.cb('compress a large buffer', function(t) {
+  testStream(brotli.compressStream, 'large.txt', 'large.txt.compressed', t);
+});
 
-    it('should flush data', function(done) {
-      const buf1 = Buffer.from('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
-      const buf2 = Buffer.from('Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
+test.cb('flush data', function(t) {
+  const buf1 = Buffer.from('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
+  const buf2 = Buffer.from('Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
 
-      const stream = brotli.compressStream();
-      const writeStream = new BufferWriter();
+  const stream = brotli.compressStream();
+  const writeStream = new BufferWriter();
 
-      stream
-        .pipe(brotli.decompressStream())
-        .pipe(writeStream);
+  stream
+    .pipe(brotli.decompressStream())
+    .pipe(writeStream);
 
-      stream.write(buf1);
-      stream.flush();
-      stream.once('data', function() {
-        stream.end(buf2);
-      });
-
-      writeStream.on('finish', function() {
-        expect(writeStream.data).to.deep.equal(Buffer.concat([buf1, buf2]));
-        done();
-      });
-    });
+  stream.write(buf1);
+  stream.flush();
+  stream.once('data', function() {
+    stream.end(buf2);
   });
 
-  describe('decompress', function() {
-    it('should decompress binary data', function(done) {
-      testStream(brotli.decompressStream, 'data10k.bin.compressed', 'data10k.bin', done);
-    });
-
-    it('should decompress text data', function(done) {
-      testStream(brotli.decompressStream, 'data.txt.compressed', 'data.txt', done);
-    });
-
-    it('should decompress to an empty buffer', function(done) {
-      testStream(brotli.decompressStream, 'empty.compressed', 'empty', done);
-    });
-
-    it('should decompress to a random buffer', function(done) {
-      testStream(brotli.decompressStream, 'rand.compressed', 'rand', done);
-    });
-
-    it('should decompress to a large buffer', function(done) {
-      this.timeout(30000);
-      testStream(brotli.decompressStream, 'large.compressed', 'large', done);
-    });
-
-    it('should decompress to another large buffer', function(done) {
-      this.timeout(30000);
-      testStream(brotli.decompressStream, 'large.txt.compressed', 'large.txt', done);
-    });
+  writeStream.on('finish', function() {
+    t.truthy(writeStream.data.equals(Buffer.concat([buf1, buf2])));
+    t.end();
   });
+});
+
+test.cb('decompress binary data', function(t) {
+  testStream(brotli.decompressStream, 'data10k.bin.compressed', 'data10k.bin', t);
+});
+
+test.cb('decompress text data', function(t) {
+  testStream(brotli.decompressStream, 'data.txt.compressed', 'data.txt', t);
+});
+
+test.cb('decompress to an empty buffer', function(t) {
+  testStream(brotli.decompressStream, 'empty.compressed', 'empty', t);
+});
+
+test.cb('decompress to a random buffer', function(t) {
+  testStream(brotli.decompressStream, 'rand.compressed', 'rand', t);
+});
+
+test.cb('decompress to a large buffer', function(t) {
+  testStream(brotli.decompressStream, 'large.compressed', 'large', t);
+});
+
+test.cb('decompress to another large buffer', function(t) {
+  testStream(brotli.decompressStream, 'large.txt.compressed', 'large.txt', t);
 });

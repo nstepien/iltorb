@@ -1,3 +1,5 @@
+skip_branch_with_pr: true
+
 clone_depth: 10
 
 os: Visual Studio 2017

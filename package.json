@@ -38,18 +38,18 @@
     "detect-libc": "^1.0.3",
     "nan": "^2.10.0",
     "npmlog": "^4.1.2",
-    "prebuild-install": "^3.0.0",
+    "prebuild-install": "^4.0.0",
     "which-pm-runs": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "cross-env": "^5.1.4",
+    "cross-env": "^5.1.5",
     "cross-spawn": "^6.0.5",
     "mocha": "^5.0.5",
-    "node-abi": "^2.4.0",
+    "node-abi": "^2.4.1",
     "node-gyp": "^3.6.2",
     "npm-run-path-compat": "^2.0.3",
-    "prebuild": "^7.5.0"
+    "prebuild": "^7.6.0"
   },
   "scripts": {
     "install": "node ./scripts/install.js || node-gyp rebuild",

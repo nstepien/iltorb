@@ -122,7 +122,7 @@ napi_value StreamEncode::Transform(napi_env env, napi_callback_info info) {
 
     napi_queue_async_work(env, work);
   } else {
-    napi_status status;
+    napi_status status = napi_ok;
     ExecuteEncode(env, obj);
     CompleteEncode(env, status, obj);
   }
@@ -169,7 +169,7 @@ napi_value StreamEncode::Flush(napi_env env, napi_callback_info info) {
 
     napi_queue_async_work(env, work);
   } else {
-    napi_status status;
+    napi_status status = napi_ok;
     ExecuteEncode(env, obj);
     CompleteEncode(env, status, obj);
   }

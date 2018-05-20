@@ -82,7 +82,7 @@ napi_value StreamDecode::Transform(napi_env env, napi_callback_info info) {
 
     napi_queue_async_work(env, work);
   } else {
-    napi_status status;
+    napi_status status = napi_ok;
     ExecuteDecode(env, obj);
     CompleteDecode(env, status, obj);
   }
@@ -122,7 +122,7 @@ napi_value StreamDecode::Flush(napi_env env, napi_callback_info info) {
 
     napi_queue_async_work(env, work);
   } else {
-    napi_status status;
+    napi_status status = napi_ok;
     ExecuteDecode(env, obj);
     CompleteDecode(env, status, obj);
   }

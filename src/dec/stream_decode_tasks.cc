@@ -43,6 +43,10 @@ void CompleteDecode(napi_env env, napi_status, void* data) {
   napi_value cb;
   napi_get_reference_value(env, obj->cbref, &cb);
 
+  if (obj->work != NULL) {
+    napi_delete_async_work(env, obj->work);
+    obj->work = NULL;
+  }
   if (obj->bufref != NULL) {
     napi_delete_reference(env, obj->bufref);
     obj->bufref = NULL;

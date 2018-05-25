@@ -71,16 +71,15 @@ napi_value StreamDecode::Transform(napi_env env, napi_callback_info info) {
     napi_value resource_name;
     napi_create_string_utf8(env, "DecodeResource", NAPI_AUTO_LENGTH, &resource_name);
 
-    napi_async_work work;
     napi_create_async_work(env,
                            nullptr,
                            resource_name,
                            ExecuteDecode,
                            CompleteDecode,
                            obj,
-                           &work);
+                           &obj->work);
 
-    napi_queue_async_work(env, work);
+    napi_queue_async_work(env, obj->work);
   } else {
     napi_status status = napi_ok;
     ExecuteDecode(env, obj);
@@ -111,16 +110,15 @@ napi_value StreamDecode::Flush(napi_env env, napi_callback_info info) {
     napi_value resource_name;
     napi_create_string_utf8(env, "DecodeResource", NAPI_AUTO_LENGTH, &resource_name);
 
-    napi_async_work work;
     napi_create_async_work(env,
                            nullptr,
                            resource_name,
                            ExecuteDecode,
                            CompleteDecode,
                            obj,
-                           &work);
+                           &obj->work);
 
-    napi_queue_async_work(env, work);
+    napi_queue_async_work(env, obj->work);
   } else {
     napi_status status = napi_ok;
     ExecuteDecode(env, obj);

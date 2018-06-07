@@ -69,6 +69,4 @@ void CompleteDecode(napi_env env, napi_status, void* data) {
     napi_value argv[] = {null, arr};
     napi_call_function(env, null, cb, 2, argv, nullptr);
   }
-
-  obj->alloc.ReportMemoryToV8(env);
 }

@@ -27,5 +27,7 @@ void StreamCoder::PendingChunksAsArray(napi_env env, napi_value* arr) {
     napi_create_external_buffer(env, buf_info->size, chunk, Allocator::NodeFree, NULL, &buf);
     napi_set_element(env, *arr, i, buf);
   }
+
   pending_output.clear();
+  alloc.ReportMemoryToV8(env);
 }

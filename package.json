@@ -41,10 +41,9 @@
     "which-pm-runs": "^1.0.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
+    "ava": "^0.25.0",
     "cross-env": "^5.1.5",
     "cross-spawn": "^6.0.5",
-    "mocha": "^5.0.5",
     "node-abi": "^2.4.1",
     "node-gyp": "^3.6.2",
     "npm-run-path-compat": "^2.0.3",
@@ -56,7 +55,7 @@
     "prebuild": "detect-libc prebuild",
     "prebuild-ci": "node ./scripts/build.js",
     "prebuild-upload": "cross-env PUBLISH_BINARY=1 npm run prebuild-ci",
-    "test": "mocha"
+    "test": "ava"
   },
   "binary": {
     "module_name": "iltorb",

@@ -1,97 +1,77 @@
-'use strict';
+import test from 'ava';
+import * as brotli from '../';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-const brotli = require('../');
-const { expect } = require('chai');
-const fs = require('fs');
-const path = require('path');
-
-function testBufferSync(method, bufferFile, resultFile, params={}) {
-  const buffer = fs.readFileSync(path.join(__dirname, '/fixtures/', bufferFile));
-  const result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
+function testBuffer(method, bufferFile, resultFile, t, params={}) {
+  const buffer = readFileSync(join(__dirname, '/fixtures/', bufferFile));
+  const result = readFileSync(join(__dirname, '/fixtures/', resultFile));
   const output = method(buffer, params);
-  expect(output).to.deep.equal(result);
+  t.truthy(output.equals(result));
 }
 
-function testBufferError(method) {
-  expect(function() {
+function testBufferError(method, t) {
+  t.throws(function() {
     method('not a buffer');
-  }).to.throw(Error);
+  }, Error);
 }
 
-describe('Brotli Buffer Sync', function() {
-  describe('compress', function() {
-    it('should compress binary data', function() {
-      testBufferSync(brotli.compressSync, 'data10k.bin', 'data10k.bin.compressed');
-    });
+test('compress binary data', function(t) {
+  testBuffer(brotli.compressSync, 'data10k.bin', 'data10k.bin.compressed', t);
+});
 
-    it('should compress text data', function() {
-      testBufferSync(brotli.compressSync, 'data.txt', 'data.txt.compressed');
-    });
+test('compress text data', function(t) {
+  testBuffer(brotli.compressSync, 'data.txt', 'data.txt.compressed', t);
+});
 
-    it('should compress text data with quality=3', function() {
-      testBufferSync(brotli.compressSync, 'data.txt', 'data.txt.compressed.03', { quality: 3 });
-    });
+test('compress text data with quality=3', function(t) {
+  testBuffer(brotli.compressSync, 'data.txt', 'data.txt.compressed.03', t, { quality: 3 });
+});
 
-    it('should compress text data with quality=9', function() {
-      testBufferSync(brotli.compressSync, 'data.txt', 'data.txt.compressed.09', { quality: 9 });
-    });
+test('compress text data with quality=9', function(t) {
+  testBuffer(brotli.compressSync, 'data.txt', 'data.txt.compressed.09', t, { quality: 9 });
+});
 
-    it('should compress an empty buffer', function() {
-      testBufferSync(brotli.compressSync, 'empty', 'empty.compressed');
-    });
+test('compress an empty buffer', function(t) {
+  testBuffer(brotli.compressSync, 'empty', 'empty.compressed', t);
+});
 
-    it('should compress a random buffer', function() {
-      this.timeout(30000);
-      testBufferSync(brotli.compressSync, 'rand', 'rand.compressed');
-    });
+test('compress a random buffer', function(t) {
+  testBuffer(brotli.compressSync, 'rand', 'rand.compressed', t);
+});
 
-    it('should compress a large buffer', function() {
-      if (process.env.SKIP_LARGE_BUFFER_TEST) {
-        this.skip();
-      }
+test('compress a large buffer', function(t) {
+  testBuffer(brotli.compressSync, 'large.txt', 'large.txt.compressed', t);
+});
 
-      this.timeout(30000);
-      testBufferSync(brotli.compressSync, 'large.txt', 'large.txt.compressed');
-    });
+test('throw when the compression input is not a buffer', function(t) {
+  testBufferError(brotli.compressSync, t);
+});
 
-    it('should throw when the input is not a buffer', function() {
-      testBufferError(brotli.compressSync);
-    });
-  });
+test('decompress binary data', function(t) {
+  testBuffer(brotli.decompressSync, 'data10k.bin.compressed', 'data10k.bin', t);
+});
 
-  describe('decompress', function() {
-    it('should decompress binary data', function() {
-      testBufferSync(brotli.decompressSync, 'data10k.bin.compressed', 'data10k.bin');
-    });
+test('decompress text data', function(t) {
+  testBuffer(brotli.decompressSync, 'data.txt.compressed', 'data.txt', t);
+});
 
-    it('should decompress text data', function() {
-      testBufferSync(brotli.decompressSync, 'data.txt.compressed', 'data.txt');
-    });
+test('decompress to an empty buffer', function(t) {
+  testBuffer(brotli.decompressSync, 'empty.compressed', 'empty', t);
+});
 
-    it('should decompress to an empty buffer', function() {
-      testBufferSync(brotli.decompressSync, 'empty.compressed', 'empty');
-    });
+test('decompress a random buffer', function(t) {
+  testBuffer(brotli.decompressSync, 'rand.compressed', 'rand', t);
+});
 
-    it('should decompress a random buffer', function() {
-      testBufferSync(brotli.decompressSync, 'rand.compressed', 'rand');
-    });
+test('decompress to a large buffer', function(t) {
+  testBuffer(brotli.decompressSync, 'large.compressed', 'large', t);
+});
 
-    it('should decompress to a large buffer', function() {
-      this.timeout(30000);
-      testBufferSync(brotli.decompressSync, 'large.compressed', 'large');
-    });
+test('decompress to another large buffer', function(t) {
+  testBuffer(brotli.decompressSync, 'large.txt.compressed', 'large.txt', t);
+});
 
-    it('should decompress to another large buffer', function() {
-      if (process.env.SKIP_LARGE_BUFFER_TEST) {
-        this.skip();
-      }
-
-      this.timeout(30000);
-      testBufferSync(brotli.decompressSync, 'large.txt.compressed', 'large.txt');
-    });
-
-    it('should throw when the input is not a buffer', function() {
-      testBufferError(brotli.decompressSync);
-    });
-  });
+test('throw when the decompression input is not a buffer', function(t) {
+  testBufferError(brotli.decompressSync, t);
 });

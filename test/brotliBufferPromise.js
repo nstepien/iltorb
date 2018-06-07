@@ -1,110 +1,76 @@
-'use strict';
+import test from 'ava';
+import * as brotli from '../';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-const brotli = require('../');
-const { expect } = require('chai');
-const fs = require('fs');
-const path = require('path');
+async function testBuffer(method, bufferFile, resultFile, t, params={}) {
+  const buffer = readFileSync(join(__dirname, '/fixtures/', bufferFile));
+  const result = readFileSync(join(__dirname, '/fixtures/', resultFile));
 
-function testBufferPromise(method, bufferFile, resultFile, done, params={}) {
-  const buffer = fs.readFileSync(path.join(__dirname, '/fixtures/', bufferFile));
-  const result = fs.readFileSync(path.join(__dirname, '/fixtures/', resultFile));
-
-  if (method.name === 'compress') {
-    method(buffer, params).then(function(output) {
-      expect(output).to.deep.equal(result);
-      done();
-    }).catch(done);
-  }
-
-  if (method.name === 'decompress') {
-    method(buffer).then(function(output) {
-      expect(output).to.deep.equal(result);
-      done();
-    }).catch(done);
-  }
+  const output = await (method.name === 'compress' ? method(buffer, params) : method(buffer));
+  t.truthy(output.equals(result));
 }
 
-function testBufferError(method, done) {
-  method('not a buffer').catch(function(err) {
-    expect(err).an.instanceof(Error);
-    done();
-  });
+function testBufferError(method, t) {
+  return t.throws(method('not a buffer'), Error);
 }
 
-describe('Brotli Buffer Promise', function() {
-  describe('compress', function() {
-    it('should compress binary data', function(done) {
-      testBufferPromise(brotli.compress, 'data10k.bin', 'data10k.bin.compressed', done);
-    });
+test('compress binary data', function(t) {
+  return testBuffer(brotli.compress, 'data10k.bin', 'data10k.bin.compressed', t);
+});
 
-    it('should compress text data', function(done) {
-      testBufferPromise(brotli.compress, 'data.txt', 'data.txt.compressed', done);
-    });
+test('compress text data', function(t) {
+  return testBuffer(brotli.compress, 'data.txt', 'data.txt.compressed', t);
+});
 
-    it('should compress text data with quality=3', function(done) {
-      testBufferPromise(brotli.compress, 'data.txt', 'data.txt.compressed.03', done, { quality: 3 });
-    });
+test('compress text data with quality=3', function(t) {
+  return testBuffer(brotli.compress, 'data.txt', 'data.txt.compressed.03', t, { quality: 3 });
+});
 
-    it('should compress text data with quality=9', function(done) {
-      testBufferPromise(brotli.compress, 'data.txt', 'data.txt.compressed.09', done, { quality: 9 });
-    });
+test('compress text data with quality=9', function(t) {
+  return testBuffer(brotli.compress, 'data.txt', 'data.txt.compressed.09', t, { quality: 9 });
+});
 
-    it('should compress an empty buffer', function(done) {
-      testBufferPromise(brotli.compress, 'empty', 'empty.compressed', done);
-    });
+test('compress an empty buffer', function(t) {
+  return testBuffer(brotli.compress, 'empty', 'empty.compressed', t);
+});
 
-    it('should compress a random buffer', function(done) {
-      this.timeout(30000);
-      testBufferPromise(brotli.compress, 'rand', 'rand.compressed', done);
-    });
+test('compress a random buffer', function(t) {
+  return testBuffer(brotli.compress, 'rand', 'rand.compressed', t);
+});
 
-    it('should compress a large buffer', function(done) {
-      if (process.env.SKIP_LARGE_BUFFER_TEST) {
-        this.skip();
-      }
+test('compress a large buffer', function(t) {
+  return testBuffer(brotli.compress, 'large.txt', 'large.txt.compressed', t);
+});
 
-      this.timeout(30000);
-      testBufferPromise(brotli.compress, 'large.txt', 'large.txt.compressed', done);
-    });
+test('reject with an error when the compression input is not a buffer', function(t) {
+  return testBufferError(brotli.compress, t);
+});
 
-    it('should reject with an error when the input is not a buffer', function(done) {
-      testBufferError(brotli.compress, done);
-    });
-  });
+test('decompress binary data', function(t) {
+  return testBuffer(brotli.decompress, 'data10k.bin.compressed', 'data10k.bin', t);
+});
 
-  describe('decompress', function() {
-    it('should decompress binary data', function(done) {
-      testBufferPromise(brotli.decompress, 'data10k.bin.compressed', 'data10k.bin', done);
-    });
+test('decompress text data', function(t) {
+  return testBuffer(brotli.decompress, 'data.txt.compressed', 'data.txt', t);
+});
 
-    it('should decompress text data', function(done) {
-      testBufferPromise(brotli.decompress, 'data.txt.compressed', 'data.txt', done);
-    });
+test('decompress to an empty buffer', function(t) {
+  return testBuffer(brotli.decompress, 'empty.compressed', 'empty', t);
+});
 
-    it('should decompress to an empty buffer', function(done) {
-      testBufferPromise(brotli.decompress, 'empty.compressed', 'empty', done);
-    });
+test('decompress a random buffer', function(t) {
+  return testBuffer(brotli.decompress, 'rand.compressed', 'rand', t);
+});
 
-    it('should decompress a random buffer', function(done) {
-      testBufferPromise(brotli.decompress, 'rand.compressed', 'rand', done);
-    });
+test('decompress to a large buffer', function(t) {
+  return testBuffer(brotli.decompress, 'large.compressed', 'large', t);
+});
 
-    it('should decompress to a large buffer', function(done) {
-      this.timeout(30000);
-      testBufferPromise(brotli.decompress, 'large.compressed', 'large', done);
-    });
+test('decompress to another large buffer', function(t) {
+  return testBuffer(brotli.decompress, 'large.txt.compressed', 'large.txt', t);
+});
 
-    it('should decompress to another large buffer', function(done) {
-      if (process.env.SKIP_LARGE_BUFFER_TEST) {
-        this.skip();
-      }
-
-      this.timeout(30000);
-      testBufferPromise(brotli.decompress, 'large.txt.compressed', 'large.txt', done);
-    });
-
-    it('should reject with an error when the input is not a buffer', function(done) {
-      testBufferError(brotli.decompress, done);
-    });
-  });
+test('reject with an error when the decompression input is not a buffer', function(t) {
+  return testBufferError(brotli.decompress, t);
 });

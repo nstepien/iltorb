@@ -2,7 +2,8 @@
 
 napi_ref StreamEncode::constructor;
 
-StreamEncode::StreamEncode(napi_env env, napi_value params) {
+StreamEncode::StreamEncode(napi_env env, napi_value async, napi_value params) {
+  napi_get_value_bool(env, async, &isAsync);
   state = BrotliEncoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
 
   SetParameter(env, params, "mode", BROTLI_PARAM_MODE);
@@ -66,12 +67,12 @@ napi_value StreamEncode::Init(napi_env env, napi_value exports) {
 }
 
 napi_value StreamEncode::New(napi_env env, napi_callback_info info) {
-  size_t argc = 1;
-  napi_value argv[1];
+  size_t argc = 2;
+  napi_value argv[2];
   napi_value jsthis;
   napi_get_cb_info(env, info, &argc, argv, &jsthis, nullptr);
 
-  StreamEncode* obj = new StreamEncode(env, argv[0]);
+  StreamEncode* obj = new StreamEncode(env, argv[0], argv[1]);
 
   napi_wrap(env,
             jsthis,
@@ -84,8 +85,8 @@ napi_value StreamEncode::New(napi_env env, napi_callback_info info) {
 }
 
 napi_value StreamEncode::Transform(napi_env env, napi_callback_info info) {
-  size_t argc = 3;
-  napi_value argv[3];
+  size_t argc = 2;
+  napi_value argv[2];
   napi_value jsthis;
   napi_get_cb_info(env, info, &argc, argv, &jsthis, nullptr);
 
@@ -97,12 +98,9 @@ napi_value StreamEncode::Transform(napi_env env, napi_callback_info info) {
   napi_create_reference(env, argv[0], 1, &obj->bufref);
   napi_create_reference(env, argv[1], 1, &obj->cbref);
 
-  bool isAsync;
-  napi_get_value_bool(env, argv[2], &isAsync);
-
   obj->op = BROTLI_OPERATION_PROCESS;
 
-  if (isAsync) {
+  if (obj->isAsync) {
     napi_value resource_name;
     napi_create_string_utf8(env, "EncodeResource", NAPI_AUTO_LENGTH, &resource_name);
 
@@ -125,8 +123,8 @@ napi_value StreamEncode::Transform(napi_env env, napi_callback_info info) {
 }
 
 napi_value StreamEncode::Flush(napi_env env, napi_callback_info info) {
-  size_t argc = 3;
-  napi_value argv[3];
+  size_t argc = 2;
+  napi_value argv[2];
   napi_value jsthis;
   napi_get_cb_info(env, info, &argc, argv, &jsthis, nullptr);
 
@@ -138,9 +136,6 @@ napi_value StreamEncode::Flush(napi_env env, napi_callback_info info) {
 
   napi_create_reference(env, argv[1], 1, &obj->cbref);
 
-  bool isAsync;
-  napi_get_value_bool(env, argv[2], &isAsync);
-
   obj->op = isFinish
     ? BROTLI_OPERATION_FINISH
     : BROTLI_OPERATION_FLUSH;
@@ -148,7 +143,7 @@ napi_value StreamEncode::Flush(napi_env env, napi_callback_info info) {
   obj->next_in = nullptr;
   obj->available_in = 0;
 
-  if (isAsync) {
+  if (obj->isAsync) {
     napi_value resource_name;
     napi_create_string_utf8(env, "EncodeResource", NAPI_AUTO_LENGTH, &resource_name);
 

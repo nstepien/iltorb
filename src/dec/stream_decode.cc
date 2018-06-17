@@ -2,7 +2,8 @@
 
 napi_ref StreamDecode::constructor;
 
-StreamDecode::StreamDecode(napi_env env) {
+StreamDecode::StreamDecode(napi_env env, napi_value async) {
+  napi_get_value_bool(env, async, &isAsync);
   state = BrotliDecoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
   alloc.ReportMemoryToV8(env);
 }
@@ -29,11 +30,12 @@ napi_value StreamDecode::Init(napi_env env, napi_value exports) {
 }
 
 napi_value StreamDecode::New(napi_env env, napi_callback_info info) {
-  size_t argc = 0;
+  size_t argc = 1;
+  napi_value argv[1];
   napi_value jsthis;
-  napi_get_cb_info(env, info, &argc, nullptr, &jsthis, nullptr);
+  napi_get_cb_info(env, info, &argc, argv, &jsthis, nullptr);
 
-  StreamDecode* obj = new StreamDecode(env);
+  StreamDecode* obj = new StreamDecode(env, argv[0]);
 
   napi_wrap(env,
             jsthis,
@@ -46,8 +48,8 @@ napi_value StreamDecode::New(napi_env env, napi_callback_info info) {
 }
 
 napi_value StreamDecode::Transform(napi_env env, napi_callback_info info) {
-  size_t argc = 3;
-  napi_value argv[3];
+  size_t argc = 2;
+  napi_value argv[2];
   napi_value jsthis;
   napi_get_cb_info(env, info, &argc, argv, &jsthis, nullptr);
 
@@ -59,10 +61,7 @@ napi_value StreamDecode::Transform(napi_env env, napi_callback_info info) {
   napi_create_reference(env, argv[0], 1, &obj->bufref);
   napi_create_reference(env, argv[1], 1, &obj->cbref);
 
-  bool isAsync;
-  napi_get_value_bool(env, argv[2], &isAsync);
-
-  if (isAsync) {
+  if (obj->isAsync) {
     napi_value resource_name;
     napi_create_string_utf8(env, "DecodeResource", NAPI_AUTO_LENGTH, &resource_name);
 
@@ -85,8 +84,8 @@ napi_value StreamDecode::Transform(napi_env env, napi_callback_info info) {
 }
 
 napi_value StreamDecode::Flush(napi_env env, napi_callback_info info) {
-  size_t argc = 2;
-  napi_value argv[2];
+  size_t argc = 1;
+  napi_value argv[1];
   napi_value jsthis;
   napi_get_cb_info(env, info, &argc, argv, &jsthis, nullptr);
 
@@ -95,13 +94,10 @@ napi_value StreamDecode::Flush(napi_env env, napi_callback_info info) {
 
   napi_create_reference(env, argv[0], 1, &obj->cbref);
 
-  bool isAsync;
-  napi_get_value_bool(env, argv[1], &isAsync);
-
   obj->next_in = nullptr;
   obj->available_in = 0;
 
-  if (isAsync) {
+  if (obj->isAsync) {
     napi_value resource_name;
     napi_create_string_utf8(env, "DecodeResource", NAPI_AUTO_LENGTH, &resource_name);
 

@@ -11,13 +11,12 @@ const { StreamEncode, StreamDecode } = require('./build/bindings/iltorb.node');
 const { Transform } = require('stream');
 
 class TransformStreamEncode extends Transform {
-  constructor(params={}, sync=false) {
+  constructor(params={}, async=true) {
     super();
-    this.sync = sync;
     this.encoding = false;
     this.corked = false;
     this.flushing = false;
-    this.encoder = new StreamEncode(params);
+    this.encoder = new StreamEncode(async, params);
   }
 
   _transform(chunk, encoding, next) {
@@ -32,7 +31,7 @@ class TransformStreamEncode extends Transform {
       if (this.flushing) {
         this.flush(true);
       }
-    }, !this.sync);
+    });
   }
 
   _flush(done) {
@@ -42,7 +41,7 @@ class TransformStreamEncode extends Transform {
       }
       this._push(output);
       done();
-    }, !this.sync);
+    });
   }
 
   _push(output) {
@@ -82,10 +81,9 @@ class TransformStreamEncode extends Transform {
 }
 
 class TransformStreamDecode extends Transform {
-  constructor(sync=false) {
+  constructor(async=true) {
     super();
-    this.sync = sync;
-    this.decoder = new StreamDecode();
+    this.decoder = new StreamDecode(async);
   }
 
   _transform(chunk, encoding, next) {
@@ -95,7 +93,7 @@ class TransformStreamDecode extends Transform {
       }
       this._push(output);
       next();
-    }, !this.sync);
+    });
   }
 
   _flush(done) {
@@ -105,7 +103,7 @@ class TransformStreamDecode extends Transform {
       }
       this._push(output);
       done();
-    }, !this.sync);
+    });
   }
 
   _push(output) {
@@ -214,7 +212,7 @@ function compressSync(input, params) {
     params = {};
   }
   params = Object.assign({}, params, {size_hint: input.length});
-  const stream = new TransformStreamEncode(params, true);
+  const stream = new TransformStreamEncode(params, false);
   const chunks = [];
   let length = 0;
   stream.on('error', function(e) {
@@ -232,7 +230,7 @@ function decompressSync(input) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('Brotli input is not a buffer.');
   }
-  const stream = new TransformStreamDecode(true);
+  const stream = new TransformStreamDecode(false);
   const chunks = [];
   let length = 0;
   stream.on('error', function(e) {

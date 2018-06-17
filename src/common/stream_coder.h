@@ -1,20 +1,17 @@
 #ifndef STREAM_CODER_H
 #define STREAM_CODER_H
 
+#include <vector>
+#include <node_api.h>
 #include "allocator.h"
-#include <nan.h>
 
-using namespace v8;
-
-class StreamCoder : public Nan::ObjectWrap {
+class StreamCoder {
   public:
     Allocator alloc;
     std::vector<uint8_t*> pending_output;
 
-    Local<Array> PendingChunksAsArray();
-  protected:
-    explicit StreamCoder();
-    ~StreamCoder();
+    void ClearPendingOutput(napi_env env);
+    void PendingChunksAsArray(napi_env env, napi_value* arr);
 };
 
 #endif

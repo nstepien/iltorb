@@ -1,5 +1,4 @@
 #include "allocator.h"
-#include <nan.h>
 
 void* Allocator::Alloc(void* opaque, size_t size) {
   return static_cast<Allocator*>(opaque)->Alloc(size);
@@ -21,28 +20,31 @@ Allocator::AllocatedBuffer* Allocator::GetBufferInfo(void* address) {
   return static_cast<AllocatedBuffer*>(address) - 1;
 }
 
-void Allocator::Free(void* opaque, void* address) {
+void Allocator::Free(void* opaque, void* address, napi_env env) {
   if (!address) {
     return;
   }
 
   AllocatedBuffer* buf = GetBufferInfo(address);
+  int64_t size = buf->size + sizeof(*buf);
 
   if (opaque) {
     Allocator* alloc = static_cast<Allocator*>(opaque);
-    alloc->allocated_unreported_memory -= buf->size + sizeof(*buf);
+    alloc->allocated_unreported_memory -= size;
   } else {
-    Nan::AdjustExternalMemory(-(buf->size + sizeof(*buf)));
+    int64_t result;
+    napi_adjust_external_memory(env, -size, &result);
   }
 
   free(buf);
 }
 
 void Allocator::Free(void* address) {
-  Free(this, address);
+  Free(this, address, NULL);
 }
 
-void Allocator::ReportMemoryToV8() {
-  Nan::AdjustExternalMemory(allocated_unreported_memory);
+void Allocator::ReportMemoryToV8(napi_env env) {
+  int64_t result;
+  napi_adjust_external_memory(env, allocated_unreported_memory, &result);
   allocated_unreported_memory = 0;
 }

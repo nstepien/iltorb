@@ -34,15 +34,14 @@
         "src/common/stream_coder.cc",
 
         "src/dec/stream_decode.cc",
-        "src/dec/stream_decode_worker.cc",
+        "src/dec/stream_decode_tasks.cc",
 
         "src/enc/stream_encode.cc",
-        "src/enc/stream_encode_worker.cc",
+        "src/enc/stream_encode_tasks.cc",
 
         "src/iltorb.cc"
       ],
       "include_dirs": [
-        "<!(node -e \"require('nan')\")",
         "brotli/c/include"
       ],
       "defines": ["NOMINMAX"],

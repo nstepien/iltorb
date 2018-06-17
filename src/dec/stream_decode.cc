@@ -1,68 +1,87 @@
 #include "stream_decode.h"
-#include "stream_decode_worker.h"
+#include "stream_decode_tasks.h"
 
-using namespace v8;
+napi_ref StreamDecode::constructor;
 
-StreamDecode::StreamDecode() : next_in(NULL), available_in(0) {
+StreamDecode::StreamDecode(napi_env env, napi_value async) {
+  napi_get_value_bool(env, async, &isAsync);
   state = BrotliDecoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
-  alloc.ReportMemoryToV8();
+  alloc.ReportMemoryToV8(env);
 }
 
-StreamDecode::~StreamDecode() {
-  BrotliDecoderDestroyInstance(state);
+void StreamDecode::Destructor(napi_env env, void* nativeObject, void* /*finalize_hint*/) {
+  StreamDecode* obj = reinterpret_cast<StreamDecode*>(nativeObject);
+  BrotliDecoderDestroyInstance(obj->state);
+  obj->ClearPendingOutput(env);
+  delete obj;
 }
 
-void StreamDecode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
-  Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
-  tpl->SetClassName(Nan::New("StreamDecode").ToLocalChecked());
-  tpl->InstanceTemplate()->SetInternalFieldCount(1);
+napi_value StreamDecode::Init(napi_env env, napi_value exports) {
+  napi_value cons;
+  napi_property_descriptor properties[] = {
+    { "transform", NULL, Transform, NULL, NULL, NULL, napi_default, NULL },
+    { "flush", NULL, Flush, NULL, NULL, NULL, napi_default, NULL }
+  };
 
-  Nan::SetPrototypeMethod(tpl, "transform", Transform);
-  Nan::SetPrototypeMethod(tpl, "flush", Flush);
+  napi_define_class(env, "StreamDecode", NAPI_AUTO_LENGTH, New, nullptr, 2, properties, &cons);
+  napi_create_reference(env, cons, 1, &constructor);
+  napi_set_named_property(env, exports, "StreamDecode", cons);
 
-  constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
-  Nan::Set(target, Nan::New("StreamDecode").ToLocalChecked(),
-    Nan::GetFunction(tpl).ToLocalChecked());
+  return exports;
 }
 
-NAN_METHOD(StreamDecode::New) {
-  StreamDecode* obj = new StreamDecode();
-  obj->Wrap(info.This());
-  info.GetReturnValue().Set(info.This());
+napi_value StreamDecode::New(napi_env env, napi_callback_info info) {
+  size_t argc = 1;
+  napi_value argv[1];
+  napi_value jsthis;
+  napi_get_cb_info(env, info, &argc, argv, &jsthis, nullptr);
+
+  StreamDecode* obj = new StreamDecode(env, argv[0]);
+
+  napi_wrap(env,
+            jsthis,
+            reinterpret_cast<void*>(obj),
+            StreamDecode::Destructor,
+            nullptr,
+            nullptr);
+
+  return jsthis;
 }
 
-NAN_METHOD(StreamDecode::Transform) {
-  StreamDecode* obj = ObjectWrap::Unwrap<StreamDecode>(info.Holder());
+napi_value StreamDecode::Transform(napi_env env, napi_callback_info info) {
+  size_t argc = 2;
+  napi_value argv[2];
+  napi_value jsthis;
+  napi_get_cb_info(env, info, &argc, argv, &jsthis, nullptr);
 
-  Local<Object> buffer = info[0]->ToObject();
-  obj->next_in = (const uint8_t*) node::Buffer::Data(buffer);
-  obj->available_in = node::Buffer::Length(buffer);
+  StreamDecode* obj;
+  napi_unwrap(env, jsthis, reinterpret_cast<void**>(&obj));
 
-  Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
-  StreamDecodeWorker *worker = new StreamDecodeWorker(callback, obj);
-  if (info[2]->BooleanValue()) {
-    Nan::AsyncQueueWorker(worker);
-  } else {
-    worker->Execute();
-    worker->WorkComplete();
-    worker->Destroy();
-  }
+  napi_get_buffer_info(env, argv[0], (void**)&obj->next_in, &obj->available_in);
+
+  napi_create_reference(env, argv[0], 1, &obj->bufref);
+  napi_create_reference(env, argv[1], 1, &obj->cbref);
+
+  StartDecode(env, obj);
+
+  return nullptr;
 }
 
-NAN_METHOD(StreamDecode::Flush) {
-  StreamDecode* obj = ObjectWrap::Unwrap<StreamDecode>(info.Holder());
+napi_value StreamDecode::Flush(napi_env env, napi_callback_info info) {
+  size_t argc = 1;
+  napi_value argv[1];
+  napi_value jsthis;
+  napi_get_cb_info(env, info, &argc, argv, &jsthis, nullptr);
 
-  Nan::Callback *callback = new Nan::Callback(info[0].As<Function>());
+  StreamDecode* obj;
+  napi_unwrap(env, jsthis, reinterpret_cast<void**>(&obj));
+
+  napi_create_reference(env, argv[0], 1, &obj->cbref);
+
   obj->next_in = nullptr;
   obj->available_in = 0;
-  StreamDecodeWorker *worker = new StreamDecodeWorker(callback, obj);
-  if (info[1]->BooleanValue()) {
-    Nan::AsyncQueueWorker(worker);
-  } else {
-    worker->Execute();
-    worker->WorkComplete();
-    worker->Destroy();
-  }
-}
 
-Nan::Persistent<Function> StreamDecode::constructor;
+  StartDecode(env, obj);
+
+  return nullptr;
+}

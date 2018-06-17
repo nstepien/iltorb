@@ -1,8 +1,8 @@
 #ifndef ILTORB_ALLOCATOR_H
 #define ILTORB_ALLOCATOR_H
 
-#include <stddef.h>
-#include <stdint.h>
+#include <stdlib.h>
+#include <node_api.h>
 
 struct Allocator {
   Allocator() : allocated_unreported_memory(0) {}
@@ -18,15 +18,18 @@ struct Allocator {
   void Free(void* address);
 
   static AllocatedBuffer* GetBufferInfo(void* address);
-  void ReportMemoryToV8();
+  void ReportMemoryToV8(napi_env env);
 
   // Brotli-style parameter order.
   static void* Alloc(void* opaque, size_t size);
-  static void Free(void* opaque, void* address);
+  static void Free(void* opaque, void* address) {
+    Free(opaque, address, NULL);
+  }
+  static void Free(void* opaque, void* address, napi_env env);
 
   // Like Free, but in node::Buffer::FreeCallback style.
-  static void NodeFree(char* address, void* opaque) {
-    return Free(opaque, address);
+  static void NodeFree(napi_env env, void* address, void* opaque) {
+    Free(opaque, address, env);
   }
 };
 

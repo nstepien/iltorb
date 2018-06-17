@@ -8,9 +8,9 @@ const PREBUILD_TOKEN = process.env.PREBUILD_TOKEN;
 const PUBLISH_BINARY = process.env.PUBLISH_BINARY || false;
 
 
-function build(runtime, target) {
+function build({target, runtime, abi}) {
   try {
-    getTarget(target, runtime);
+    abi && getTarget(target, runtime);
   } catch (err) {
     return Promise.resolve();
   }
@@ -42,19 +42,18 @@ function build(runtime, target) {
 
 
 const builds = [
-  { runtime: 'node', target: process.versions.modules }
+  { runtime: 'node', target: process.versions.node, abi: false }
 ];
 
 if (PUBLISH_BINARY) {
   builds.push(
-    { runtime: 'electron', target: '50' },
-    { runtime: 'electron', target: '53' },
-    { runtime: 'electron', target: process.versions.modules }
+    { runtime: 'electron', target: '50', abi: true },
+    { runtime: 'electron', target: '53', abi: true },
+    { runtime: 'electron', target: process.versions.modules, abi: true }
   );
 }
 
 builds
   .reduce((promise, item) => {
-    return promise.then(() => build(item.runtime, item.target)).catch((code) => process.exit(code));
+    return promise.then(() => build(item)).catch((code) => process.exit(code));
   }, Promise.resolve());
-

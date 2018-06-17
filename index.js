@@ -76,7 +76,7 @@ class TransformStreamEncode extends Transform {
       this.corked = false;
       this.flushing = false;
       this.uncork();
-    }, true);
+    });
   }
 }
 

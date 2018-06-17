@@ -1,11 +1,5 @@
 #include "stream_coder.h"
 
-StreamCoder::StreamCoder() {
-}
-
-StreamCoder::~StreamCoder() {
-}
-
 void StreamCoder::ClearPendingOutput(napi_env env) {
   size_t n_chunks = pending_output.size();
   for (size_t i = 0; i < n_chunks; i++) {

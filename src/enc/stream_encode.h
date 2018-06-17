@@ -22,15 +22,12 @@ class StreamEncode : public StreamCoder {
 
   private:
     explicit StreamEncode(napi_env env, napi_value params);
-    ~StreamEncode();
     void SetParameter(napi_env env, napi_value params, const char* key, BrotliEncoderParameter p);
 
     static napi_value New(napi_env env, napi_callback_info info);
     static napi_value Transform(napi_env env, napi_callback_info info);
     static napi_value Flush(napi_env env, napi_callback_info info);
     static napi_ref constructor;
-    napi_env env_;
-    napi_ref wrapper_;
 };
 
 #endif

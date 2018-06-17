@@ -7,15 +7,11 @@ StreamDecode::StreamDecode(napi_env env) {
   alloc.ReportMemoryToV8(env);
 }
 
-StreamDecode::~StreamDecode() {
-  napi_delete_reference(env_, wrapper_);
-  BrotliDecoderDestroyInstance(state);
-}
-
 void StreamDecode::Destructor(napi_env env, void* nativeObject, void* /*finalize_hint*/) {
   StreamDecode* obj = reinterpret_cast<StreamDecode*>(nativeObject);
-  obj->~StreamDecode();
+  BrotliDecoderDestroyInstance(obj->state);
   obj->ClearPendingOutput(env);
+  delete obj;
 }
 
 napi_value StreamDecode::Init(napi_env env, napi_value exports) {
@@ -39,13 +35,12 @@ napi_value StreamDecode::New(napi_env env, napi_callback_info info) {
 
   StreamDecode* obj = new StreamDecode(env);
 
-  obj->env_ = env;
   napi_wrap(env,
             jsthis,
             reinterpret_cast<void*>(obj),
             StreamDecode::Destructor,
             nullptr,
-            &obj->wrapper_);
+            nullptr);
 
   return jsthis;
 }

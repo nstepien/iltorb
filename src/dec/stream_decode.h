@@ -21,14 +21,11 @@ class StreamDecode : public StreamCoder {
 
   private:
     explicit StreamDecode(napi_env env);
-    ~StreamDecode();
 
     static napi_value New(napi_env env, napi_callback_info info);
     static napi_value Transform(napi_env env, napi_callback_info info);
     static napi_value Flush(napi_env env, napi_callback_info info);
     static napi_ref constructor;
-    napi_env env_;
-    napi_ref wrapper_;
 };
 
 #endif

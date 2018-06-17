@@ -18,15 +18,11 @@ StreamEncode::StreamEncode(napi_env env, napi_value params) {
   alloc.ReportMemoryToV8(env);
 }
 
-StreamEncode::~StreamEncode() {
-  napi_delete_reference(env_, wrapper_);
-  BrotliEncoderDestroyInstance(state);
-}
-
 void StreamEncode::Destructor(napi_env env, void* nativeObject, void* /*finalize_hint*/) {
   StreamEncode* obj = reinterpret_cast<StreamEncode*>(nativeObject);
-  obj->~StreamEncode();
+  BrotliEncoderDestroyInstance(obj->state);
   obj->ClearPendingOutput(env);
+  delete obj;
 }
 
 void StreamEncode::SetParameter(napi_env env, napi_value params, const char* key, BrotliEncoderParameter p) {
@@ -77,13 +73,12 @@ napi_value StreamEncode::New(napi_env env, napi_callback_info info) {
 
   StreamEncode* obj = new StreamEncode(env, argv[0]);
 
-  obj->env_ = env;
   napi_wrap(env,
             jsthis,
             reinterpret_cast<void*>(obj),
             StreamEncode::Destructor,
             nullptr,
-            &obj->wrapper_);
+            nullptr);
 
   return jsthis;
 }

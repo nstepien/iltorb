@@ -12,9 +12,6 @@ class StreamCoder {
 
     void ClearPendingOutput(napi_env env);
     void PendingChunksAsArray(napi_env env, napi_value* arr);
-  protected:
-    explicit StreamCoder();
-    ~StreamCoder();
 };
 
 #endif

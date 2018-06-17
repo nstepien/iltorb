@@ -1,5 +1,26 @@
 #include "stream_encode_tasks.h"
 
+void StartEncode(napi_env env, StreamEncode* obj) {
+  if (obj->isAsync) {
+    napi_value resource_name;
+    napi_create_string_utf8(env, "EncodeResource", NAPI_AUTO_LENGTH, &resource_name);
+
+    napi_create_async_work(env,
+                           nullptr,
+                           resource_name,
+                           ExecuteEncode,
+                           CompleteEncode,
+                           obj,
+                           &obj->work);
+
+    napi_queue_async_work(env, obj->work);
+  } else {
+    napi_status status = napi_ok;
+    ExecuteEncode(env, obj);
+    CompleteEncode(env, status, obj);
+  }
+}
+
 void ExecuteEncode(napi_env env, void* data) {
   StreamEncode* obj = reinterpret_cast<StreamEncode*>(data);
 

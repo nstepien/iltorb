@@ -6,6 +6,7 @@
 #include "brotli/decode.h"
 #include "stream_decode.h"
 
+void StartDecode(napi_env env, StreamDecode* obj);
 void ExecuteDecode(napi_env env, void* data);
 void CompleteDecode(napi_env env, napi_status, void* data);
 

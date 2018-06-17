@@ -1,5 +1,26 @@
 #include "stream_decode_tasks.h"
 
+void StartDecode(napi_env env, StreamDecode* obj) {
+  if (obj->isAsync) {
+    napi_value resource_name;
+    napi_create_string_utf8(env, "DecodeResource", NAPI_AUTO_LENGTH, &resource_name);
+
+    napi_create_async_work(env,
+                           nullptr,
+                           resource_name,
+                           ExecuteDecode,
+                           CompleteDecode,
+                           obj,
+                           &obj->work);
+
+    napi_queue_async_work(env, obj->work);
+  } else {
+    napi_status status = napi_ok;
+    ExecuteDecode(env, obj);
+    CompleteDecode(env, status, obj);
+  }
+}
+
 void ExecuteDecode(napi_env env, void* data) {
   StreamDecode* obj = reinterpret_cast<StreamDecode*>(data);
   BrotliDecoderResult res;

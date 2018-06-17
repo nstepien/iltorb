@@ -1,4 +1,5 @@
 #include "stream_decode.h"
+#include "stream_decode_tasks.h"
 
 napi_ref StreamDecode::constructor;
 
@@ -61,24 +62,7 @@ napi_value StreamDecode::Transform(napi_env env, napi_callback_info info) {
   napi_create_reference(env, argv[0], 1, &obj->bufref);
   napi_create_reference(env, argv[1], 1, &obj->cbref);
 
-  if (obj->isAsync) {
-    napi_value resource_name;
-    napi_create_string_utf8(env, "DecodeResource", NAPI_AUTO_LENGTH, &resource_name);
-
-    napi_create_async_work(env,
-                           nullptr,
-                           resource_name,
-                           ExecuteDecode,
-                           CompleteDecode,
-                           obj,
-                           &obj->work);
-
-    napi_queue_async_work(env, obj->work);
-  } else {
-    napi_status status = napi_ok;
-    ExecuteDecode(env, obj);
-    CompleteDecode(env, status, obj);
-  }
+  StartDecode(env, obj);
 
   return nullptr;
 }
@@ -97,24 +81,7 @@ napi_value StreamDecode::Flush(napi_env env, napi_callback_info info) {
   obj->next_in = nullptr;
   obj->available_in = 0;
 
-  if (obj->isAsync) {
-    napi_value resource_name;
-    napi_create_string_utf8(env, "DecodeResource", NAPI_AUTO_LENGTH, &resource_name);
-
-    napi_create_async_work(env,
-                           nullptr,
-                           resource_name,
-                           ExecuteDecode,
-                           CompleteDecode,
-                           obj,
-                           &obj->work);
-
-    napi_queue_async_work(env, obj->work);
-  } else {
-    napi_status status = napi_ok;
-    ExecuteDecode(env, obj);
-    CompleteDecode(env, status, obj);
-  }
+  StartDecode(env, obj);
 
   return nullptr;
 }

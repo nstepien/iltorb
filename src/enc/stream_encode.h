@@ -4,7 +4,6 @@
 #include <node_api.h>
 #include "brotli/encode.h"
 #include "../common/stream_coder.h"
-#include "stream_encode_tasks.h"
 
 class StreamEncode : public StreamCoder {
   public:

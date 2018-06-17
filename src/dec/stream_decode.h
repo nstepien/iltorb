@@ -4,7 +4,6 @@
 #include <node_api.h>
 #include "brotli/decode.h"
 #include "../common/stream_coder.h"
-#include "stream_decode_tasks.h"
 
 class StreamDecode : public StreamCoder {
   public:

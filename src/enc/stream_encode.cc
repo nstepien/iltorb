@@ -1,4 +1,5 @@
 #include "stream_encode.h"
+#include "stream_encode_tasks.h"
 
 napi_ref StreamEncode::constructor;
 
@@ -100,24 +101,7 @@ napi_value StreamEncode::Transform(napi_env env, napi_callback_info info) {
 
   obj->op = BROTLI_OPERATION_PROCESS;
 
-  if (obj->isAsync) {
-    napi_value resource_name;
-    napi_create_string_utf8(env, "EncodeResource", NAPI_AUTO_LENGTH, &resource_name);
-
-    napi_create_async_work(env,
-                           nullptr,
-                           resource_name,
-                           ExecuteEncode,
-                           CompleteEncode,
-                           obj,
-                           &obj->work);
-
-    napi_queue_async_work(env, obj->work);
-  } else {
-    napi_status status = napi_ok;
-    ExecuteEncode(env, obj);
-    CompleteEncode(env, status, obj);
-  }
+  StartEncode(env, obj);
 
   return nullptr;
 }
@@ -143,24 +127,7 @@ napi_value StreamEncode::Flush(napi_env env, napi_callback_info info) {
   obj->next_in = nullptr;
   obj->available_in = 0;
 
-  if (obj->isAsync) {
-    napi_value resource_name;
-    napi_create_string_utf8(env, "EncodeResource", NAPI_AUTO_LENGTH, &resource_name);
-
-    napi_create_async_work(env,
-                           nullptr,
-                           resource_name,
-                           ExecuteEncode,
-                           CompleteEncode,
-                           obj,
-                           &obj->work);
-
-    napi_queue_async_work(env, obj->work);
-  } else {
-    napi_status status = napi_ok;
-    ExecuteEncode(env, obj);
-    CompleteEncode(env, status, obj);
-  }
+  StartEncode(env, obj);
 
   return nullptr;
 }

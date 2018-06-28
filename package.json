@@ -42,10 +42,10 @@
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "cross-env": "^5.1.5",
+    "cross-env": "^5.2.0",
     "cross-spawn": "^6.0.5",
-    "node-abi": "^2.4.1",
-    "node-gyp": "^3.6.2",
+    "node-abi": "^2.4.3",
+    "node-gyp": "^3.7.0",
     "npm-run-path-compat": "^2.0.3",
     "prebuild": "^7.6.0"
   },

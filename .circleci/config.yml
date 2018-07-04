@@ -69,14 +69,6 @@ jobs:
           DISTRO: CENTOS
           NODEJS: 8
 
-  "node-9":
-    <<: *config_steps
-    docker:
-      - image: centos:6.6
-        environment:
-          DISTRO: CENTOS
-          NODEJS: 9
-
   "node-10":
     <<: *config_steps
     docker:
@@ -100,14 +92,6 @@ jobs:
         environment:
           DISTRO: ALPINE
           NODEJS: 8
-
-  "node-9 musl":
-    <<: *config_steps
-    docker:
-      - image: mhart/alpine-node:9
-        environment:
-          DISTRO: ALPINE
-          NODEJS: 9
 
   "node-10 musl":
     <<: *config_steps
@@ -133,10 +117,6 @@ workflows:
       - "node-8":
           <<: *build_releases
       - "node-8 musl":
-          <<: *build_releases
-      - "node-9":
-          <<: *build_releases
-      - "node-9 musl":
           <<: *build_releases
       - "node-10":
           <<: *build_releases

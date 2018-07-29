@@ -37,7 +37,7 @@
   "dependencies": {
     "detect-libc": "^1.0.3",
     "npmlog": "^4.1.2",
-    "prebuild-install": "^4.0.0",
+    "prebuild-install": "^5.0.0",
     "which-pm-runs": "^1.0.0"
   },
   "devDependencies": {
@@ -47,7 +47,7 @@
     "node-abi": "^2.4.3",
     "node-gyp": "^3.7.0",
     "npm-run-path-compat": "^2.0.3",
-    "prebuild": "^7.6.0"
+    "prebuild": "^7.6.1"
   },
   "scripts": {
     "install": "node ./scripts/install.js || node-gyp rebuild",

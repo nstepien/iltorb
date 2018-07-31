@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.4.0] - 2018-07-31
+### Changed
+- Updated brotli from [v1.0.4] to [v1.0.5]
+- Replaced NAN with N-API
+
+### Removed
+- Dropped support for Node 9
+
 ## [2.3.2] - 2018-05-01
 ### Fixed
 - Fixed pre-compiled binaries download script
@@ -270,6 +278,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
+[2.4.0]: https://github.com/MayhemYDG/iltorb/compare/v2.3.2...v2.4.0
 [2.3.2]: https://github.com/MayhemYDG/iltorb/compare/v2.3.1...v2.3.2
 [2.3.1]: https://github.com/MayhemYDG/iltorb/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/MayhemYDG/iltorb/compare/v2.2.0...v2.3.0
@@ -314,6 +323,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [1.0.1]: https://github.com/MayhemYDG/iltorb/compare/1.0.0...1.0.1
 [1.0.1]: https://github.com/MayhemYDG/iltorb/releases/tag/1.0.0
 
+[v1.0.5]: https://github.com/google/brotli/releases/tag/v1.0.5
 [v1.0.4]: https://github.com/google/brotli/releases/tag/v1.0.4
 [v1.0.3]: https://github.com/google/brotli/releases/tag/v1.0.3
 [v1.0.2]: https://github.com/google/brotli/releases/tag/v1.0.2

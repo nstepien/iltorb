@@ -41,19 +41,5 @@ function build({target, runtime, abi}) {
 }
 
 
-const builds = [
-  { runtime: 'node', target: process.versions.node, abi: false }
-];
-
-if (PUBLISH_BINARY) {
-  builds.push(
-    { runtime: 'electron', target: '50', abi: true },
-    { runtime: 'electron', target: '53', abi: true },
-    { runtime: 'electron', target: process.versions.modules, abi: true }
-  );
-}
-
-builds
-  .reduce((promise, item) => {
-    return promise.then(() => build(item)).catch((code) => process.exit(code));
-  }, Promise.resolve());
+build({ runtime: 'node', target: process.versions.node, abi: false })
+  .catch(code => process.exit(code));

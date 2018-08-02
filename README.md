@@ -149,6 +149,20 @@ const brotliEncodeParams = {
 };
 ```
 
+## Troubleshooting
+
+1. I am unable to install `iltorb` because the host (GitHub) that serves the binaries is blocked by my firewall.
+
+    a) By **default**, if the binaries could not be downloaded for any reason, the install script will attempt to compile the binaries locally on your machine. This requires having all of the build requirements fulfilled.
+
+    b) You can override the `binary.host` value found in `package.json` with the following methods:
+
+      - using the following ENV variable `npm_config_iltorb_binary_host=https://domain.tld/path`
+      - as an additional argument with npm install `--iltorb_binary_host=https://domain.tld/path`
+
+      Note: Both of these would result in downloading the binary from `https://domain.tld/path/vX.X.X/iltorb-vX.X.X-node-vXX-arch.tar.gz`
+
+
 [npm-badge]: https://img.shields.io/npm/v/iltorb.svg
 [npm-url]: https://www.npmjs.com/package/iltorb
 [travis-badge]: https://img.shields.io/travis/MayhemYDG/iltorb.svg

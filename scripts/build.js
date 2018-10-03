@@ -1,6 +1,5 @@
 const libc = require('detect-libc');
 const getTarget = require('node-abi').getTarget;
-const exec = require('child_process').exec;
 const spawn = require('cross-spawn');
 const npmRunPath = require('npm-run-path-compat');
 

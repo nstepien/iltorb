@@ -3,9 +3,9 @@ const getTarget = require('node-abi').getTarget;
 const spawn = require('cross-spawn');
 const npmRunPath = require('npm-run-path-compat');
 
+const ENV = npmRunPath.env();
 const PREBUILD_TOKEN = process.env.PREBUILD_TOKEN;
 const PUBLISH_BINARY = process.env.PUBLISH_BINARY || false;
-
 
 function build({target, runtime, abi}) {
   try {
@@ -25,6 +25,8 @@ function build({target, runtime, abi}) {
   }
 
   return new Promise((resolve, reject) => {
+    // re-create PATH to ensure that system binaries take precendence over NODE binaries
+    const env = Object.assign({}, ENV, { PATH: `${process.env.PATH}:${ENV.PATH}` })
     const proc = spawn('prebuild', args, { env: npmRunPath.env() });
 
     proc.stdout.pipe(process.stdout);

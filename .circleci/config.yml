@@ -15,7 +15,7 @@ config_steps: &config_steps
             yum -y install devtoolset-7-gcc devtoolset-7-gcc-c++ git make
             yum -y groupinstall 'Development Tools'
             yum -y install nodejs
-            echo 'export PATH=/opt/rh/devtoolset-3/root/usr/bin/:$PATH' >> $BASH_ENV
+            echo 'export PATH=/opt/rh/devtoolset-7/root/usr/bin/:$PATH' >> $BASH_ENV
           fi
 
     - checkout

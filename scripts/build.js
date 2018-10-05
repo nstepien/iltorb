@@ -6,7 +6,6 @@ const npmRunPath = require('npm-run-path-compat');
 const PREBUILD_TOKEN = process.env.PREBUILD_TOKEN;
 const PUBLISH_BINARY = process.env.PUBLISH_BINARY || false;
 
-
 function build({target, runtime, abi}) {
   try {
     abi && getTarget(target, runtime);

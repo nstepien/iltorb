@@ -11,10 +11,9 @@ config_steps: &config_steps
           if [[ $DISTRO == "CENTOS" ]]; then
             curl --silent --location "https://rpm.nodesource.com/setup_${NODEJS}.x" | bash -
             yum -y install centos-release-scl-rh epel-release
-            yum -y install http://opensource.wandisco.com/centos/6/git/x86_64/wandisco-git-release-6-1.noarch.rpm
-            yum -y install devtoolset-3-gcc devtoolset-3-gcc-c++ git make
+            yum -y groupinstall 'Development Tools'
             yum -y install nodejs
-            echo 'export PATH=/opt/rh/devtoolset-3/root/usr/bin/:$PATH' >> $BASH_ENV
+            echo 'export PATH=/opt/rh/devtoolset-7/root/usr/bin/:$PATH' >> $BASH_ENV
           fi
 
     - checkout
@@ -56,7 +55,7 @@ jobs:
   "node-6":
     <<: *config_steps
     docker:
-      - image: centos:6.6
+      - image: centos:7
         environment:
           DISTRO: CENTOS
           NODEJS: 6
@@ -64,7 +63,7 @@ jobs:
   "node-8":
     <<: *config_steps
     docker:
-      - image: centos:6.6
+      - image: centos:7
         environment:
           DISTRO: CENTOS
           NODEJS: 8
@@ -72,7 +71,7 @@ jobs:
   "node-10":
     <<: *config_steps
     docker:
-      - image: centos:6.6
+      - image: centos:7
         environment:
           DISTRO: CENTOS
           NODEJS: 10

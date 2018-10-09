@@ -31,7 +31,7 @@ config_steps: &config_steps
             echo 'export PUBLISH="true"' >> $BASH_ENV
           fi
 
-    - run: npm install -g node-gyp
+    - run: npm install -g node-gyp --unsafe-perm
     - run: npm install --build-from-source --unsafe-perm
     - run: npm test
     - run: npm run prebuild-ci

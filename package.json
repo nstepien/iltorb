@@ -37,17 +37,17 @@
   "dependencies": {
     "detect-libc": "^1.0.3",
     "npmlog": "^4.1.2",
-    "prebuild-install": "^5.0.0",
+    "prebuild-install": "^5.2.1",
     "which-pm-runs": "^1.0.0"
   },
   "devDependencies": {
     "ava": "^0.25.0",
     "cross-env": "^5.2.0",
     "cross-spawn": "^6.0.5",
-    "node-abi": "^2.4.3",
-    "node-gyp": "^3.7.0",
+    "node-abi": "^2.4.5",
+    "node-gyp": "^3.8.0",
     "npm-run-path-compat": "^2.0.3",
-    "prebuild": "^7.6.1"
+    "prebuild": "^8.1.1"
   },
   "scripts": {
     "install": "node ./scripts/install.js || node-gyp rebuild",

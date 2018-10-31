@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.4.1] - 2018-10-31
+### Added
+- Support for Node 11
+
+### Fixed
+- Fixed `Module did not self-register` errors, happening when `require()`-ing iltorb multiple times, with worker threads for example. #78
+
+### Changed
+- Updated brotli from [v1.0.5] to [v1.0.7]
+
 ## [2.4.0] - 2018-07-31
 ### Changed
 - Updated brotli from [v1.0.4] to [v1.0.5]
@@ -278,6 +288,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
+[2.4.1]: https://github.com/MayhemYDG/iltorb/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/MayhemYDG/iltorb/compare/v2.3.2...v2.4.0
 [2.3.2]: https://github.com/MayhemYDG/iltorb/compare/v2.3.1...v2.3.2
 [2.3.1]: https://github.com/MayhemYDG/iltorb/compare/v2.3.0...v2.3.1
@@ -323,6 +334,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [1.0.1]: https://github.com/MayhemYDG/iltorb/compare/1.0.0...1.0.1
 [1.0.1]: https://github.com/MayhemYDG/iltorb/releases/tag/1.0.0
 
+[v1.0.7]: https://github.com/google/brotli/releases/tag/v1.0.7
 [v1.0.5]: https://github.com/google/brotli/releases/tag/v1.0.5
 [v1.0.4]: https://github.com/google/brotli/releases/tag/v1.0.4
 [v1.0.3]: https://github.com/google/brotli/releases/tag/v1.0.3

@@ -27,7 +27,6 @@ artifacts:
 install:
   - cmd: git submodule update --init --recursive
   - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) $env:platform;
-  - cmd: set PATH=%APPDATA%\npm;%PATH%
   - ps: >
       npm config set progress false
       npm config set spin false

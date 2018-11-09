@@ -23,7 +23,9 @@ artifacts:
 
 install:
   - cmd: git submodule update --init --recursive
-  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) $env:platform;
+  - ps: Install-Product node $env:nodejs_version $env:platform;
+  - node --version
+  - npm --version
   - ps: >
       $env:JOBS = "max";
       $env:PUBLISH = "false";

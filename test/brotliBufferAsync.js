@@ -22,9 +22,12 @@ function testBuffer(method, bufferFile, resultFile, t, params={}) {
 }
 
 function testBufferError(method, t) {
-  method('not a buffer', function(err) {
-    t.true(err instanceof Error);
-    t.end();
+  return t.throwsAsync(new Promise(function(resolve, reject) {
+    method('not a buffer', function(err) {
+      err ? reject(err) : resolve();
+    });
+  }), {
+    message: 'Brotli input is not a buffer.'
   });
 }
 
@@ -56,8 +59,8 @@ test.cb('compress a large buffer', function(t) {
   testBuffer(brotli.compress, 'large.txt', 'large.txt.compressed', t);
 });
 
-test.cb('call back with an error when the compress input is not a buffer', function(t) {
-  testBufferError(brotli.compress, t);
+test('call back with an error when the compress input is not a buffer', function(t) {
+  return testBufferError(brotli.compress, t);
 });
 
 test.cb('decompress binary data', function(t) {
@@ -84,6 +87,6 @@ test.cb('decompress to another large buffer', function(t) {
   testBuffer(brotli.decompress, 'large.txt.compressed', 'large.txt', t);
 });
 
-test.cb('call back with an error when the decompression input is not a buffer', function(t) {
-  testBufferError(brotli.decompress, t);
+test('call back with an error when the decompression input is not a buffer', function(t) {
+  return testBufferError(brotli.decompress, t);
 });

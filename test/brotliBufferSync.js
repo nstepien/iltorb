@@ -13,7 +13,9 @@ function testBuffer(method, bufferFile, resultFile, t, params={}) {
 function testBufferError(method, t) {
   t.throws(function() {
     method('not a buffer');
-  }, Error);
+  }, {
+    message: 'Brotli input is not a buffer.'
+  });
 }
 
 test('compress binary data', function(t) {

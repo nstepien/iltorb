@@ -41,7 +41,7 @@
     "which-pm-runs": "^1.0.0"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
+    "ava": "^1.0.1",
     "cross-env": "^5.2.0",
     "cross-spawn": "^6.0.5",
     "node-abi": "^2.4.5",

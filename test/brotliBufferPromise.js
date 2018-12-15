@@ -12,7 +12,9 @@ async function testBuffer(method, bufferFile, resultFile, t, params={}) {
 }
 
 function testBufferError(method, t) {
-  return t.throws(method('not a buffer'), Error);
+  return t.throwsAsync(method('not a buffer'), {
+    message: 'Brotli input is not a buffer.'
+  });
 }
 
 test('compress binary data', function(t) {

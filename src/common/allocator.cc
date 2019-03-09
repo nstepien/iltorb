@@ -1,3 +1,4 @@
+#include <nan.h>
 #include "allocator.h"
 
 void* Allocator::Alloc(void* opaque, size_t size) {
@@ -20,7 +21,7 @@ Allocator::AllocatedBuffer* Allocator::GetBufferInfo(void* address) {
   return static_cast<AllocatedBuffer*>(address) - 1;
 }
 
-void Allocator::Free(void* opaque, void* address, napi_env env) {
+void Allocator::Free(void* opaque, void* address) {
   if (!address) {
     return;
   }
@@ -30,21 +31,19 @@ void Allocator::Free(void* opaque, void* address, napi_env env) {
 
   if (opaque) {
     Allocator* alloc = static_cast<Allocator*>(opaque);
-    alloc->allocated_unreported_memory -= size;
+    alloc->allocated_unreported_memory -= buf->size + sizeof(*buf);
   } else {
-    int64_t result;
-    napi_adjust_external_memory(env, -size, &result);
+    Nan::AdjustExternalMemory(-(buf->size + sizeof(*buf)));
   }
 
   free(buf);
 }
 
 void Allocator::Free(void* address) {
-  Free(this, address, NULL);
+  Free(this, address);
 }
 
-void Allocator::ReportMemoryToV8(napi_env env) {
-  int64_t result;
-  napi_adjust_external_memory(env, allocated_unreported_memory, &result);
+void Allocator::ReportMemoryToV8() {
+  Nan::AdjustExternalMemory(allocated_unreported_memory);
   allocated_unreported_memory = 0;
 }

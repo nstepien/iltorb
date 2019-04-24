@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+### Changed
+- Updated npm dependencies.
+
 ## [2.4.2] - 2019-03-11
 ### Changed
 - Moved back to using NAN from N-API to hopefully fix some segmentation faults.

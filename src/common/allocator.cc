@@ -27,7 +27,6 @@ void Allocator::Free(void* opaque, void* address) {
   }
 
   AllocatedBuffer* buf = GetBufferInfo(address);
-  int64_t size = buf->size + sizeof(*buf);
 
   if (opaque) {
     Allocator* alloc = static_cast<Allocator*>(opaque);

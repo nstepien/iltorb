@@ -9,11 +9,11 @@ environment:
     secure: 7t92yForo995jn/5Afeo6A3wcmEyus0nlybU4a9MYQ1FSoMvkjLeihbEQYr99F9S
 
   matrix:
-    - nodejs_version: "6"
-    - nodejs_version: "8"
-    - nodejs_version: "10"
-    - nodejs_version: "11"
     - nodejs_version: "12"
+    - nodejs_version: "11"
+    - nodejs_version: "10"
+    - nodejs_version: "8"
+    - nodejs_version: "6"
 
 platform:
   - x86
@@ -27,7 +27,7 @@ artifacts:
 
 install:
   - cmd: git submodule update --init --recursive
-  - ps: Install-Product node $env:nodejs_version $env:platform;
+  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) $env:platform
   - node --version
   - npm --version
   - ps: >

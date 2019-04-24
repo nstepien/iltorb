@@ -20,7 +20,7 @@ config_steps: &config_steps
 
     - run:
         name: Checkout code submodules
-        command: git submodule update --init --recursive --remote
+        command: git submodule update --init --recursive
 
     - run:
         name: 'Configure Environment'

@@ -32,7 +32,8 @@ void Allocator::Free(void* opaque, void* address) {
     Allocator* alloc = static_cast<Allocator*>(opaque);
     alloc->allocated_unreported_memory -= buf->size + sizeof(*buf);
   } else {
-    Nan::AdjustExternalMemory(-(buf->size + sizeof(*buf)));
+    int64_t count = buf->size + sizeof(*buf);
+    Nan::AdjustExternalMemory(-count);
   }
 
   free(buf);

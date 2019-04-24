@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.4.3] - 2019-04-24
 ### Added
 - Support for Node 12
 
@@ -298,7 +299,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
-[2.4.1]: https://github.com/MayhemYDG/iltorb/compare/v2.4.1...v2.4.2
+[2.4.3]: https://github.com/MayhemYDG/iltorb/compare/v2.4.2...v2.4.3
+[2.4.2]: https://github.com/MayhemYDG/iltorb/compare/v2.4.1...v2.4.2
 [2.4.1]: https://github.com/MayhemYDG/iltorb/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/MayhemYDG/iltorb/compare/v2.3.2...v2.4.0
 [2.3.2]: https://github.com/MayhemYDG/iltorb/compare/v2.3.1...v2.3.2

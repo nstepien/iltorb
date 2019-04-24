@@ -7,59 +7,69 @@ StreamEncode::StreamEncode(bool isAsync, Local<Object> params): isAsync(isAsync)
   state = BrotliEncoderCreateInstance(Allocator::Alloc, Allocator::Free, &alloc);
 
   Local<String> key;
+  Local<Value> localVal;
   uint32_t val;
 
   key = Nan::New<String>("mode").ToLocalChecked();
   if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    localVal = Nan::Get(params, key).ToLocalChecked();
+    val = Nan::To<uint32_t>(localVal).FromJust();
     BrotliEncoderSetParameter(state, BROTLI_PARAM_MODE, val);
   }
 
   key = Nan::New<String>("quality").ToLocalChecked();
   if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    localVal = Nan::Get(params, key).ToLocalChecked();
+    val = Nan::To<uint32_t>(localVal).FromJust();
     BrotliEncoderSetParameter(state, BROTLI_PARAM_QUALITY, val);
   }
 
   key = Nan::New<String>("lgwin").ToLocalChecked();
   if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    localVal = Nan::Get(params, key).ToLocalChecked();
+    val = Nan::To<uint32_t>(localVal).FromJust();
     BrotliEncoderSetParameter(state, BROTLI_PARAM_LGWIN, val);
   }
 
   key = Nan::New<String>("lgblock").ToLocalChecked();
   if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    localVal = Nan::Get(params, key).ToLocalChecked();
+    val = Nan::To<uint32_t>(localVal).FromJust();
     BrotliEncoderSetParameter(state, BROTLI_PARAM_LGBLOCK, val);
   }
 
   key = Nan::New<String>("disable_literal_context_modeling").ToLocalChecked();
   if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    localVal = Nan::Get(params, key).ToLocalChecked();
+    val = Nan::To<uint32_t>(localVal).FromJust();
     BrotliEncoderSetParameter(state, BROTLI_PARAM_DISABLE_LITERAL_CONTEXT_MODELING, val);
   }
 
   key = Nan::New<String>("size_hint").ToLocalChecked();
   if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    localVal = Nan::Get(params, key).ToLocalChecked();
+    val = Nan::To<uint32_t>(localVal).FromJust();
     BrotliEncoderSetParameter(state, BROTLI_PARAM_SIZE_HINT, val);
   }
 
   key = Nan::New<String>("large_window").ToLocalChecked();
   if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    localVal = Nan::Get(params, key).ToLocalChecked();
+    val = Nan::To<uint32_t>(localVal).FromJust();
     BrotliEncoderSetParameter(state, BROTLI_PARAM_LARGE_WINDOW, val);
   }
 
   key = Nan::New<String>("npostfix").ToLocalChecked();
   if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    localVal = Nan::Get(params, key).ToLocalChecked();
+    val = Nan::To<uint32_t>(localVal).FromJust();
     BrotliEncoderSetParameter(state, BROTLI_PARAM_NPOSTFIX, val);
   }
 
   key = Nan::New<String>("ndirect").ToLocalChecked();
   if (Nan::Has(params, key).FromJust()) {
-    val = Nan::Get(params, key).ToLocalChecked()->Int32Value();
+    localVal = Nan::Get(params, key).ToLocalChecked();
+    val = Nan::To<uint32_t>(localVal).FromJust();
     BrotliEncoderSetParameter(state, BROTLI_PARAM_NDIRECT, val);
   }
 }
@@ -82,7 +92,10 @@ void StreamEncode::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target) {
 }
 
 NAN_METHOD(StreamEncode::New) {
-  StreamEncode* obj = new StreamEncode(info[0]->BooleanValue(), info[1]->ToObject());
+  StreamEncode* obj = new StreamEncode(
+    Nan::To<bool>(info[0]).FromJust(),
+    Nan::To<Object>(info[1]).ToLocalChecked()
+  );
   obj->Wrap(info.This());
   info.GetReturnValue().Set(info.This());
 }
@@ -90,7 +103,7 @@ NAN_METHOD(StreamEncode::New) {
 NAN_METHOD(StreamEncode::Transform) {
   StreamEncode* obj = ObjectWrap::Unwrap<StreamEncode>(info.Holder());
 
-  Local<Object> buffer = info[0]->ToObject();
+  Local<Object> buffer = Nan::To<Object>(info[0]).ToLocalChecked();
   obj->next_in = (const uint8_t*) node::Buffer::Data(buffer);
   obj->available_in = node::Buffer::Length(buffer);
 
@@ -109,7 +122,7 @@ NAN_METHOD(StreamEncode::Flush) {
   StreamEncode* obj = ObjectWrap::Unwrap<StreamEncode>(info.Holder());
 
   Nan::Callback *callback = new Nan::Callback(info[1].As<Function>());
-  BrotliEncoderOperation op = info[0]->BooleanValue()
+  BrotliEncoderOperation op = Nan::To<bool>(info[0]).FromJust()
     ? BROTLI_OPERATION_FINISH
     : BROTLI_OPERATION_FLUSH;
   obj->next_in = nullptr;

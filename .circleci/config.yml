@@ -52,14 +52,6 @@ config_steps: &config_steps
 version: 2
 
 jobs:
-  "node-6":
-    <<: *config_steps
-    docker:
-      - image: centos:7
-        environment:
-          DISTRO: CENTOS
-          NODEJS: 6
-
   "node-8":
     <<: *config_steps
     docker:
@@ -91,14 +83,6 @@ jobs:
         environment:
           DISTRO: CENTOS
           NODEJS: 12
-
-  "node-6 musl":
-    <<: *config_steps
-    docker:
-      - image: mhart/alpine-node:6
-        environment:
-          DISTRO: ALPINE
-          NODEJS: 6
 
   "node-8 musl":
     <<: *config_steps
@@ -141,10 +125,6 @@ workflows:
   version: 2
   build:
     jobs:
-      - "node-6":
-          <<: *build_releases
-      - "node-6 musl":
-          <<: *build_releases
       - "node-8":
           <<: *build_releases
       - "node-8 musl":

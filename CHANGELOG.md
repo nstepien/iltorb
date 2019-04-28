@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Removed
+- Dropped support for Node 6
+
 ## [2.4.3] - 2019-04-24
 ### Added
 - Support for Node 12

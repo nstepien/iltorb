@@ -131,7 +131,7 @@ function compress(input, params, cb) {
     return Promise.reject(err);
   }
 
-  params = Object.assign({}, params, {size_hint: input.length});
+  params = { ...params, size_hint: input.length };
 
   if (gotCallback) {
     return compressBuffer(input, params, cb);
@@ -211,7 +211,7 @@ function compressSync(input, params) {
   if (typeof params !== 'object') {
     params = {};
   }
-  params = Object.assign({}, params, {size_hint: input.length});
+  params = { ...params, size_hint: input.length };
   const stream = new TransformStreamEncode(params, false);
   const chunks = [];
   let length = 0;

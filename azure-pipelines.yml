@@ -55,16 +55,16 @@ steps:
     versionSpec: $(node_version)
   displayName: 'Install Node.js'
 
-- script: |
+- bash: |
     node --version
     npm --version
   displayName: 'Log node and npm versions'
 
-- script: npm install --build-from-source
+- bash: npm install --build-from-source
   displayName: 'Install'
 
-- script: npm test
+- bash: npm test
   displayName: 'Test'
 
-- script: npm run prebuild-ci
+- bash: npm run prebuild-ci
   displayName: 'Build'

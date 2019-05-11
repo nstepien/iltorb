@@ -1,0 +1,21 @@
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+- master
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '12.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    node --version
+    npm --version
+  displayName: 'Log node and npm versions'
+
+- script: npm install --build-from-source
+  displayName: 'Install'
+
+- script: npm test
+  displayName: 'Test'

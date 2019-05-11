@@ -13,7 +13,7 @@ strategy:
       imageName: 'macOS-latest'
     node8_windows:
       node_version: 8.x
-      imageName: 'windows-2019'
+      imageName: 'vs2017-win2016'
     node10_linux:
       node_version: 10.x
       imageName: 'ubuntu-latest'
@@ -22,7 +22,7 @@ strategy:
       imageName: 'macOS-latest'
     node10_windows:
       node_version: 10.x
-      imageName: 'windows-2019'
+      imageName: 'vs2017-win2016'
     node11_linux:
       node_version: 11.x
       imageName: 'ubuntu-latest'
@@ -31,7 +31,7 @@ strategy:
       imageName: 'macOS-latest'
     node11_windows:
       node_version: 11.x
-      imageName: 'windows-2019'
+      imageName: 'vs2017-win2016'
     node12_linux:
       node_version: 12.x
       imageName: 'ubuntu-latest'
@@ -40,7 +40,7 @@ strategy:
       imageName: 'macOS-latest'
     node12_windows:
       node_version: 12.x
-      imageName: 'windows-2019'
+      imageName: 'vs2017-win2016'
 
 pool:
   vmImage: $(imageName)

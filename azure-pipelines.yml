@@ -4,6 +4,10 @@ trigger:
 - master
 
 steps:
+- checkout: self
+  fetchDepth: 1
+  submodules: recursive
+
 - task: NodeTool@0
   inputs:
     versionSpec: '12.x'

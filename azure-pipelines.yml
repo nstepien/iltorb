@@ -3,6 +3,48 @@
 trigger:
 - master
 
+strategy:
+  matrix:
+    node8_linux:
+      node_version: 8.x
+      imageName: 'ubuntu-latest'
+    node8_macOS:
+      node_version: 8.x
+      imageName: 'macOS-latest'
+    node8_windows:
+      node_version: 8.x
+      imageName: 'windows-latest'
+    node10_linux:
+      node_version: 10.x
+      imageName: 'ubuntu-latest'
+    node10_macOS:
+      node_version: 10.x
+      imageName: 'macOS-latest'
+    node10_windows:
+      node_version: 10.x
+      imageName: 'windows-latest'
+    node11_linux:
+      node_version: 11.x
+      imageName: 'ubuntu-latest'
+    node11_macOS:
+      node_version: 11.x
+      imageName: 'macOS-latest'
+    node11_windows:
+      node_version: 11.x
+      imageName: 'windows-latest'
+    node12_linux:
+      node_version: 12.x
+      imageName: 'ubuntu-latest'
+    node12_macOS:
+      node_version: 12.x
+      imageName: 'macOS-latest'
+    node12_windows:
+      node_version: 12.x
+      imageName: 'windows-latest'
+
+pool:
+  vmImage: $(imageName)
+
 steps:
 - checkout: self
   fetchDepth: 1
@@ -10,7 +52,7 @@ steps:
 
 - task: NodeTool@0
   inputs:
-    versionSpec: '12.x'
+    versionSpec: $(node_version)
   displayName: 'Install Node.js'
 
 - script: |
@@ -23,3 +65,6 @@ steps:
 
 - script: npm test
   displayName: 'Test'
+
+- script: npm run prebuild-ci
+  displayName: 'Build'

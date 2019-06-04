@@ -4,7 +4,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 ### Removed
-- Dropped support for Node 6
+- Dropped support for Node 6 and Node 11
 
 ## [2.4.3] - 2019-04-24
 ### Added

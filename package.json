@@ -46,7 +46,7 @@
     "cross-env": "^6.0.0",
     "cross-spawn": "^7.0.0",
     "node-abi": "^2.8.0",
-    "node-gyp": "^5.0.0",
+    "node-gyp": "^6.0.0",
     "npm-run-path-compat": "^2.0.3",
     "prebuild": "^9.0.0"
   },

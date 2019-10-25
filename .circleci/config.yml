@@ -76,6 +76,14 @@ jobs:
           DISTRO: CENTOS
           NODEJS: 12
 
+  "node-13":
+    <<: *config_steps
+    docker:
+      - image: centos:7
+        environment:
+          DISTRO: CENTOS
+          NODEJS: 13
+
   "node-8 musl":
     <<: *config_steps
     docker:
@@ -100,6 +108,14 @@ jobs:
           DISTRO: ALPINE
           NODEJS: 12
 
+  "node-13 musl":
+    <<: *config_steps
+    docker:
+      - image: mhart/alpine-node:13
+        environment:
+          DISTRO: ALPINE
+          NODEJS: 13
+
 build_releases: &build_releases
   filters:
     tags:
@@ -120,4 +136,8 @@ workflows:
       - "node-12":
           <<: *build_releases
       - "node-12 musl":
+          <<: *build_releases
+      - "node-13":
+          <<: *build_releases
+      - "node-13 musl":
           <<: *build_releases

@@ -48,7 +48,7 @@
     "node-abi": "^2.12.0",
     "node-gyp": "^6.0.0",
     "npm-run-path-compat": "^2.0.3",
-    "prebuild": "^9.1.1"
+    "prebuild": "^10.0.0"
   },
   "scripts": {
     "install": "node ./scripts/install.js || node-gyp rebuild",

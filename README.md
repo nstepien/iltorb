@@ -167,7 +167,7 @@ const brotliEncodeParams = {
 [npm-url]: https://www.npmjs.com/package/iltorb
 [travis-badge]: https://img.shields.io/travis/nstepien/iltorb.svg
 [travis-url]: https://travis-ci.org/nstepien/iltorb
-[appveyor-badge]: https://ci.appveyor.com/api/projects/status/ysib4o1bfey84lqk/branch/master?svg=true
+[appveyor-badge]: https://ci.appveyor.com/api/projects/status/5x96vn5561bixics/branch/master?svg=true
 [appveyor-url]: https://ci.appveyor.com/project/MayhemYDG/iltorb
 [circleci-badge]: https://circleci.com/gh/nstepien/iltorb/tree/master.svg?style=shield
 [circleci-url]: https://circleci.com/gh/nstepien/iltorb/tree/master

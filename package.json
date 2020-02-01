@@ -2,11 +2,11 @@
   "name": "iltorb",
   "version": "2.4.5",
   "description": "Brotli compression/decompression with native bindings",
-  "homepage": "https://github.com/MayhemYDG/iltorb",
-  "bugs": "https://github.com/MayhemYDG/iltorb/issues",
+  "homepage": "https://github.com/nstepien/iltorb",
+  "bugs": "https://github.com/nstepien/iltorb/issues",
   "repository": {
     "type": "git",
-    "url": "git://github.com/MayhemYDG/iltorb.git"
+    "url": "git://github.com/nstepien/iltorb.git"
   },
   "main": "index.js",
   "keywords": [
@@ -62,7 +62,7 @@
     "module_name": "iltorb",
     "module_path": "./build/bindings",
     "remote_path": "v{version}",
-    "host": "https://github.com/MayhemYDG/iltorb/releases/download/"
+    "host": "https://github.com/nstepien/iltorb/releases/download/"
   },
   "license": "MIT"
 }

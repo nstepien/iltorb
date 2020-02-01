@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.4.5] - 2020-02-01
+- `iltorb` is now deprecated in favor of `zlib`.
+  - The `zlib` module has support for brotli compression/decompression APIs starting with [Node.js v10.16.0](https://nodejs.org/dist/latest/docs/api/zlib.html).
+
 ## [2.4.4] - 2019-10-25
 ### Added
 - Support for Node 13
@@ -306,6 +310,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [1.0.0] - 2015-10-18
 
+[2.4.5]: https://github.com/MayhemYDG/iltorb/compare/v2.4.4...v2.4.5
 [2.4.4]: https://github.com/MayhemYDG/iltorb/compare/v2.4.3...v2.4.4
 [2.4.3]: https://github.com/MayhemYDG/iltorb/compare/v2.4.2...v2.4.3
 [2.4.2]: https://github.com/MayhemYDG/iltorb/compare/v2.4.1...v2.4.2

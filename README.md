@@ -17,7 +17,7 @@ npm install iltorb
 
 ### Prerequisites for Building
 
-The following is required to build from source or when a [pre-compiled binary](https://github.com/MayhemYDG/iltorb/releases) does not exist.
+The following is required to build from source or when a [pre-compiled binary](https://github.com/nstepien/iltorb/releases) does not exist.
 
 - Python 2.7
 - GCC 4.8+ (Unix) or [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools) (Windows), see [Node Building tools](https://github.com/nodejs/node-gyp#installation).
@@ -165,9 +165,9 @@ const brotliEncodeParams = {
 
 [npm-badge]: https://img.shields.io/npm/v/iltorb.svg
 [npm-url]: https://www.npmjs.com/package/iltorb
-[travis-badge]: https://img.shields.io/travis/MayhemYDG/iltorb.svg
-[travis-url]: https://travis-ci.org/MayhemYDG/iltorb
-[appveyor-badge]: https://ci.appveyor.com/api/projects/status/ysib4o1bfey84lqk/branch/master?svg=true
+[travis-badge]: https://img.shields.io/travis/nstepien/iltorb.svg
+[travis-url]: https://travis-ci.org/nstepien/iltorb
+[appveyor-badge]: https://ci.appveyor.com/api/projects/status/5x96vn5561bixics/branch/master?svg=true
 [appveyor-url]: https://ci.appveyor.com/project/MayhemYDG/iltorb
-[circleci-badge]: https://circleci.com/gh/MayhemYDG/iltorb/tree/master.svg?style=shield
-[circleci-url]: https://circleci.com/gh/MayhemYDG/iltorb/tree/master
+[circleci-badge]: https://circleci.com/gh/nstepien/iltorb/tree/master.svg?style=shield
+[circleci-url]: https://circleci.com/gh/nstepien/iltorb/tree/master

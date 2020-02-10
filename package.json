@@ -42,7 +42,7 @@
     "which-pm-runs": "^1.0.0"
   },
   "devDependencies": {
-    "ava": "^2.4.0",
+    "ava": "^3.3.0",
     "cross-env": "^7.0.0",
     "cross-spawn": "^7.0.1",
     "node-abi": "^2.13.0",

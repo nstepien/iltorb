@@ -38,7 +38,7 @@
     "detect-libc": "^1.0.3",
     "nan": "^2.14.0",
     "npmlog": "^4.1.2",
-    "prebuild-install": "^5.3.3",
+    "prebuild-install": "^6.1.1",
     "which-pm-runs": "^1.0.0"
   },
   "devDependencies": {
